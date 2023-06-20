@@ -1,0 +1,14 @@
+2023-06-18 18:50:38.389 +02:00 [INF] User profile is available. Using 'C:\Users\ecola\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2023-06-18 18:50:38.746 +02:00 [INF] Now listening on: https://localhost:7047
+2023-06-18 18:50:38.747 +02:00 [INF] Now listening on: http://localhost:5159
+2023-06-18 18:50:38.751 +02:00 [INF] Application started. Press Ctrl+C to shut down.
+2023-06-18 18:50:38.752 +02:00 [INF] Hosting environment: Development
+2023-06-18 18:50:38.753 +02:00 [INF] Content root path: C:\Users\ecola\Documents\gitkraken\Tiktok-api
+2023-06-18 18:50:39.594 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7047/swagger/index.html - -
+2023-06-18 18:50:39.879 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7047/swagger/index.html - - - 200 - text/html;charset=utf-8 287.5650ms
+2023-06-18 18:50:39.888 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7047/_framework/aspnetcore-browser-refresh.js - -
+2023-06-18 18:50:39.888 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7047/_vs/browserLink - -
+2023-06-18 18:50:39.893 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7047/_framework/aspnetcore-browser-refresh.js - - - 200 11990 application/javascript;+charset=utf-8 4.6507ms
+2023-06-18 18:50:39.902 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7047/_vs/browserLink - - - 200 - text/javascript;+charset=UTF-8 14.4854ms
+2023-06-18 18:50:39.951 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7047/swagger/v1/swagger.json - -
+2023-06-18 18:50:39.968 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7047/swagger/v1/swagger.json - - - 200 - application/json;charset=utf-8 16.7799ms
