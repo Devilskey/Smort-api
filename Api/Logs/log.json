@@ -1,0 +1,40 @@
+2023-06-18 18:50:38.389 +02:00 [INF] User profile is available. Using 'C:\Users\ecola\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2023-06-18 18:50:38.746 +02:00 [INF] Now listening on: https://localhost:7047
+2023-06-18 18:50:38.747 +02:00 [INF] Now listening on: http://localhost:5159
+2023-06-18 18:50:38.751 +02:00 [INF] Application started. Press Ctrl+C to shut down.
+2023-06-18 18:50:38.752 +02:00 [INF] Hosting environment: Development
+2023-06-18 18:50:38.753 +02:00 [INF] Content root path: C:\Users\ecola\Documents\gitkraken\Tiktok-api
+2023-06-18 18:50:39.594 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7047/swagger/index.html - -
+2023-06-18 18:50:39.879 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7047/swagger/index.html - - - 200 - text/html;charset=utf-8 287.5650ms
+2023-06-18 18:50:39.888 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7047/_framework/aspnetcore-browser-refresh.js - -
+2023-06-18 18:50:39.888 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7047/_vs/browserLink - -
+2023-06-18 18:50:39.893 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7047/_framework/aspnetcore-browser-refresh.js - - - 200 11990 application/javascript;+charset=utf-8 4.6507ms
+2023-06-18 18:50:39.902 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7047/_vs/browserLink - - - 200 - text/javascript;+charset=UTF-8 14.4854ms
+2023-06-18 18:50:39.951 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7047/swagger/v1/swagger.json - -
+2023-06-18 18:50:39.968 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7047/swagger/v1/swagger.json - - - 200 - application/json;charset=utf-8 16.7799ms
+2023-07-16 16:00:25.429 +02:00 [INF] User profile is available. Using 'C:\Users\ecola\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2023-07-16 16:00:25.865 +02:00 [INF] Now listening on: https://localhost:7047
+2023-07-16 16:00:25.866 +02:00 [INF] Now listening on: http://localhost:5159
+2023-07-16 16:00:25.869 +02:00 [INF] Application started. Press Ctrl+C to shut down.
+2023-07-16 16:00:25.870 +02:00 [INF] Hosting environment: Development
+2023-07-16 16:00:25.870 +02:00 [INF] Content root path: C:\Users\ecola\Documents\gitkraken\Smort-api\Api
+2023-07-16 16:00:26.689 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7047/swagger - -
+2023-07-16 16:00:26.765 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7047/swagger - - - 301 0 - 80.2649ms
+2023-07-16 16:00:26.767 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7047/swagger/index.html - -
+2023-07-16 16:00:26.909 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7047/swagger/index.html - - - 200 - text/html;charset=utf-8 142.3301ms
+2023-07-16 16:00:26.921 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7047/_framework/aspnetcore-browser-refresh.js - -
+2023-07-16 16:00:26.921 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7047/swagger/swagger-ui-standalone-preset.js - -
+2023-07-16 16:00:26.921 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7047/swagger/swagger-ui-bundle.js - -
+2023-07-16 16:00:26.921 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7047/swagger/swagger-ui.css - -
+2023-07-16 16:00:26.924 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7047/_framework/aspnetcore-browser-refresh.js - - - 200 11988 application/javascript;+charset=utf-8 3.1374ms
+2023-07-16 16:00:26.933 +02:00 [INF] Sending file. Request path: '/swagger-ui.css'. Physical path: 'N/A'
+2023-07-16 16:00:26.937 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7047/swagger/swagger-ui.css - - - 200 143632 text/css 15.5278ms
+2023-07-16 16:00:26.956 +02:00 [INF] Sending file. Request path: '/swagger-ui-standalone-preset.js'. Physical path: 'N/A'
+2023-07-16 16:00:26.956 +02:00 [INF] Sending file. Request path: '/swagger-ui-bundle.js'. Physical path: 'N/A'
+2023-07-16 16:00:26.959 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7047/swagger/swagger-ui-standalone-preset.js - - - 200 337162 application/javascript 38.4300ms
+2023-07-16 16:00:26.959 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7047/swagger/swagger-ui-bundle.js - - - 200 1092889 application/javascript 38.2097ms
+2023-07-16 16:00:27.036 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7047/swagger/v1/swagger.json - -
+2023-07-16 16:00:27.041 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7047/swagger/favicon-32x32.png - -
+2023-07-16 16:00:27.042 +02:00 [INF] Sending file. Request path: '/favicon-32x32.png'. Physical path: 'N/A'
+2023-07-16 16:00:27.043 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7047/swagger/favicon-32x32.png - - - 200 628 image/png 1.5844ms
+2023-07-16 16:00:27.054 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7047/swagger/v1/swagger.json - - - 200 - application/json;charset=utf-8 17.8487ms
