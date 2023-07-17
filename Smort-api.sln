@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33723.286
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Smort-api", "Api\Smort-api.csproj", "{DE32D77A-DC26-449E-B790-FBCB37A5E4CD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTest", "UnitTest\UnitTest.csproj", "{DD43519B-BB83-4A65-B29C-24283885D92C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DE32D77A-DC26-449E-B790-FBCB37A5E4CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE32D77A-DC26-449E-B790-FBCB37A5E4CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE32D77A-DC26-449E-B790-FBCB37A5E4CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE32D77A-DC26-449E-B790-FBCB37A5E4CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DD43519B-BB83-4A65-B29C-24283885D92C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD43519B-BB83-4A65-B29C-24283885D92C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD43519B-BB83-4A65-B29C-24283885D92C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD43519B-BB83-4A65-B29C-24283885D92C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {69F35AD1-9C9E-400C-89CC-0F6D8E27B092}
+	EndGlobalSection
+EndGlobal
