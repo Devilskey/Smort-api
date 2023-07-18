@@ -1,0 +1,35 @@
+{"@t":"2023-07-18T07:47:25.2370572Z","@mt":"Now listening on: {address}","address":"https://localhost:7047","EventId":{"Id":14,"Name":"ListeningOnAddress"},"SourceContext":"Microsoft.Hosting.Lifetime","Application":"webApi"}
+{"@t":"2023-07-18T07:47:25.2701149Z","@mt":"Now listening on: {address}","address":"http://localhost:5159","EventId":{"Id":14,"Name":"ListeningOnAddress"},"SourceContext":"Microsoft.Hosting.Lifetime","Application":"webApi"}
+{"@t":"2023-07-18T07:47:25.2729354Z","@mt":"Application started. Press Ctrl+C to shut down.","SourceContext":"Microsoft.Hosting.Lifetime","Application":"webApi"}
+{"@t":"2023-07-18T07:47:25.2737389Z","@mt":"Hosting environment: {envName}","envName":"Development","SourceContext":"Microsoft.Hosting.Lifetime","Application":"webApi"}
+{"@t":"2023-07-18T07:47:25.2743498Z","@mt":"Content root path: {contentRoot}","contentRoot":"C:\\Users\\ecola\\Documents\\gitkraken\\Smort-api\\Api","SourceContext":"Microsoft.Hosting.Lifetime","Application":"webApi"}
+{"@t":"2023-07-18T07:49:29.4560861Z","@mt":"Now listening on: {address}","address":"https://localhost:7047","EventId":{"Id":14,"Name":"ListeningOnAddress"},"SourceContext":"Microsoft.Hosting.Lifetime","Application":"webApi"}
+{"@t":"2023-07-18T07:49:29.4869341Z","@mt":"Now listening on: {address}","address":"http://localhost:5159","EventId":{"Id":14,"Name":"ListeningOnAddress"},"SourceContext":"Microsoft.Hosting.Lifetime","Application":"webApi"}
+{"@t":"2023-07-18T07:49:29.4897304Z","@mt":"Application started. Press Ctrl+C to shut down.","SourceContext":"Microsoft.Hosting.Lifetime","Application":"webApi"}
+{"@t":"2023-07-18T07:49:29.4907418Z","@mt":"Hosting environment: {envName}","envName":"Development","SourceContext":"Microsoft.Hosting.Lifetime","Application":"webApi"}
+{"@t":"2023-07-18T07:49:29.4914718Z","@mt":"Content root path: {contentRoot}","contentRoot":"C:\\Users\\ecola\\Documents\\gitkraken\\Smort-api\\Api","SourceContext":"Microsoft.Hosting.Lifetime","Application":"webApi"}
+{"@t":"2023-07-18T07:49:56.3335051Z","@mt":"Now listening on: {address}","address":"https://localhost:7047","EventId":{"Id":14,"Name":"ListeningOnAddress"},"SourceContext":"Microsoft.Hosting.Lifetime","Application":"webApi"}
+{"@t":"2023-07-18T07:49:56.3643442Z","@mt":"Now listening on: {address}","address":"http://localhost:5159","EventId":{"Id":14,"Name":"ListeningOnAddress"},"SourceContext":"Microsoft.Hosting.Lifetime","Application":"webApi"}
+{"@t":"2023-07-18T07:49:56.3676239Z","@mt":"Application started. Press Ctrl+C to shut down.","SourceContext":"Microsoft.Hosting.Lifetime","Application":"webApi"}
+{"@t":"2023-07-18T07:49:56.3684767Z","@mt":"Hosting environment: {envName}","envName":"Development","SourceContext":"Microsoft.Hosting.Lifetime","Application":"webApi"}
+{"@t":"2023-07-18T07:49:56.3690450Z","@mt":"Content root path: {contentRoot}","contentRoot":"C:\\Users\\ecola\\Documents\\gitkraken\\Smort-api\\Api","SourceContext":"Microsoft.Hosting.Lifetime","Application":"webApi"}
+{"@t":"2023-07-18T07:51:41.9690818Z","@mt":"Now listening on: {address}","address":"https://localhost:7047","EventId":{"Id":14,"Name":"ListeningOnAddress"},"SourceContext":"Microsoft.Hosting.Lifetime","Application":"webApi"}
+{"@t":"2023-07-18T07:51:42.0005318Z","@mt":"Now listening on: {address}","address":"http://localhost:5159","EventId":{"Id":14,"Name":"ListeningOnAddress"},"SourceContext":"Microsoft.Hosting.Lifetime","Application":"webApi"}
+{"@t":"2023-07-18T07:51:42.0035451Z","@mt":"Application started. Press Ctrl+C to shut down.","SourceContext":"Microsoft.Hosting.Lifetime","Application":"webApi"}
+{"@t":"2023-07-18T07:51:42.0044316Z","@mt":"Hosting environment: {envName}","envName":"Development","SourceContext":"Microsoft.Hosting.Lifetime","Application":"webApi"}
+{"@t":"2023-07-18T07:51:42.0049625Z","@mt":"Content root path: {contentRoot}","contentRoot":"C:\\Users\\ecola\\Documents\\gitkraken\\Smort-api\\Api","SourceContext":"Microsoft.Hosting.Lifetime","Application":"webApi"}
+{"@t":"2023-07-18T07:53:08.9862045Z","@mt":"Now listening on: {address}","address":"https://localhost:7047","EventId":{"Id":14,"Name":"ListeningOnAddress"},"SourceContext":"Microsoft.Hosting.Lifetime","Application":"webApi"}
+{"@t":"2023-07-18T07:53:09.0164779Z","@mt":"Now listening on: {address}","address":"http://localhost:5159","EventId":{"Id":14,"Name":"ListeningOnAddress"},"SourceContext":"Microsoft.Hosting.Lifetime","Application":"webApi"}
+{"@t":"2023-07-18T07:53:09.0192832Z","@mt":"Application started. Press Ctrl+C to shut down.","SourceContext":"Microsoft.Hosting.Lifetime","Application":"webApi"}
+{"@t":"2023-07-18T07:53:09.0200494Z","@mt":"Hosting environment: {envName}","envName":"Development","SourceContext":"Microsoft.Hosting.Lifetime","Application":"webApi"}
+{"@t":"2023-07-18T07:53:09.0205772Z","@mt":"Content root path: {contentRoot}","contentRoot":"C:\\Users\\ecola\\Documents\\gitkraken\\Smort-api\\Api","SourceContext":"Microsoft.Hosting.Lifetime","Application":"webApi"}
+{"@t":"2023-07-18T07:54:26.9210665Z","@mt":"Now listening on: {address}","address":"https://localhost:7047","EventId":{"Id":14,"Name":"ListeningOnAddress"},"SourceContext":"Microsoft.Hosting.Lifetime","Application":"webApi"}
+{"@t":"2023-07-18T07:54:26.9522919Z","@mt":"Now listening on: {address}","address":"http://localhost:5159","EventId":{"Id":14,"Name":"ListeningOnAddress"},"SourceContext":"Microsoft.Hosting.Lifetime","Application":"webApi"}
+{"@t":"2023-07-18T07:54:26.9565412Z","@mt":"Application started. Press Ctrl+C to shut down.","SourceContext":"Microsoft.Hosting.Lifetime","Application":"webApi"}
+{"@t":"2023-07-18T07:54:26.9575502Z","@mt":"Hosting environment: {envName}","envName":"Development","SourceContext":"Microsoft.Hosting.Lifetime","Application":"webApi"}
+{"@t":"2023-07-18T07:54:26.9583031Z","@mt":"Content root path: {contentRoot}","contentRoot":"C:\\Users\\ecola\\Documents\\gitkraken\\Smort-api\\Api","SourceContext":"Microsoft.Hosting.Lifetime","Application":"webApi"}
+{"@t":"2023-07-18T08:02:34.8020276Z","@mt":"Now listening on: {address}","address":"https://localhost:7047","EventId":{"Id":14,"Name":"ListeningOnAddress"},"SourceContext":"Microsoft.Hosting.Lifetime","Application":"webApi"}
+{"@t":"2023-07-18T08:02:34.8332023Z","@mt":"Now listening on: {address}","address":"http://localhost:5159","EventId":{"Id":14,"Name":"ListeningOnAddress"},"SourceContext":"Microsoft.Hosting.Lifetime","Application":"webApi"}
+{"@t":"2023-07-18T08:02:34.8363489Z","@mt":"Application started. Press Ctrl+C to shut down.","SourceContext":"Microsoft.Hosting.Lifetime","Application":"webApi"}
+{"@t":"2023-07-18T08:02:34.8372852Z","@mt":"Hosting environment: {envName}","envName":"Development","SourceContext":"Microsoft.Hosting.Lifetime","Application":"webApi"}
+{"@t":"2023-07-18T08:02:34.8380060Z","@mt":"Content root path: {contentRoot}","contentRoot":"C:\\Users\\ecola\\Documents\\gitkraken\\Smort-api\\Api","SourceContext":"Microsoft.Hosting.Lifetime","Application":"webApi"}

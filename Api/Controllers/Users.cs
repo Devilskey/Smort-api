@@ -7,5 +7,6 @@ namespace Tiktok_api.Controllers
     [ApiController]
     public class Users : ControllerBase
     {
+
     }
 }
