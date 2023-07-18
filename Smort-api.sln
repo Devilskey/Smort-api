@@ -7,9 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Smort-api", "Api\Smort-api.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Smort-api-UnitTest", "UnitTest\Smort-api-UnitTest.csproj", "{DD43519B-BB83-4A65-B29C-24283885D92C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Smort-api.Extensions", "Smort-api.Extensions\Smort-api.Extensions.csproj", "{CC17204E-A0FE-4B60-AEFC-9CB84C3E6B7C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Smort-api.Extensions", "Smort-api.Extensions\Smort-api.Extensions.csproj", "{CC17204E-A0FE-4B60-AEFC-9CB84C3E6B7C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Smort-api.Handlers", "Smort-api.Handlers\Smort-api.Handlers.csproj", "{916AC441-39AE-434F-8C70-989935921125}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Smort-api.Handlers", "Smort-api.Handlers\Smort-api.Handlers.csproj", "{916AC441-39AE-434F-8C70-989935921125}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Smort-api.Objects", "Smort-api.Object\Smort-api.Objects.csproj", "{23949822-4250-48EB-8D02-32D78B7F4E6E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -105,6 +107,26 @@ Global
 		{916AC441-39AE-434F-8C70-989935921125}.Release|x64.Build.0 = Release|Any CPU
 		{916AC441-39AE-434F-8C70-989935921125}.Release|x86.ActiveCfg = Release|Any CPU
 		{916AC441-39AE-434F-8C70-989935921125}.Release|x86.Build.0 = Release|Any CPU
+		{23949822-4250-48EB-8D02-32D78B7F4E6E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23949822-4250-48EB-8D02-32D78B7F4E6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23949822-4250-48EB-8D02-32D78B7F4E6E}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{23949822-4250-48EB-8D02-32D78B7F4E6E}.Debug|ARM.Build.0 = Debug|Any CPU
+		{23949822-4250-48EB-8D02-32D78B7F4E6E}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{23949822-4250-48EB-8D02-32D78B7F4E6E}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{23949822-4250-48EB-8D02-32D78B7F4E6E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{23949822-4250-48EB-8D02-32D78B7F4E6E}.Debug|x64.Build.0 = Debug|Any CPU
+		{23949822-4250-48EB-8D02-32D78B7F4E6E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{23949822-4250-48EB-8D02-32D78B7F4E6E}.Debug|x86.Build.0 = Debug|Any CPU
+		{23949822-4250-48EB-8D02-32D78B7F4E6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23949822-4250-48EB-8D02-32D78B7F4E6E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{23949822-4250-48EB-8D02-32D78B7F4E6E}.Release|ARM.ActiveCfg = Release|Any CPU
+		{23949822-4250-48EB-8D02-32D78B7F4E6E}.Release|ARM.Build.0 = Release|Any CPU
+		{23949822-4250-48EB-8D02-32D78B7F4E6E}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{23949822-4250-48EB-8D02-32D78B7F4E6E}.Release|ARM64.Build.0 = Release|Any CPU
+		{23949822-4250-48EB-8D02-32D78B7F4E6E}.Release|x64.ActiveCfg = Release|Any CPU
+		{23949822-4250-48EB-8D02-32D78B7F4E6E}.Release|x64.Build.0 = Release|Any CPU
+		{23949822-4250-48EB-8D02-32D78B7F4E6E}.Release|x86.ActiveCfg = Release|Any CPU
+		{23949822-4250-48EB-8D02-32D78B7F4E6E}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

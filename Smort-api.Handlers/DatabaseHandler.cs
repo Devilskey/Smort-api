@@ -6,11 +6,8 @@ namespace Smort_api.Handlers
     public class DatabaseHandler : IDisposable
     {
         private static string? Username { get; set; }
-
         private static string? Password { get; set; }
-
         private static string? Server  { get; set; }
-
         private static string? DatabaseName { get; set; }
 
         private static MySqlConnection? connection;
@@ -72,6 +69,22 @@ namespace Smort_api.Handlers
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+            }
+        }
+
+        public string PostWithReturn(MySqlCommand SqlCommand)
+        {
+            SqlCommand.Connection = connection;
+            try
+            {
+                using (MySqlDataReader Reader = SqlCommand.ExecuteReader())
+                {
+                    return SqlReaderToJson(Reader);
+                }
+            }
+            catch (Exception ex)
+            {
+                return $"Json Error {ex}";
             }
         }
 
