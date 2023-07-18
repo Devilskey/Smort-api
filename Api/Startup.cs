@@ -1,10 +1,18 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Serilog;
+﻿using Serilog;
+using Smort_api.Extensions;
 
 namespace Tiktok_api
 {
     public class Startup
     {
+        private IConfiguration Configuration { get; }
+
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
+
+
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
@@ -13,12 +21,7 @@ namespace Tiktok_api
             services.AddSwaggerGen();
             services.AddEndpointsApiExplorer();
 
-            Log.Logger = new LoggerConfiguration()
-                .WriteTo.Console()
-                .WriteTo.File("./Logs/log.json")
-                .CreateLogger();
-
-            services.AddLogging(c => c.AddSerilog());
+            services.AddSerilogLogging(Configuration);
 
         }
         public void Configure(IApplicationBuilder app)
@@ -29,7 +32,8 @@ namespace Tiktok_api
             app.UseSerilogRequestLogging();
 
             app.UseHttpsRedirection();
-          
+
+            app.MigrateDatabase(Configuration);
 
             app.UseRouting();
             app.UseAuthorization();
