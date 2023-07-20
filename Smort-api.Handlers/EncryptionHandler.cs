@@ -1,5 +1,4 @@
 ﻿using Smort_api.Object;
-using System.Runtime.Intrinsics.Arm;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -47,6 +46,57 @@ namespace Smort_api.Handlers
                 SaltAndHash[1] = Convert.ToBase64String(hashedData);
 
                 return SaltAndHash;
+            }
+        }
+
+        public static AESObject EncryptAES(string data)
+        {
+            AESObject AESEncrypted = new AESObject();
+
+            using (Aes aes = Aes.Create())
+            {
+                AESEncrypted.Iv = Convert.ToBase64String(aes.IV);
+                AESEncrypted.Key = Convert.ToBase64String(aes.Key);
+
+                ICryptoTransform encryptor = aes.CreateEncryptor();
+
+                using (MemoryStream msEncrypt = new MemoryStream())
+                {
+                    using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
+                    {
+                        using (StreamWriter swEncrypt = new StreamWriter(csEncrypt))
+                        {
+                            //Write all data to the stream.
+                            swEncrypt.Write(data);
+                        }
+                        AESEncrypted.CipherText = Convert.ToBase64String(msEncrypt.ToArray());
+                    }
+                }
+            }
+
+            return AESEncrypted;
+        }
+        public static string DeCrypteAES(AESObject AesObject)
+        {
+            using (Aes aes = Aes.Create())
+            {
+                aes.Key = Encoding.UTF8.GetBytes(AesObject.Key);
+                aes.IV = Encoding.UTF8.GetBytes(AesObject.Iv);
+                byte[] encryptedText = Encoding.UTF8.GetBytes(AesObject.CipherText);
+
+                ICryptoTransform decryptor = aes.CreateDecryptor(aes.Key, aes.IV);
+
+                using (MemoryStream msDecrypt = new MemoryStream())
+                {
+                    using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
+                    {
+                        using (StreamReader srDecrypt = new StreamReader(csDecrypt))
+                        {
+
+                            return srDecrypt.ReadToEnd();
+                        }
+                    }
+                }
             }
         }
     }

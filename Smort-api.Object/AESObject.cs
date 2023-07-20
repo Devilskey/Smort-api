@@ -8,9 +8,9 @@ namespace Smort_api.Object
 {
     public class AESObject
     {
-        public byte[] cipherText { get; set; }
-        public byte[] Iv { get; set; }
-        public byte[] Key { get; set; }
+        public string CipherText { get; set; }
+        public string Iv { get; set; }
+        public string Key { get; set; }
 
     }
 }

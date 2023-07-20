@@ -54,9 +54,10 @@ namespace Tiktok_api.Controllers
 
             string[] Results = EncryptionHandler.HashAndSaltData(newUser.Password);
 
+
             addUser.CommandText =
-                @"INSERT INTO Users_Private (Role_Id, Email, Password, Salt)
-                 VALUES (1, @Email, @Password, @Salt);
+                @"INSERT INTO Users_Private (Role_Id, Email,Email_Key,  Email_IV, Password, Salt)
+                 VALUES (1, @Email, @EmailKey, @EmailIv, @Password, @Salt);
                  INSERT INTO Users_Public (Person_Id, Username, Profile_Picture, Created_At, Updated_At, Deleted_At) 
                  VALUES (LAST_INSERT_ID(), @Username, @ProfilePicture, @CreatedAt, @UpdatedAt, @DeletedAt);";
 
