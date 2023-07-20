@@ -2,6 +2,15 @@
   "version": 3,
   "targets": {
     "net6.0": {
+      "CryptSharp.Core/4.0.0": {
+        "type": "package",
+        "compile": {
+          "lib/net6.0/CryptSharp.Core.dll": {}
+        },
+        "runtime": {
+          "lib/net6.0/CryptSharp.Core.dll": {}
+        }
+      },
       "Google.Protobuf/3.21.9": {
         "type": "package",
         "compile": {
@@ -899,8 +908,10 @@
         "type": "project",
         "framework": ".NETCoreApp,Version=v6.0",
         "dependencies": {
+          "CryptSharp.Core": "4.0.0",
           "MySql.Data": "8.0.33",
-          "Newtonsoft.Json": "13.0.1"
+          "Newtonsoft.Json": "13.0.1",
+          "Smort-api.Objects": "1.0.0"
         },
         "compile": {
           "bin/placeholder/Smort-api.Handlers.dll": {}
@@ -908,10 +919,34 @@
         "runtime": {
           "bin/placeholder/Smort-api.Handlers.dll": {}
         }
+      },
+      "Smort-api.Objects/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v6.0",
+        "compile": {
+          "bin/placeholder/Smort-api.Objects.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Smort-api.Objects.dll": {}
+        }
       }
     }
   },
   "libraries": {
+    "CryptSharp.Core/4.0.0": {
+      "sha512": "XDYOelqdpDOY7w5/gLdj9gbaRFjfZWGiPgL6uycLG+TBV4hdMaZPI6tfIUIOFnrpcAbPDaI/F4+3C1RGTwAmNA==",
+      "type": "package",
+      "path": "cryptsharp.core/4.0.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "cryptsharp.core.4.0.0.nupkg.sha512",
+        "cryptsharp.core.nuspec",
+        "lib/net6.0/CryptSharp.Core.dll",
+        "lib/net7.0/CryptSharp.Core.dll",
+        "lib/netstandard2.1/CryptSharp.Core.dll"
+      ]
+    },
     "Google.Protobuf/3.21.9": {
       "sha512": "OTpFujTgkmqMLbg3KT7F/iuKi1rg6s5FCS2M9XcVLDn40zL8wgXm37CY/F6MeOEXKjdcnXGCN/h7oyMkVydVsg==",
       "type": "package",
@@ -2681,6 +2716,11 @@
       "type": "project",
       "path": "../Smort-api.Handlers/Smort-api.Handlers.csproj",
       "msbuildProject": "../Smort-api.Handlers/Smort-api.Handlers.csproj"
+    },
+    "Smort-api.Objects/1.0.0": {
+      "type": "project",
+      "path": "../Smort-api.Object/Smort-api.Objects.csproj",
+      "msbuildProject": "../Smort-api.Object/Smort-api.Objects.csproj"
     }
   },
   "projectFileDependencyGroups": {

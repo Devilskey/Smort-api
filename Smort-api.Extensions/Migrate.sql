@@ -1,6 +1,6 @@
 ﻿CREATE TABLE `Role` ( `Id` integer PRIMARY KEY AUTO_INCREMENT,`Name` varchar(16),`Description` varchar(128));
-CREATE TABLE `Users_Public` (`Id` integer PRIMARY KEY AUTO_INCREMENT,`Person_Id` integer,`Username` varchar(32),`Profile_Picture` varchar(128),`Created_At` DateTime, `Updated_At` DateTime,`Deleted_At` DateTime);
-CREATE TABLE `Users_Private` ( `Id` integer PRIMARY KEY AUTO_INCREMENT, `Role_Id` integer, `Email` varchar(64), `Password` varchar(64), `Token` varchar(64));
+CREATE TABLE `Users_Public` (`Id` integer PRIMARY KEY AUTO_INCREMENT,`Person_Id` integer,`Username` varchar(32),`Profile_Picture` blob,`Created_At` DateTime, `Updated_At` DateTime,`Deleted_At` DateTime);
+CREATE TABLE `Users_Private` ( `Id` integer PRIMARY KEY AUTO_INCREMENT, `Role_Id` integer, `Email` varchar(64),Email_Key varchar(64), Email_IV varchar(64) `Password` varchar(128), `Salt` varchar(64), `Token` varchar(64));
 CREATE TABLE `Following` ( `User_Id_Followed` integer, `User_Id_Follower` integer, `Followed_At` DateTime );
 CREATE TABLE `Video` ( `Id` integer PRIMARY KEY AUTO_INCREMENT, `User_Id` integer, `File_Id` integer, `Title` varchar(32), `Description` varchar(128), `Url` varchar(64), `Created_At` DateTime, `Updated_At` DateTime, `Deleted_At` DateTime );
 CREATE TABLE `Reaction` ( `User_Id` integer, `Video_Id` integer, `Created_At` DateTime, `Updated_At` DateTime );

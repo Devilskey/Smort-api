@@ -8,11 +8,21 @@
     ".NETCoreApp,Version=v6.0": {
       "Smort-api.Handlers/1.0.0": {
         "dependencies": {
+          "CryptSharp.Core": "4.0.0",
           "MySql.Data": "8.0.33",
-          "Newtonsoft.Json": "13.0.1"
+          "Newtonsoft.Json": "13.0.1",
+          "Smort-api.Objects": "1.0.0"
         },
         "runtime": {
           "Smort-api.Handlers.dll": {}
+        }
+      },
+      "CryptSharp.Core/4.0.0": {
+        "runtime": {
+          "lib/net6.0/CryptSharp.Core.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.0.0.0"
+          }
         }
       },
       "Google.Protobuf/3.21.9": {
@@ -326,6 +336,11 @@
             "fileVersion": "4.700.19.56404"
           }
         }
+      },
+      "Smort-api.Objects/1.0.0": {
+        "runtime": {
+          "Smort-api.Objects.dll": {}
+        }
       }
     }
   },
@@ -334,6 +349,13 @@
       "type": "project",
       "serviceable": false,
       "sha512": ""
+    },
+    "CryptSharp.Core/4.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-XDYOelqdpDOY7w5/gLdj9gbaRFjfZWGiPgL6uycLG+TBV4hdMaZPI6tfIUIOFnrpcAbPDaI/F4+3C1RGTwAmNA==",
+      "path": "cryptsharp.core/4.0.0",
+      "hashPath": "cryptsharp.core.4.0.0.nupkg.sha512"
     },
     "Google.Protobuf/3.21.9": {
       "type": "package",
@@ -551,6 +573,11 @@
       "sha512": "sha512-CeWTdRNfRaSh0pm2gDTJFwVaXfTq6Xwv/sA887iwPTneW7oMtMlpvDIO+U60+3GWTB7Aom6oQwv5VZVUhQRdPQ==",
       "path": "system.windows.extensions/4.7.0",
       "hashPath": "system.windows.extensions.4.7.0.nupkg.sha512"
+    },
+    "Smort-api.Objects/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
     }
   }
 }

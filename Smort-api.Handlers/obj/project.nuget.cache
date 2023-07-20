@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "R9wOoWDL0NtxVmp6LImyYC/qFZeh2KFcKFKNCCXZ5AqD7uKAmmzkhMou2f5JbbKgSoN/n3uHBJdOBJdXKhgQQg==",
+  "dgSpecHash": "FpMcoNe/lCpSgs6HBQW2dYYlO8e3+LDviHnHjFVtbyt6QrCoGbdRxrg0nPOZf+Ve0TKkxRnBn0UGc69QfwW10A==",
   "success": true,
   "projectFilePath": "C:\\Users\\ecola\\Documents\\gitkraken\\Smort-api\\Smort-api.Handlers\\Smort-api.Handlers.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\ecola\\.nuget\\packages\\cryptsharp.core\\4.0.0\\cryptsharp.core.4.0.0.nupkg.sha512",
     "C:\\Users\\ecola\\.nuget\\packages\\google.protobuf\\3.21.9\\google.protobuf.3.21.9.nupkg.sha512",
     "C:\\Users\\ecola\\.nuget\\packages\\k4os.compression.lz4\\1.3.5\\k4os.compression.lz4.1.3.5.nupkg.sha512",
     "C:\\Users\\ecola\\.nuget\\packages\\k4os.compression.lz4.streams\\1.3.5\\k4os.compression.lz4.streams.1.3.5.nupkg.sha512",

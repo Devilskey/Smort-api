@@ -60,6 +60,10 @@
               "target": "Package",
               "version": "[1.18.1, )"
             },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.3, )"
+            },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[6.2.3, )"
@@ -200,7 +204,11 @@
         "frameworks": {
           "net6.0": {
             "targetAlias": "net6.0",
-            "projectReferences": {}
+            "projectReferences": {
+              "C:\\Users\\ecola\\Documents\\gitkraken\\Smort-api\\Smort-api.Object\\Smort-api.Objects.csproj": {
+                "projectPath": "C:\\Users\\ecola\\Documents\\gitkraken\\Smort-api\\Smort-api.Object\\Smort-api.Objects.csproj"
+              }
+            }
           }
         },
         "warningProperties": {
@@ -213,6 +221,10 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "dependencies": {
+            "CryptSharp.Core": {
+              "target": "Package",
+              "version": "[4.0.0, )"
+            },
             "MySql.Data": {
               "target": "Package",
               "version": "[8.0.33, )"

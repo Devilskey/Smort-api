@@ -55,6 +55,22 @@ namespace Smort_api.Handlers
             }
         }
 
+        public int Count(MySqlCommand SqlCommand)
+        {
+            SqlCommand.Connection = connection;
+            try
+            {
+                using (MySqlDataReader Reader = SqlCommand.ExecuteReader())
+                {
+                    return sqlReaderToInt(Reader);
+                }
+            }
+            catch (Exception ex)
+            {
+                return 0;
+            }
+        }
+
         /// <summary>
         /// Use this funciton For Update Delete and Post
         /// </summary>
@@ -69,22 +85,6 @@ namespace Smort_api.Handlers
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-            }
-        }
-
-        public string PostWithReturn(MySqlCommand SqlCommand)
-        {
-            SqlCommand.Connection = connection;
-            try
-            {
-                using (MySqlDataReader Reader = SqlCommand.ExecuteReader())
-                {
-                    return SqlReaderToJson(Reader);
-                }
-            }
-            catch (Exception ex)
-            {
-                return $"Json Error {ex}";
             }
         }
 
@@ -107,6 +107,22 @@ namespace Smort_api.Handlers
             }
             return JsonConvert.SerializeObject(objects);
         }
+
+        /// <summary>
+        /// Gets the sql data returns an int
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <returns></returns>
+        public int sqlReaderToInt(MySqlDataReader reader)
+        {
+            if (reader.Read())
+            {
+                return reader.GetInt32(0);
+            }
+            
+            return 0;
+        }
+
         /// <summary>
         /// Migrates the database
         /// </summary>
