@@ -1,8 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "kPIJ+UlaUn7Y4CGsfJsiHXysIXDK0Q5SJcIjlnSrfZbKHMCKmuBqvnMrizjvi3g2HAbEJk8lEC8jLNmIO7Yf+w==",
+  "dgSpecHash": "XGH8lNlzxTLl9QUedgrnOB5A49wp3DYAe6Tr5973/Z+Ml1N8NTSzsBy4udK/aqa61nq8jGeC/26V7UjXLuJneg==",
   "success": true,
   "projectFilePath": "C:\\Users\\ecola\\Documents\\gitkraken\\Smort-api\\Smort-api.Object\\Smort-api.Objects.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\ecola\\.nuget\\packages\\microsoft.aspnetcore.http.features\\5.0.17\\microsoft.aspnetcore.http.features.5.0.17.nupkg.sha512",
+    "C:\\Users\\ecola\\.nuget\\packages\\microsoft.extensions.primitives\\5.0.1\\microsoft.extensions.primitives.5.0.1.nupkg.sha512",
+    "C:\\Users\\ecola\\.nuget\\packages\\system.io.pipelines\\5.0.2\\system.io.pipelines.5.0.2.nupkg.sha512"
+  ],
   "logs": []
 }

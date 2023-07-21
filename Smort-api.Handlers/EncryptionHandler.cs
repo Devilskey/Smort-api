@@ -1,10 +1,10 @@
-﻿using Smort_api.Object;
+﻿using Smort_api.Object.Security;
 using System.Security.Cryptography;
 using System.Text;
 
 namespace Smort_api.Handlers
 {
-    public static class EncryptionHandler
+    public class EncryptionHandler
     {
         public static bool VerifyData(PasswordObject PasswordData, string Passwordreceived)
         {
@@ -80,9 +80,9 @@ namespace Smort_api.Handlers
         {
             using (Aes aes = Aes.Create())
             {
-                aes.Key = Encoding.UTF8.GetBytes(AesObject.Key);
-                aes.IV = Encoding.UTF8.GetBytes(AesObject.Iv);
-                byte[] encryptedText = Encoding.UTF8.GetBytes(AesObject.CipherText);
+                aes.Key = Encoding.UTF8.GetBytes(AesObject.Key!);
+                aes.IV = Encoding.UTF8.GetBytes(AesObject.Iv!);
+                byte[] encryptedText = Encoding.UTF8.GetBytes(AesObject.CipherText!);
 
                 ICryptoTransform decryptor = aes.CreateDecryptor(aes.Key, aes.IV);
 

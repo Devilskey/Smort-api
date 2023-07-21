@@ -1,5 +1,8 @@
-﻿using Serilog;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Serilog;
 using Smort_api.Extensions;
+using System.Text;
 
 namespace Tiktok_api
 {
@@ -17,8 +20,32 @@ namespace Tiktok_api
         {
             services.AddControllers();
 
+            services.AddAuthentication(config =>
+            {
+                config.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                config.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                config.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(config =>
+            {
+                config.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidIssuer = Configuration["JwtSettings:Issuer"],
+                    ValidAudience = Configuration["JwtSettings:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(Configuration["JwtSettings:Key"]!)),
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true
+                };
+            });
+
+            services.AddSwaggerSecurityConfiguration();
+
+            services.AddAuthorization();
+
             services.AddMvc();
-            services.AddSwaggerGen();
+
             services.AddEndpointsApiExplorer();
 
             services.AddSerilogLogging(Configuration);
@@ -26,8 +53,7 @@ namespace Tiktok_api
         }
         public void Configure(IApplicationBuilder app)
         {
-            app.UseSwagger();
-            app.UseSwaggerUI();
+            app.UseSwaggerDocumentation();
 
             app.UseSerilogRequestLogging();
 
@@ -36,6 +62,7 @@ namespace Tiktok_api
             app.MigrateDatabase(Configuration);
 
             app.UseRouting();
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

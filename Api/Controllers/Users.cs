@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MySql.Data.MySqlClient;
-using Newtonsoft;
 using Newtonsoft.Json;
 using Smort_api.Handlers;
 using Smort_api.Object;
-
+using Smort_api.Object.Security;
 
 namespace Tiktok_api.Controllers
 {
@@ -22,8 +22,8 @@ namespace Tiktok_api.Controllers
         public Task<ActionResult> CreateAccount(CreateAccount newUser)
         {
             // Checks if data is not empty
-            if (string.IsNullOrEmpty(newUser.Email)  || string.IsNullOrEmpty(newUser.Password) || string.IsNullOrEmpty(newUser.Username))
-                return Task.FromResult<ActionResult>(BadRequest());
+            if (string.IsNullOrEmpty(newUser.Email) || string.IsNullOrEmpty(newUser.Password) || string.IsNullOrEmpty(newUser.Username))
+                return Task.FromResult<ActionResult>(BadRequest("Not all the data is Filled in"));
 
             // Makes the using for the databasehandler that will be disposed when the task is done.
             using DatabaseHandler databaseHandler = new DatabaseHandler();
@@ -35,17 +35,25 @@ namespace Tiktok_api.Controllers
 
             string data = databaseHandler.Select(CheckIfExist);
 
-            LoginObject[] Emails = JsonConvert.DeserializeObject<LoginObject[]>(data);
+            CheckIfExist.Dispose();
+
+            LoginObject[] Emails = JsonConvert.DeserializeObject<LoginObject[]>(data)!;
 
             // if the email adress already has been used return a bad request
-            if (Emails != null && Emails.Length != 0) 
-                return Task.FromResult<ActionResult>(BadRequest());
+            if (Emails != null && Emails.Length != 0)
+                return Task.FromResult<ActionResult>(BadRequest("Already an account using this Email"));
 
+            //gets a user i
             using MySqlCommand GetUserNameAmount = new MySqlCommand();
             GetUserNameAmount.CommandText = "SELECT COUNT(*) FROM Users_Public WHERE Username LIKE @Username";
             GetUserNameAmount.Parameters.AddWithValue("@Username", $"{newUser.Username}#%");
 
             int IdNumber = databaseHandler.Count(GetUserNameAmount) + 1;
+
+            GetUserNameAmount.Dispose();
+
+            if (IdNumber > 9999)
+                return Task.FromResult<ActionResult>(BadRequest("Account name not available anymore"));
 
             Logger.Log(LogLevel.Information, $"{newUser.Username}#{IdNumber.ToString("D4")}");
 
@@ -54,10 +62,9 @@ namespace Tiktok_api.Controllers
 
             string[] Results = EncryptionHandler.HashAndSaltData(newUser.Password);
 
-
             addUser.CommandText =
-                @"INSERT INTO Users_Private (Role_Id, Email,Email_Key,  Email_IV, Password, Salt)
-                 VALUES (1, @Email, @EmailKey, @EmailIv, @Password, @Salt);
+                @"INSERT INTO Users_Private (Role_Id, Email, Password, Salt)
+                 VALUES (1, @Email, @Password, @Salt);
                  INSERT INTO Users_Public (Person_Id, Username, Profile_Picture, Created_At, Updated_At, Deleted_At) 
                  VALUES (LAST_INSERT_ID(), @Username, @ProfilePicture, @CreatedAt, @UpdatedAt, @DeletedAt);";
 
@@ -65,17 +72,19 @@ namespace Tiktok_api.Controllers
             addUser.Parameters.AddWithValue("@Password", Results[1]);
             addUser.Parameters.AddWithValue("@Salt", Results[0]);
             addUser.Parameters.AddWithValue("@Username", $"{newUser.Username}#{IdNumber.ToString("D4")}");
-            addUser.Parameters.AddWithValue("@ProfilePicture", newUser.Profile_Picture);
+            addUser.Parameters.AddWithValue("@ProfilePicture", newUser.ProfilePicture);
             addUser.Parameters.AddWithValue("@DeletedAt", DateTime.Now);
             addUser.Parameters.AddWithValue("@UpdatedAt", DateTime.Now);
             addUser.Parameters.AddWithValue("@CreatedAt", DateTime.Now);
 
             databaseHandler.EditDatabase(addUser);
 
+            addUser.Dispose();
+
             // Logs the data 
             Logger.Log(LogLevel.Information, $"Created User: {newUser.Username}");
 
-            return Task.FromResult<ActionResult>(Ok());
+            return Task.FromResult<ActionResult>(Ok("User Created"));
         }
 
         [Route("users/Login")]
@@ -109,13 +118,23 @@ namespace Tiktok_api.Controllers
             // Hashes the the password that has been givens
             string[] Results = EncryptionHandler.HashAndSaltData(User.Password);
 
-
             if (EncryptionHandler.VerifyData(Passwords[0], User.Password))
-                return Task.FromResult<string>("I am a token");
+            {
+                string token = JWTTokenHandler.GenerateToken(User);
+                return Task.FromResult<string>(token);
+            }
 
             Logger.Log(LogLevel.Warning, $"Failed Login attempt at {DateTime.Now}");
+
             return Task.FromResult<string>("Failed to login");
         }
 
+        [Authorize]
+        [Route("users/EditUser")]
+        [HttpPost]
+        public Task<string> EditUser()
+        {
+            return Task.FromResult<string>("AuthWorked"); ;
+        }
     }
 }

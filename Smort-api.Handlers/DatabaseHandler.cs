@@ -1,4 +1,5 @@
-﻿using MySql.Data.MySqlClient;
+﻿using Microsoft.Extensions.Logging;
+using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 
 namespace Smort_api.Handlers
@@ -10,9 +11,12 @@ namespace Smort_api.Handlers
         private static string? Server  { get; set; }
         private static string? DatabaseName { get; set; }
 
+        private readonly ILogger Logger;
+
         private static MySqlConnection? connection;
 
-        public DatabaseHandler() { 
+        public DatabaseHandler(ILogger<DatabaseHandler> logger = null) {
+            Logger = logger;
             Initialize();
         }
 
@@ -67,6 +71,7 @@ namespace Smort_api.Handlers
             }
             catch (Exception ex)
             {
+                Logger.Log(LogLevel.Error, $"message: {ex.Message}, source {ex.Source}");
                 return 0;
             }
         }

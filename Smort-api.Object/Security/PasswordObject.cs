@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Smort_api.Object
+namespace Smort_api.Object.Security
 {
     public class PasswordObject
     {
