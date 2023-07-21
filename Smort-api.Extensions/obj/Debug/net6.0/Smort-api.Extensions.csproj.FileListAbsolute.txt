@@ -1,0 +1,17 @@
+C:\Users\ecola\Documents\gitkraken\Smort-api\Smort-api.Extensions\bin\Debug\net6.0\Smort-api.Extensions.deps.json
+C:\Users\ecola\Documents\gitkraken\Smort-api\Smort-api.Extensions\bin\Debug\net6.0\Smort-api.Extensions.dll
+C:\Users\ecola\Documents\gitkraken\Smort-api\Smort-api.Extensions\bin\Debug\net6.0\Smort-api.Extensions.pdb
+C:\Users\ecola\Documents\gitkraken\Smort-api\Smort-api.Extensions\bin\Debug\net6.0\Smort-api.Handlers.dll
+C:\Users\ecola\Documents\gitkraken\Smort-api\Smort-api.Extensions\bin\Debug\net6.0\Smort-api.Handlers.pdb
+C:\Users\ecola\Documents\gitkraken\Smort-api\Smort-api.Extensions\obj\Debug\net6.0\Smort-api.Extensions.csproj.AssemblyReference.cache
+C:\Users\ecola\Documents\gitkraken\Smort-api\Smort-api.Extensions\obj\Debug\net6.0\Smort-api.Extensions.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\ecola\Documents\gitkraken\Smort-api\Smort-api.Extensions\obj\Debug\net6.0\Smort-api.Extensions.AssemblyInfoInputs.cache
+C:\Users\ecola\Documents\gitkraken\Smort-api\Smort-api.Extensions\obj\Debug\net6.0\Smort-api.Extensions.AssemblyInfo.cs
+C:\Users\ecola\Documents\gitkraken\Smort-api\Smort-api.Extensions\obj\Debug\net6.0\Smort-api.Extensions.csproj.CoreCompileInputs.cache
+C:\Users\ecola\Documents\gitkraken\Smort-api\Smort-api.Extensions\obj\Debug\net6.0\Smort-api.Extensions.csproj.CopyComplete
+C:\Users\ecola\Documents\gitkraken\Smort-api\Smort-api.Extensions\obj\Debug\net6.0\Smort-api.Extensions.dll
+C:\Users\ecola\Documents\gitkraken\Smort-api\Smort-api.Extensions\obj\Debug\net6.0\refint\Smort-api.Extensions.dll
+C:\Users\ecola\Documents\gitkraken\Smort-api\Smort-api.Extensions\obj\Debug\net6.0\Smort-api.Extensions.pdb
+C:\Users\ecola\Documents\gitkraken\Smort-api\Smort-api.Extensions\obj\Debug\net6.0\ref\Smort-api.Extensions.dll
+C:\Users\ecola\Documents\gitkraken\Smort-api\Smort-api.Extensions\bin\Debug\net6.0\Smort-api.Objects.dll
+C:\Users\ecola\Documents\gitkraken\Smort-api\Smort-api.Extensions\bin\Debug\net6.0\Smort-api.Objects.pdb

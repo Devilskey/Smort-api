@@ -1,4 +1,5 @@
-﻿using MySql.Data.MySqlClient;
+﻿using Microsoft.Extensions.Logging;
+using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 
 namespace Smort_api.Handlers
@@ -6,16 +7,16 @@ namespace Smort_api.Handlers
     public class DatabaseHandler : IDisposable
     {
         private static string? Username { get; set; }
-
         private static string? Password { get; set; }
-
         private static string? Server  { get; set; }
-
         private static string? DatabaseName { get; set; }
+
+        private readonly ILogger Logger;
 
         private static MySqlConnection? connection;
 
-        public DatabaseHandler() { 
+        public DatabaseHandler(ILogger<DatabaseHandler> logger = null) {
+            Logger = logger;
             Initialize();
         }
 
@@ -58,6 +59,23 @@ namespace Smort_api.Handlers
             }
         }
 
+        public int Count(MySqlCommand SqlCommand)
+        {
+            SqlCommand.Connection = connection;
+            try
+            {
+                using (MySqlDataReader Reader = SqlCommand.ExecuteReader())
+                {
+                    return sqlReaderToInt(Reader);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(LogLevel.Error, $"message: {ex.Message}, source {ex.Source}");
+                return 0;
+            }
+        }
+
         /// <summary>
         /// Use this funciton For Update Delete and Post
         /// </summary>
@@ -94,6 +112,22 @@ namespace Smort_api.Handlers
             }
             return JsonConvert.SerializeObject(objects);
         }
+
+        /// <summary>
+        /// Gets the sql data returns an int
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <returns></returns>
+        public int sqlReaderToInt(MySqlDataReader reader)
+        {
+            if (reader.Read())
+            {
+                return reader.GetInt32(0);
+            }
+            
+            return 0;
+        }
+
         /// <summary>
         /// Migrates the database
         /// </summary>

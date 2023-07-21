@@ -1,0 +1,35 @@
+﻿{
+  "Serilog": {
+    "Using": [
+      "Serilog.Sinks.Console"
+    ],
+    "MinimumLevel": {
+      "Default": "Information",
+      "Override": {
+        "Microsoft.Hosting.Lifetime": "Information",
+        "Microsoft": "Warning"
+      }
+    },
+    "WriteTo": {
+      "Console": {
+        "Name": "Console",
+        "Args": {
+          "restrictedToMinimumLevel": "Information",
+          "outputTemplate": ""
+        }
+      },
+      "File": {
+        "Name": "File",
+        "Args": {
+          "path": "./logs/Smorts-.json",
+          "rollingInterval":  "Day",
+          "formatter": "Serilog.Formatting.Compact.CompactJsonFormatter, Serilog.Formatting.Compact",
+          "restrictedToMinimumLevel": "Information"
+        }
+      }
+    },
+    "Properties": {
+      "Application": "webApi"
+    }
+  }
+}
