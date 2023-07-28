@@ -156,6 +156,9 @@ namespace Tiktok_api.Controllers
             string id = User.FindFirstValue("Id");
             string token = HttpContext.Response.Headers["Authorization"]!;
 
+            if (JWTTokenHandler.IsBlacklisted(token))
+                return Task.FromResult<string>("User Already deleted or token is blacklisted");
+
             using MySqlCommand DeleteUserPublic = new MySqlCommand();
 
             DeleteUserPublic.CommandText = "DELETE FROM Users_Public WHERE Person_Id = @id;";
@@ -183,12 +186,21 @@ namespace Tiktok_api.Controllers
             return Task.FromResult<string>("");
         }
 
+        /// <summary>
+        /// changes the password of an user
+        /// </summary>
+        /// <param name="newPassword"></param>
+        /// <returns></returns>
         [Authorize]
         [Route("users/ChangePassword")]
         [HttpPut]
         public Task<string> ChangePassword(string newPassword)
         {
             string id = User.FindFirstValue("Id");
+            string token = HttpContext.Response.Headers["Authorization"]!;
+
+            if (JWTTokenHandler.IsBlacklisted(token))
+                return Task.FromResult<string>("token is blacklisted");
 
             string[] EncryptedPassword = EncryptionHandler.HashAndSaltData(newPassword);
 
@@ -208,12 +220,21 @@ namespace Tiktok_api.Controllers
             return Task.FromResult<string>($"");
         }
 
+        /// <summary>
+        /// Changes the email adress of an user
+        /// </summary>
+        /// <param name="newEmail"></param>
+        /// <returns></returns>
         [Authorize]
         [Route("users/ChangeEmail")]
         [HttpPut]
         public Task<string> ChangeEmail(string newEmail)
         {
             string id = User.FindFirstValue("Id");
+            string token = HttpContext.Response.Headers["Authorization"]!;
+
+            if (JWTTokenHandler.IsBlacklisted(token))
+                return Task.FromResult<string>("token is blacklisted");
 
             using MySqlCommand UpdatePassword = new MySqlCommand();
 
@@ -231,12 +252,21 @@ namespace Tiktok_api.Controllers
 
         }
 
+        /// <summary>
+        /// Changes the profile picture of an user
+        /// </summary>
+        /// <param name="newProfilePicture"></param>
+        /// <returns></returns>
         [Authorize]
         [Route("users/ChangeProfilePicture")]
         [HttpPut]
         public Task<string> ChangeProfilePicture(byte[] newProfilePicture)
         {
             string id = User.FindFirstValue("Id");
+            string token = HttpContext.Response.Headers["Authorization"]!;
+
+            if (JWTTokenHandler.IsBlacklisted(token))
+                return Task.FromResult<string>("token is blacklisted");
 
             using MySqlCommand UpdatePassword = new MySqlCommand();
 
@@ -253,12 +283,21 @@ namespace Tiktok_api.Controllers
             return Task.FromResult<string>($"");
         }
 
+        /// <summary>
+        /// Changes the username of an account
+        /// </summary>
+        /// <param name="newUsername"></param>
+        /// <returns></returns>
         [Authorize]
         [Route("users/ChangeUsername")]
         [HttpPut]
         public Task<string> ChangeUsername(string newUsername)
         {
             string id = User.FindFirstValue("Id");
+            string token = HttpContext.Response.Headers["Authorization"]!;
+
+            if (JWTTokenHandler.IsBlacklisted(token))
+                return Task.FromResult<string>("token is blacklisted");
 
             using MySqlCommand UpdatePassword = new MySqlCommand();
 

@@ -3,6 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using Smort_api.Object;
 using Smort_api.Object.Security;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text;
 
@@ -17,6 +18,18 @@ namespace Smort_api.Handlers
         /// List of tokens from deleted accounts
         /// </summary>
         public static List<JWTtokenBlacklistItem>? BlackList { get; set; } = new List<JWTtokenBlacklistItem>();
+
+        public static bool IsBlacklisted(string token)
+        {
+            foreach (JWTtokenBlacklistItem blacklistItem in BlackList!)
+            {
+                if(blacklistItem.Token == token)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
 
         public static string GenerateToken(LoginObject loginDetails, string id)
         {
