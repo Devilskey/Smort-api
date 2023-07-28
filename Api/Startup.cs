@@ -3,6 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Smort_api.Extensions;
 using System.Text;
+using Tiktok_api.BackgroundServices;
 
 namespace Tiktok_api
 {
@@ -45,6 +46,8 @@ namespace Tiktok_api
             services.AddAuthorization();
 
             services.AddMvc();
+
+            services.AddHostedService<RemoveExpiredTokensServices>();
 
             services.AddEndpointsApiExplorer();
 

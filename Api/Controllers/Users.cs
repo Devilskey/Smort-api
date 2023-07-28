@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using Smort_api.Handlers;
 using Smort_api.Object;
 using Smort_api.Object.Security;
+using System.Security.Claims;
 
 namespace Tiktok_api.Controllers
 {
@@ -30,7 +31,7 @@ namespace Tiktok_api.Controllers
 
             // Checks if the email adress is already used in the database
             using MySqlCommand CheckIfExist = new MySqlCommand();
-            CheckIfExist.CommandText = "SELECT Email FROM Users_Private WHERE Email = @Email";
+            CheckIfExist.CommandText = "SELECT Email FROM Users_Private WHERE Email = @Email;";
             CheckIfExist.Parameters.AddWithValue("@Email", newUser.Email);
 
             string data = databaseHandler.Select(CheckIfExist);
@@ -45,10 +46,10 @@ namespace Tiktok_api.Controllers
 
             //gets a user i
             using MySqlCommand GetUserNameAmount = new MySqlCommand();
-            GetUserNameAmount.CommandText = "SELECT COUNT(*) FROM Users_Public WHERE Username LIKE @Username";
+            GetUserNameAmount.CommandText = "SELECT COUNT(*) FROM Users_Public WHERE Username LIKE @Username;";
             GetUserNameAmount.Parameters.AddWithValue("@Username", $"{newUser.Username}#%");
 
-            int IdNumber = databaseHandler.Count(GetUserNameAmount) + 1;
+            int IdNumber = databaseHandler.GetNumber(GetUserNameAmount) + 1;
 
             GetUserNameAmount.Dispose();
 
@@ -98,7 +99,7 @@ namespace Tiktok_api.Controllers
             // Checks if the email adress exists
             using MySqlCommand addUser = new MySqlCommand();
             addUser.CommandText =
-                @"SELECT Password, Salt FROM Users_Private WHERE Email = @EmailGiven";
+                @"SELECT Password, Salt FROM Users_Private WHERE Email = @EmailGiven;";
 
             addUser.Parameters.AddWithValue("@EmailGiven", User.Email);
 
@@ -107,10 +108,24 @@ namespace Tiktok_api.Controllers
             using (DatabaseHandler databaseHandler = new DatabaseHandler())
             {
                 jsonData = databaseHandler.Select(addUser);
-                Logger.Log(LogLevel.Information, $"data: {jsonData}");
             }
 
+            MySqlCommand getId = new MySqlCommand();
+            getId.CommandText = "SELECT Id FROM Users_Private WHERE Email=@Email;";
+
+            getId.Parameters.AddWithValue("@Email", User.Email);
+
+            int id = -1;
+
+            using (DatabaseHandler databaseHandler = new DatabaseHandler())
+            {
+                id = databaseHandler.GetNumber(getId);
+            }
+
+            if (id == -1) return Task.FromResult<string>($"User Id not found");
+
             PasswordObject[]? Passwords = JsonConvert.DeserializeObject<PasswordObject[]>(jsonData);
+
 
             if (Passwords == null || Passwords.Length == 0)
                 return Task.FromResult<string>("No accounts found");
@@ -120,7 +135,7 @@ namespace Tiktok_api.Controllers
 
             if (EncryptionHandler.VerifyData(Passwords[0], User.Password))
             {
-                string token = JWTTokenHandler.GenerateToken(User);
+                string token = JWTTokenHandler.GenerateToken(User, id.ToString());
                 return Task.FromResult<string>(token);
             }
 
@@ -129,12 +144,135 @@ namespace Tiktok_api.Controllers
             return Task.FromResult<string>("Failed to login");
         }
 
+        /// <summary>
+        /// Deletes a user. Can only delete the user whos token is being used in the auth
+        /// </summary>
+        /// <returns></returns>
         [Authorize]
-        [Route("users/EditUser")]
-        [HttpPost]
-        public Task<string> EditUser()
+        [Route("users/DeleteUser")]
+        [HttpDelete]
+        public Task<string> Delete()
         {
-            return Task.FromResult<string>("AuthWorked"); ;
+            string id = User.FindFirstValue("Id");
+            string token = HttpContext.Response.Headers["Authorization"]!;
+
+            using MySqlCommand DeleteUserPublic = new MySqlCommand();
+
+            DeleteUserPublic.CommandText = "DELETE FROM Users_Public WHERE Person_Id = @id;";
+            DeleteUserPublic.Parameters.AddWithValue("@id", $"{id}");
+
+            using MySqlCommand DeleteUserPrivate = new MySqlCommand();
+
+            DeleteUserPrivate.CommandText = "DELETE FROM Users_Private WHERE Id = @id;";
+            DeleteUserPrivate.Parameters.AddWithValue("@id", $"{id}");
+
+            using (DatabaseHandler databaseHandler = new DatabaseHandler())
+            {
+                databaseHandler.EditDatabase(DeleteUserPublic);
+                databaseHandler.EditDatabase(DeleteUserPrivate);
+                Logger.Log(LogLevel.Information, "USER DELETE");
+            }
+
+            JWTtokenBlacklistItem jwttokenBlacklistItem = new JWTtokenBlacklistItem();
+
+            jwttokenBlacklistItem.Token = token;
+            jwttokenBlacklistItem.ExpireTime = DateTime.Now.AddHours(8);
+
+            JWTTokenHandler.BlackList!.Add(jwttokenBlacklistItem);
+
+            return Task.FromResult<string>("");
+        }
+
+        [Authorize]
+        [Route("users/ChangePassword")]
+        [HttpPut]
+        public Task<string> ChangePassword(string newPassword)
+        {
+            string id = User.FindFirstValue("Id");
+
+            string[] EncryptedPassword = EncryptionHandler.HashAndSaltData(newPassword);
+
+            using MySqlCommand UpdatePassword = new MySqlCommand();
+
+            UpdatePassword.CommandText = "UPDATE Users_Private SET Password=@Password, Salt=@Salt WHERE Id=@Id";
+
+            UpdatePassword.Parameters.AddWithValue("@Password", EncryptedPassword[1]);
+            UpdatePassword.Parameters.AddWithValue("@Salt", EncryptedPassword[0]);
+            UpdatePassword.Parameters.AddWithValue("@Id", id);
+
+            using (DatabaseHandler databaseHandler = new DatabaseHandler())
+            {
+                databaseHandler.EditDatabase(UpdatePassword);
+            }
+
+            return Task.FromResult<string>($"");
+        }
+
+        [Authorize]
+        [Route("users/ChangeEmail")]
+        [HttpPut]
+        public Task<string> ChangeEmail(string newEmail)
+        {
+            string id = User.FindFirstValue("Id");
+
+            using MySqlCommand UpdatePassword = new MySqlCommand();
+
+            UpdatePassword.CommandText = "UPDATE Users_Private SET Email=@Email WHERE Id=@Id";
+
+            UpdatePassword.Parameters.AddWithValue("@Email", newEmail);
+            UpdatePassword.Parameters.AddWithValue("@Id", id);
+
+            using (DatabaseHandler databaseHandler = new DatabaseHandler())
+            {
+                databaseHandler.EditDatabase(UpdatePassword);
+            }
+
+            return Task.FromResult<string>($"");
+
+        }
+
+        [Authorize]
+        [Route("users/ChangeProfilePicture")]
+        [HttpPut]
+        public Task<string> ChangeProfilePicture(byte[] newProfilePicture)
+        {
+            string id = User.FindFirstValue("Id");
+
+            using MySqlCommand UpdatePassword = new MySqlCommand();
+
+            UpdatePassword.CommandText = "UPDATE Users_Public SET Profile_Picture=@ProfilePicture WHERE Id=@Id";
+
+            UpdatePassword.Parameters.AddWithValue("@ProfilePicture", newProfilePicture);
+            UpdatePassword.Parameters.AddWithValue("@Id", id);
+
+            using (DatabaseHandler databaseHandler = new DatabaseHandler())
+            {
+                databaseHandler.EditDatabase(UpdatePassword);
+            }
+
+            return Task.FromResult<string>($"");
+        }
+
+        [Authorize]
+        [Route("users/ChangeUsername")]
+        [HttpPut]
+        public Task<string> ChangeUsername(string newUsername)
+        {
+            string id = User.FindFirstValue("Id");
+
+            using MySqlCommand UpdatePassword = new MySqlCommand();
+
+            UpdatePassword.CommandText = "UPDATE Users_Public SET Username=@Username WHERE Id=@Id";
+
+            UpdatePassword.Parameters.AddWithValue("@Username", newUsername);
+            UpdatePassword.Parameters.AddWithValue("@Id", id);
+
+            using (DatabaseHandler databaseHandler = new DatabaseHandler())
+            {
+                databaseHandler.EditDatabase(UpdatePassword);
+            }
+
+            return Task.FromResult<string>($"");
         }
     }
 }

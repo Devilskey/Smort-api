@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace Smort_api.Object.Security
 {
-    public class AESObject
+    public class JWTtokenBlacklistItem
     {
-        public string? CipherText { get; set; }
-        public string? Iv { get; set; }
-        public string? Key { get; set; }
+        public string Token { get; set; }
+        public DateTime ExpireTime { get; set; }
     }
 }

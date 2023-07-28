@@ -59,7 +59,7 @@ namespace Smort_api.Handlers
             }
         }
 
-        public int Count(MySqlCommand SqlCommand)
+        public int GetNumber(MySqlCommand SqlCommand)
         {
             SqlCommand.Connection = connection;
             try
