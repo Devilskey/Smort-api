@@ -44,19 +44,43 @@ namespace Tiktok_api.Controllers
             if (Emails != null && Emails.Length != 0)
                 return Task.FromResult<ActionResult>(BadRequest("Already an account using this Email"));
 
-            //gets a user i
-            using MySqlCommand GetUserNameAmount = new MySqlCommand();
-            GetUserNameAmount.CommandText = "SELECT COUNT(*) FROM Users_Public WHERE Username LIKE @Username;";
-            GetUserNameAmount.Parameters.AddWithValue("@Username", $"{newUser.Username}#%");
+            using MySqlCommand CheckUsernameExist = new MySqlCommand();
 
-            int IdNumber = databaseHandler.GetNumber(GetUserNameAmount) + 1;
+            CheckUsernameExist.CommandText = "SELECT COUNT(*) FROM Username_Counter WHERE Username=@Username;";
+            CheckUsernameExist.Parameters.AddWithValue("@Username", $"{newUser.Username}");
 
-            GetUserNameAmount.Dispose();
+            CheckUsernameExist.Dispose();
 
-            if (IdNumber > 9999)
-                return Task.FromResult<ActionResult>(BadRequest("Account name not available anymore"));
+            int Exist = databaseHandler.GetNumber(CheckUsernameExist);
+            int id = 1;
 
-            Logger.Log(LogLevel.Information, $"{newUser.Username}#{IdNumber.ToString("D4")}");
+            if (Exist == 0)
+            {
+                //Insert New Username
+                using MySqlCommand GetUserNameAmount = new MySqlCommand();
+
+                GetUserNameAmount.CommandText = "INSERT INTO Username_Counter (Username, Amount, Created_At, Deleted_At, Updated_At) VALUES (@Username, @Amount, @Created_At, @Deleted_At, @Update_At);";
+
+                GetUserNameAmount.Parameters.AddWithValue("@Username", $"{newUser.Username}");
+                GetUserNameAmount.Parameters.AddWithValue("@Amount", 0);
+                GetUserNameAmount.Parameters.AddWithValue("@Created_At", DateTime.Now);
+                GetUserNameAmount.Parameters.AddWithValue("@Deleted_At", DateTime.Now);
+                GetUserNameAmount.Parameters.AddWithValue("@Update_At", DateTime.Now);
+
+                databaseHandler.EditDatabase(GetUserNameAmount);
+                GetUserNameAmount.Dispose();
+            }
+            else
+            {
+                using MySqlCommand GetUserNameAmount = new MySqlCommand();
+
+                GetUserNameAmount.CommandText = "SELECT Amount FROM Username_Counter WHERE Username=@Username;";
+
+                GetUserNameAmount.Parameters.AddWithValue("@Username", $"{newUser.Username}");
+
+                id = databaseHandler.GetNumber(GetUserNameAmount);
+                GetUserNameAmount.Dispose();
+            }
 
             // Creates the new user and adds the data to the database
             using MySqlCommand addUser = new MySqlCommand();
@@ -72,7 +96,7 @@ namespace Tiktok_api.Controllers
             addUser.Parameters.AddWithValue("@Email", newUser.Email);
             addUser.Parameters.AddWithValue("@Password", Results[1]);
             addUser.Parameters.AddWithValue("@Salt", Results[0]);
-            addUser.Parameters.AddWithValue("@Username", $"{newUser.Username}#{IdNumber.ToString("D4")}");
+            addUser.Parameters.AddWithValue("@Username", $"{newUser.Username}#{(id + 1).ToString("D4")}");
             addUser.Parameters.AddWithValue("@ProfilePicture", newUser.ProfilePicture);
             addUser.Parameters.AddWithValue("@DeletedAt", DateTime.Now);
             addUser.Parameters.AddWithValue("@UpdatedAt", DateTime.Now);
@@ -81,6 +105,19 @@ namespace Tiktok_api.Controllers
             databaseHandler.EditDatabase(addUser);
 
             addUser.Dispose();
+
+            using MySqlCommand UpdateUsernameAmount = new MySqlCommand();
+
+            UpdateUsernameAmount.CommandText = "UPDATE Username_Counter SET Amount=@Amount, Updated_At=@UpdatedAt WHERE Username=@Username";
+
+            UpdateUsernameAmount.Parameters.AddWithValue("@Username", $"{newUser.Username}");
+            UpdateUsernameAmount.Parameters.AddWithValue("@UpdatedAt", DateTime.Now);
+
+            UpdateUsernameAmount.Parameters.AddWithValue("@Amount", (id += 1));
+
+
+            databaseHandler.EditDatabase(UpdateUsernameAmount);
+            UpdateUsernameAmount.Dispose();
 
             // Logs the data 
             Logger.Log(LogLevel.Information, $"Created User: {newUser.Username}");
@@ -248,7 +285,7 @@ namespace Tiktok_api.Controllers
                 databaseHandler.EditDatabase(UpdatePassword);
             }
 
-            return Task.FromResult<string>($"");
+            return Task.FromResult<string>($"Email Updated");
 
         }
 
@@ -280,7 +317,7 @@ namespace Tiktok_api.Controllers
                 databaseHandler.EditDatabase(UpdatePassword);
             }
 
-            return Task.FromResult<string>($"");
+            return Task.FromResult<string>($"Profile_Picture Updated");
         }
 
         /// <summary>
@@ -311,7 +348,7 @@ namespace Tiktok_api.Controllers
                 databaseHandler.EditDatabase(UpdatePassword);
             }
 
-            return Task.FromResult<string>($"");
+            return Task.FromResult<string>($"Password Updated");
         }
     }
 }
