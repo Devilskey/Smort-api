@@ -1,0 +1,6 @@
+{"@t":"2023-08-02T15:40:09.3636346Z","@mt":"Started Token Blacklist management services","SourceContext":"Tiktok_api.BackgroundServices.RemoveExpiredTokensServices","Application":"webApi"}
+{"@t":"2023-08-02T15:40:11.4302491Z","@mt":"Now listening on: {address}","address":"https://localhost:7047","EventId":{"Id":14,"Name":"ListeningOnAddress"},"SourceContext":"Microsoft.Hosting.Lifetime","Application":"webApi"}
+{"@t":"2023-08-02T15:40:11.4327241Z","@mt":"Now listening on: {address}","address":"http://localhost:5159","EventId":{"Id":14,"Name":"ListeningOnAddress"},"SourceContext":"Microsoft.Hosting.Lifetime","Application":"webApi"}
+{"@t":"2023-08-02T15:40:11.4336393Z","@mt":"Application started. Press Ctrl+C to shut down.","SourceContext":"Microsoft.Hosting.Lifetime","Application":"webApi"}
+{"@t":"2023-08-02T15:40:11.4344571Z","@mt":"Hosting environment: {envName}","envName":"Development","SourceContext":"Microsoft.Hosting.Lifetime","Application":"webApi"}
+{"@t":"2023-08-02T15:40:11.4350609Z","@mt":"Content root path: {contentRoot}","contentRoot":"C:\\Users\\ecola\\Documents\\gitkraken\\Smort-api\\Api","SourceContext":"Microsoft.Hosting.Lifetime","Application":"webApi"}
