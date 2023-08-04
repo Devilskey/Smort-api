@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using Smort_api.Handlers;
 using Smort_api.Object;
 using Smort_api.Object.Security;
+using Smort_api.Object.User;
 using System.Security.Claims;
 
 namespace Tiktok_api.Controllers
@@ -131,7 +132,7 @@ namespace Tiktok_api.Controllers
         {
             // Checks if the data that has been received is not empty
             if (string.IsNullOrEmpty(User.Email) || string.IsNullOrEmpty(User.Password))
-                return Task.FromResult<string>("Data received Empty");
+                return Task.FromResult("Data received Empty");
 
             // Checks if the email adress exists
             using MySqlCommand addUser = new MySqlCommand();
@@ -159,13 +160,13 @@ namespace Tiktok_api.Controllers
                 id = databaseHandler.GetNumber(getId);
             }
 
-            if (id == -1) return Task.FromResult<string>($"User Id not found");
+            if (id == -1) return Task.FromResult($"User Id not found");
 
             PasswordObject[]? Passwords = JsonConvert.DeserializeObject<PasswordObject[]>(jsonData);
 
 
             if (Passwords == null || Passwords.Length == 0)
-                return Task.FromResult<string>("No accounts found");
+                return Task.FromResult("No accounts found");
 
             // Hashes the the password that has been givens
             string[] Results = EncryptionHandler.HashAndSaltData(User.Password);
@@ -173,12 +174,12 @@ namespace Tiktok_api.Controllers
             if (EncryptionHandler.VerifyData(Passwords[0], User.Password))
             {
                 string token = JWTTokenHandler.GenerateToken(User, id.ToString());
-                return Task.FromResult<string>(token);
+                return Task.FromResult(token);
             }
 
             Logger.Log(LogLevel.Warning, $"Failed Login attempt at {DateTime.Now}");
 
-            return Task.FromResult<string>("Failed to login");
+            return Task.FromResult("Failed to login");
         }
 
         /// <summary>
@@ -190,11 +191,13 @@ namespace Tiktok_api.Controllers
         [HttpDelete]
         public Task<string> Delete()
         {
-            string id = User.FindFirstValue("Id");
-            string token = HttpContext.Response.Headers["Authorization"]!;
+            string token = HttpContext.Request.Headers["Authorization"]!;
 
             if (JWTTokenHandler.IsBlacklisted(token))
-                return Task.FromResult<string>("User Already deleted or token is blacklisted");
+                return Task.FromResult("token is blacklisted");
+
+            string id = User.FindFirstValue("Id");
+
 
             using MySqlCommand DeleteUserPublic = new MySqlCommand();
 
@@ -206,10 +209,35 @@ namespace Tiktok_api.Controllers
             DeleteUserPrivate.CommandText = "DELETE FROM Users_Private WHERE Id = @id;";
             DeleteUserPrivate.Parameters.AddWithValue("@id", $"{id}");
 
+            using MySqlCommand DeleteFollowed = new MySqlCommand();
+
+            DeleteFollowed.CommandText = "DELETE FROM Following WHERE User_Id_Followed = @id;";
+            DeleteFollowed.Parameters.AddWithValue("@id", $"{id}");
+
+            using MySqlCommand DeleteFollower = new MySqlCommand();
+
+            DeleteFollower.CommandText = "DELETE FROM Following WHERE User_Id_Follower = @id;";
+            DeleteFollower.Parameters.AddWithValue("@id", $"{id}");
+
+            using MySqlCommand DeleteReporter = new MySqlCommand();
+
+            DeleteReporter.CommandText = "DELETE FROM Report_User WHERE User_Reported_Id = @id;";
+            DeleteReporter.Parameters.AddWithValue("@id", $"{id}");
+
+            using MySqlCommand DeleteReported = new MySqlCommand();
+
+            DeleteReported.CommandText = "DELETE FROM Report_User WHERE User_Reporter_Id = @id;";
+            DeleteReported.Parameters.AddWithValue("@id", $"{id}");
+
             using (DatabaseHandler databaseHandler = new DatabaseHandler())
             {
+                databaseHandler.EditDatabase(DeleteFollowed);
+                databaseHandler.EditDatabase(DeleteFollower);
+                databaseHandler.EditDatabase(DeleteReporter);
+                databaseHandler.EditDatabase(DeleteReported);
                 databaseHandler.EditDatabase(DeleteUserPublic);
                 databaseHandler.EditDatabase(DeleteUserPrivate);
+
                 Logger.Log(LogLevel.Information, "USER DELETE");
             }
 
@@ -218,9 +246,14 @@ namespace Tiktok_api.Controllers
             jwttokenBlacklistItem.Token = token;
             jwttokenBlacklistItem.ExpireTime = DateTime.Now.AddHours(8);
 
-            JWTTokenHandler.BlackList!.Add(jwttokenBlacklistItem);
+            Logger.LogInformation(token);
+            Logger.LogInformation(jwttokenBlacklistItem.Token);
 
-            return Task.FromResult<string>("");
+
+            JWTTokenHandler.BlackList!.Add(jwttokenBlacklistItem);
+            JWTTokenHandler.WriteBlackList();
+
+            return Task.FromResult("User Removed");
         }
 
         /// <summary>
@@ -233,11 +266,12 @@ namespace Tiktok_api.Controllers
         [HttpPut]
         public Task<string> ChangePassword(string newPassword)
         {
-            string id = User.FindFirstValue("Id");
-            string token = HttpContext.Response.Headers["Authorization"]!;
+            string token = HttpContext.Request.Headers["Authorization"]!;
 
             if (JWTTokenHandler.IsBlacklisted(token))
-                return Task.FromResult<string>("token is blacklisted");
+                return Task.FromResult("token is blacklisted");
+
+            string id = User.FindFirstValue("Id");
 
             string[] EncryptedPassword = EncryptionHandler.HashAndSaltData(newPassword);
 
@@ -254,7 +288,7 @@ namespace Tiktok_api.Controllers
                 databaseHandler.EditDatabase(UpdatePassword);
             }
 
-            return Task.FromResult<string>($"");
+            return Task.FromResult($"Password Changed");
         }
 
         /// <summary>
@@ -267,11 +301,13 @@ namespace Tiktok_api.Controllers
         [HttpPut]
         public Task<string> ChangeEmail(string newEmail)
         {
-            string id = User.FindFirstValue("Id");
-            string token = HttpContext.Response.Headers["Authorization"]!;
+            string token = HttpContext.Request.Headers["Authorization"]!;
 
             if (JWTTokenHandler.IsBlacklisted(token))
-                return Task.FromResult<string>("token is blacklisted");
+                return Task.FromResult("token is blacklisted");
+
+            string id = User.FindFirstValue("Id");
+
 
             using MySqlCommand UpdatePassword = new MySqlCommand();
 
@@ -285,7 +321,7 @@ namespace Tiktok_api.Controllers
                 databaseHandler.EditDatabase(UpdatePassword);
             }
 
-            return Task.FromResult<string>($"Email Updated");
+            return Task.FromResult($"Email Updated");
 
         }
 
@@ -299,11 +335,12 @@ namespace Tiktok_api.Controllers
         [HttpPut]
         public Task<string> ChangeProfilePicture(byte[] newProfilePicture)
         {
-            string id = User.FindFirstValue("Id");
-            string token = HttpContext.Response.Headers["Authorization"]!;
+            string token = HttpContext.Request.Headers["Authorization"]!;
 
             if (JWTTokenHandler.IsBlacklisted(token))
-                return Task.FromResult<string>("token is blacklisted");
+                return Task.FromResult("token is blacklisted");
+
+            string id = User.FindFirstValue("Id");
 
             using MySqlCommand UpdatePassword = new MySqlCommand();
 
@@ -317,7 +354,7 @@ namespace Tiktok_api.Controllers
                 databaseHandler.EditDatabase(UpdatePassword);
             }
 
-            return Task.FromResult<string>($"Profile_Picture Updated");
+            return Task.FromResult($"Profile_Picture Updated");
         }
 
         /// <summary>
@@ -330,11 +367,13 @@ namespace Tiktok_api.Controllers
         [HttpPut]
         public Task<string> ChangeUsername(string newUsername)
         {
-            string id = User.FindFirstValue("Id");
-            string token = HttpContext.Response.Headers["Authorization"]!;
+            string token = HttpContext.Request.Headers["Authorization"]!;
 
             if (JWTTokenHandler.IsBlacklisted(token))
-                return Task.FromResult<string>("token is blacklisted");
+                return Task.FromResult("token is blacklisted");
+
+            string id = User.FindFirstValue("Id");
+
 
             using MySqlCommand UpdatePassword = new MySqlCommand();
 
@@ -348,7 +387,165 @@ namespace Tiktok_api.Controllers
                 databaseHandler.EditDatabase(UpdatePassword);
             }
 
-            return Task.FromResult<string>($"Password Updated");
+            return Task.FromResult($"Username Updated");
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="User"></param>
+        /// <returns></returns>
+        [Authorize]
+        [Route("users/ReportUser")]
+        [HttpPost]
+        public Task<string> ReportUser(ReportUser UserReported)
+        {
+            string token = HttpContext.Request.Headers["Authorization"]!;
+
+            if (JWTTokenHandler.IsBlacklisted(token))
+                return Task.FromResult("token is blacklisted");
+
+            string id = User.FindFirstValue("Id");
+
+            if (string.IsNullOrEmpty(UserReported.Reason))
+                return Task.FromResult($"User Reported");
+
+
+            using MySqlCommand AlreadyReported = new MySqlCommand();
+            AlreadyReported.CommandText = "SELECT COUNT(*) FROM Report_User WHERE User_Reporter_Id=@IdReporter AND User_Reported_Id=@IdReported;";
+            AlreadyReported.Parameters.AddWithValue("@IdReporter", id);
+            AlreadyReported.Parameters.AddWithValue("@IdReported", UserReported.Id);
+
+            using MySqlCommand ReportUserCommand = new MySqlCommand();
+
+            ReportUserCommand.CommandText = "INSERT INTO Report_User (User_Reported_Id, User_Reporter_Id, Reason, Reported_At) VALUES (@IdReported, @IdReporter, @Reason, @ReportedAt);";
+
+            ReportUserCommand.Parameters.AddWithValue("@IdReported", UserReported.Id);
+            ReportUserCommand.Parameters.AddWithValue("@IdReporter", id);
+
+            ReportUserCommand.Parameters.AddWithValue("@Reason", UserReported.Reason);
+            ReportUserCommand.Parameters.AddWithValue("@ReportedAt", DateTime.Now);
+
+            using (DatabaseHandler databaseHandler = new DatabaseHandler())
+            {
+                if (databaseHandler.GetNumber(AlreadyReported) == 0)
+                {
+                    databaseHandler.EditDatabase(ReportUserCommand);
+                    return Task.FromResult($"User Reported");
+                }
+            }
+
+            return Task.FromResult($"User Already Reported by you");
+        }
+
+        [Authorize]
+        [Route("users/FollowUser")]
+        [HttpPost]
+        public Task<string> FollowUser(UserData CreatorData)
+        {
+            string token = HttpContext.Request.Headers["Authorization"]!;
+
+            if (JWTTokenHandler.IsBlacklisted(token))
+                return Task.FromResult("token is blacklisted");
+
+            string id = User.FindFirstValue("Id");
+
+            if (CreatorData.Id == 0)
+                return Task.FromResult($"Failed to follow user");
+
+            using MySqlCommand ReportUserCommand = new MySqlCommand();
+
+            ReportUserCommand.CommandText = "INSERT INTO Following (User_Id_Followed, User_Id_Follower, Followed_At) VALUES (@UserFollowed, @UserFollower, @FollowedAt);";
+
+            ReportUserCommand.Parameters.AddWithValue("@UserFollowed", CreatorData.Id);
+            ReportUserCommand.Parameters.AddWithValue("@UserFollower", id);
+
+            ReportUserCommand.Parameters.AddWithValue("@FollowedAt", DateTime.Now);
+
+            using (DatabaseHandler databaseHandler = new DatabaseHandler())
+            {
+                databaseHandler.EditDatabase(ReportUserCommand);
+            }
+
+            return Task.FromResult($"Now following user");
+        }
+
+        [Authorize]
+        [Route("users/UnFollowUser")]
+        [HttpDelete]
+        public Task<string> UnFollowUser(UserData CreatorData)
+        {
+            return Task.FromResult($"Now following user");
+        }
+
+        /// <summary>
+        /// Returns ProfilePicture and username
+        /// </summary>
+        /// <param name="User"></param>
+        /// <returns></returns>
+        [Route("users/GetUserDataSimpel")]
+        [HttpPost]
+        public Task<string> GetUserDataSimpel(UserData userData)
+        {
+            string token = HttpContext.Request.Headers["Authorization"]!;
+
+            if (JWTTokenHandler.IsBlacklisted(token))
+                return Task.FromResult("token is blacklisted");
+
+            if (userData.Id == 0)
+                return Task.FromResult($"Not valid value");
+
+            using MySqlCommand GetDataUser = new MySqlCommand();
+
+            GetDataUser.CommandText = "SELECT Profile_Picture, Username FROM Users_Public WHERE Id=@id;";
+            GetDataUser.Parameters.AddWithValue("Id", userData);
+
+            using (DatabaseHandler databaseHandler = new DatabaseHandler())
+            {
+                return Task.FromResult(databaseHandler.Select(GetDataUser));
+            }
+        }
+
+        /// <summary>
+        /// Returns ProfilePicture and username from the user 
+        /// </summary>
+        /// <param name="User"></param>
+        /// <returns></returns>
+        [Authorize]
+        [Route("users/GetMyProfile")]
+        [HttpGet]
+        public Task<string> GetMyProfile()
+        {
+            string token = HttpContext.Request.Headers["Authorization"]!;
+
+            if (JWTTokenHandler.IsBlacklisted(token))
+                return Task.FromResult("token is blacklisted");
+
+            string id = User.FindFirstValue("Id"); 
+
+            using MySqlCommand GetDataUser = new MySqlCommand();
+
+            GetDataUser.CommandText = "SELECT Profile_Picture, Username FROM Users_Public WHERE Id=@id;";
+            GetDataUser.Parameters.AddWithValue("Id", id);
+
+            using (DatabaseHandler databaseHandler = new DatabaseHandler())
+            {
+                return Task.FromResult(databaseHandler.Select(GetDataUser));
+            }
+        }
+
+        /// <summary>
+        /// Returns UserData and videos that user has made
+        /// </summary>
+        /// <param name="User"></param>
+        /// <returns></returns>
+        [Route("users/GetUserDataProfile")]
+        [HttpGet]
+        public Task<string> GetUserDataProfile(UserData userData)
+        {
+            //TODO
+            return Task.FromResult($"Needs To Be added when videos are done");
+
         }
     }
 }

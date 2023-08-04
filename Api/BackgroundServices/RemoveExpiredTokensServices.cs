@@ -17,7 +17,7 @@ namespace Tiktok_api.BackgroundServices
         {
             _logger.Log(LogLevel.Information, "Started Token Blacklist management services");
 
-            JWTTokenHandler.BlackList = ReadBlackList();
+            JWTTokenHandler.BlackList = JWTTokenHandler.ReadBlackList();
 
             await ManageBlackList(stoppingToken);
         }
@@ -39,6 +39,7 @@ namespace Tiktok_api.BackgroundServices
                 {
                     JWTTokenHandler.BlackList.Remove(blacklistItem);
                 }
+                JWTTokenHandler.WriteBlackList();
                 await Task.Delay(TimeSpan.FromHours(1), stoppingToken);
             }
         }
@@ -46,20 +47,8 @@ namespace Tiktok_api.BackgroundServices
         public override async Task StopAsync(CancellationToken stoppingToken)
         {
             _logger.Log(LogLevel.Information, "stopped Token Blacklist management services");
-            WriteBlackList();
+            JWTTokenHandler.WriteBlackList();
             await base.StopAsync(stoppingToken);
-        }
-
-        private List<JWTtokenBlacklistItem> ReadBlackList()
-        {
-            string json = File.ReadAllText("BlackList.json");
-            return JsonConvert.DeserializeObject<List<JWTtokenBlacklistItem>>(json);
-        }
-
-        private void WriteBlackList()
-        {
-            string json = JsonConvert.SerializeObject(JWTTokenHandler.BlackList);
-            File.WriteAllText("BlackList.json", json);
         }
     }
 }

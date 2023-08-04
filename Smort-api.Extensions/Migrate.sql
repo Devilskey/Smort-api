@@ -6,7 +6,7 @@ CREATE TABLE `Video` ( `Id` integer PRIMARY KEY AUTO_INCREMENT, `User_Id` intege
 CREATE TABLE `Reaction` ( `User_Id` integer, `Video_Id` integer, `Created_At` DateTime, `Updated_At` DateTime );
 CREATE TABLE `File` ( `Id` integer PRIMARY KEY AUTO_INCREMENT, `File_Name` varchar(32), `File_location` varchar(128), `Created_At` DateTime, `Deleted_At` DateTime );
 CREATE TABLE `Username_Counter` ( `Id` integer PRIMARY KEY AUTO_INCREMENT, `Username` varchar(32), `Amount` int, `Created_At` DateTime, `Updated_At` DateTime );
-
+CREATE TABLE `Report_User` ( `Id` integer PRIMARY KEY AUTO_INCREMENT, `User_Reported_Id` integer,`User_Reporter_Id` integer, `Reason` varchar(512), `Reported_At` DateTime);
 
 ALTER TABLE `Reaction` ADD FOREIGN KEY (`Video_Id`) REFERENCES `Video` (`Id`);
 ALTER TABLE `Video` ADD FOREIGN KEY (`File_Id`) REFERENCES `File` (`Id`);
@@ -16,6 +16,8 @@ ALTER TABLE `Following` ADD FOREIGN KEY (`User_Id_Follower`) REFERENCES `Users_P
 ALTER TABLE `Video` ADD FOREIGN KEY (`User_Id`) REFERENCES `Users_Public` (`Id`);
 ALTER TABLE `Users_Public` ADD FOREIGN KEY (`Person_Id`) REFERENCES `Users_Private` (`Id`);
 ALTER TABLE `Users_Private` ADD FOREIGN KEY (`Role_Id`) REFERENCES `Role` (`Id`);
+ALTER TABLE `Report_User` ADD FOREIGN KEY (`User_Reported_Id`) REFERENCES `Users_Public` (`Id`);
+ALTER TABLE `Report_User` ADD FOREIGN KEY (`User_Reporter_Id`) REFERENCES `Users_Public` (`Id`);
 
 INSERT IGNORE  INTO `Role` (Id, Name, Description) values (1, "User", "Someone who has an account on the site");
 INSERT IGNORE  INTO `Role` (Id, Name, Description) values (2, "Creator", "Someone who Creates content");

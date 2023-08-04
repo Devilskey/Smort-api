@@ -11,7 +11,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Smort-api.Extensions", "Smo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Smort-api.Handlers", "Smort-api.Handlers\Smort-api.Handlers.csproj", "{916AC441-39AE-434F-8C70-989935921125}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Smort-api.Objects", "Smort-api.Object\Smort-api.Objects.csproj", "{23949822-4250-48EB-8D02-32D78B7F4E6E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Smort-api.Objects", "Smort-api.Object\Smort-api.Objects.csproj", "{23949822-4250-48EB-8D02-32D78B7F4E6E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FD05DD09-6A4C-4180-9E99-F2E0DAB46624}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using Smort_api.Object;
 using Smort_api.Object.Security;
 using System.IdentityModel.Tokens.Jwt;
@@ -31,6 +32,7 @@ namespace Smort_api.Handlers
             return false;
         }
 
+
         public static string GenerateToken(LoginObject loginDetails, string id)
         {
             JwtSecurityTokenHandler tokenhandler = new JwtSecurityTokenHandler();
@@ -60,5 +62,16 @@ namespace Smort_api.Handlers
             return tokenhandler.WriteToken(token);
         }
 
+        public static List<JWTtokenBlacklistItem> ReadBlackList()
+        {
+            string json = File.ReadAllText("BlackList.json");
+            return JsonConvert.DeserializeObject<List<JWTtokenBlacklistItem>>(json)!;
+        }
+
+        public static void WriteBlackList()
+        {
+            string json = JsonConvert.SerializeObject(BlackList);
+            File.WriteAllText("BlackList.json", json);
+        }
     }
 }
