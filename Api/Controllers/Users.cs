@@ -54,7 +54,7 @@ namespace Tiktok_api.Controllers
             CheckUsernameExist.Dispose();
 
             int Exist = databaseHandler.GetNumber(CheckUsernameExist);
-            int id = 1;
+            int id = 0;
 
             if (Exist == 0)
             {
@@ -115,7 +115,7 @@ namespace Tiktok_api.Controllers
             UpdateUsernameAmount.Parameters.AddWithValue("@Username", $"{newUser.Username}");
             UpdateUsernameAmount.Parameters.AddWithValue("@UpdatedAt", DateTime.Now);
 
-            UpdateUsernameAmount.Parameters.AddWithValue("@Amount", (id += 1));
+            UpdateUsernameAmount.Parameters.AddWithValue("@Amount", (id + 1));
 
 
             databaseHandler.EditDatabase(UpdateUsernameAmount);
