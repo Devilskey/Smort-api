@@ -15,7 +15,8 @@ namespace Tiktok_api.Controllers
     {
         private readonly ILogger Logger;
 
-        public Users(ILogger<Users> logger) {
+        public Users(ILogger<Users> logger)
+        {
             Logger = logger;
         }
 
@@ -453,21 +454,30 @@ namespace Tiktok_api.Controllers
             if (CreatorData.Id == 0)
                 return Task.FromResult($"Failed to follow user");
 
-            using MySqlCommand ReportUserCommand = new MySqlCommand();
+            using MySqlCommand CheckIfAlreadyFollowing = new MySqlCommand();
 
-            ReportUserCommand.CommandText = "INSERT INTO Following (User_Id_Followed, User_Id_Follower, Followed_At) VALUES (@UserFollowed, @UserFollower, @FollowedAt);";
+            CheckIfAlreadyFollowing.CommandText = "SELECT COUNT(User_Id_Followed) FROM Following WHERE User_Id_Follower=@UserFollower;";
 
-            ReportUserCommand.Parameters.AddWithValue("@UserFollowed", CreatorData.Id);
-            ReportUserCommand.Parameters.AddWithValue("@UserFollower", id);
+            CheckIfAlreadyFollowing.Parameters.AddWithValue("@UserFollower", id);
 
-            ReportUserCommand.Parameters.AddWithValue("@FollowedAt", DateTime.Now);
+            using MySqlCommand FollowUserCommand = new MySqlCommand();
+
+            FollowUserCommand.CommandText = "INSERT INTO Following (User_Id_Followed, User_Id_Follower, Followed_At) VALUES (@UserFollowed, @UserFollower, @FollowedAt);";
+
+            FollowUserCommand.Parameters.AddWithValue("@UserFollowed", CreatorData.Id);
+            FollowUserCommand.Parameters.AddWithValue("@UserFollower", id);
+
+            FollowUserCommand.Parameters.AddWithValue("@FollowedAt", DateTime.Now);
 
             using (DatabaseHandler databaseHandler = new DatabaseHandler())
             {
-                databaseHandler.EditDatabase(ReportUserCommand);
+                if (databaseHandler.GetNumber(CheckIfAlreadyFollowing) == 0)
+                {
+                    databaseHandler.EditDatabase(FollowUserCommand);
+                    return Task.FromResult($"Now following user");
+                }
             }
-
-            return Task.FromResult($"Now following user");
+            return Task.FromResult($"Not able to follow this user");
         }
 
         [Authorize]
@@ -475,7 +485,38 @@ namespace Tiktok_api.Controllers
         [HttpDelete]
         public Task<string> UnFollowUser(UserData CreatorData)
         {
-            return Task.FromResult($"Now following user");
+            string token = HttpContext.Request.Headers["Authorization"]!;
+
+            if (JWTTokenHandler.IsBlacklisted(token))
+                return Task.FromResult("token is blacklisted");
+
+            string id = User.FindFirstValue("Id");
+
+            if (CreatorData.Id == 0)
+                return Task.FromResult($"Failed to follow user");
+
+            using MySqlCommand CheckIfFollowing = new MySqlCommand();
+
+            CheckIfFollowing.CommandText = "SELECT COUNT(User_Id_Followed) FROM Following WHERE User_Id_Follower=@UserFollower;";
+
+            CheckIfFollowing.Parameters.AddWithValue("@UserFollower", id);
+
+            using MySqlCommand UnFollowUserCommand = new MySqlCommand();
+
+            UnFollowUserCommand.CommandText = "DELETE FROM Following WHERE User_Id_Followed=@UserFollowed AND User_Id_Follower=@UserFollower;";
+
+            UnFollowUserCommand.Parameters.AddWithValue("@UserFollowed", CreatorData.Id);
+            UnFollowUserCommand.Parameters.AddWithValue("@UserFollower", id);
+
+            using (DatabaseHandler databaseHandler = new DatabaseHandler())
+            {
+                if (databaseHandler.GetNumber(CheckIfFollowing) != 0)
+                {
+                    databaseHandler.EditDatabase(UnFollowUserCommand);
+                }
+            }
+
+            return Task.FromResult($"user Unfollowed");
         }
 
         /// <summary>
@@ -521,7 +562,7 @@ namespace Tiktok_api.Controllers
             if (JWTTokenHandler.IsBlacklisted(token))
                 return Task.FromResult("token is blacklisted");
 
-            string id = User.FindFirstValue("Id"); 
+            string id = User.FindFirstValue("Id");
 
             using MySqlCommand GetDataUser = new MySqlCommand();
 
