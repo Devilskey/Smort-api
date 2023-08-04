@@ -20,6 +20,11 @@ namespace Tiktok_api.Controllers
             Logger = logger;
         }
 
+        /// <summary>
+        /// Create account For user
+        /// </summary>
+        /// <param name="newUser"></param>
+        /// <returns></returns>
         [Route("users/CreateAccount")]
         [HttpPost]
         public Task<ActionResult> CreateAccount(CreateAccount newUser)
@@ -127,6 +132,11 @@ namespace Tiktok_api.Controllers
             return Task.FromResult<ActionResult>(Ok("User Created"));
         }
 
+        /// <summary>
+        /// Login for a user returns a jwt token
+        /// </summary>
+        /// <param name="User"></param>
+        /// <returns></returns>
         [Route("users/Login")]
         [HttpPost]
         public Task<string> Login(LoginObject User)
@@ -392,7 +402,7 @@ namespace Tiktok_api.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Reports a users his account
         /// </summary>
         /// <param name="User"></param>
         /// <returns></returns>
@@ -439,6 +449,10 @@ namespace Tiktok_api.Controllers
             return Task.FromResult($"User Already Reported by you");
         }
 
+        /// <summary>
+        /// follows a users his account
+        /// </summary>
+        /// <returns></returns>
         [Authorize]
         [Route("users/FollowUser")]
         [HttpPost]
@@ -485,6 +499,10 @@ namespace Tiktok_api.Controllers
             return Task.FromResult($"Not able to follow this user");
         }
 
+        /// <summary>
+        /// Unfollows a users his account
+        /// </summary>
+        /// <returns></returns>
         [Authorize]
         [Route("users/UnFollowUser")]
         [HttpDelete]
@@ -525,6 +543,11 @@ namespace Tiktok_api.Controllers
             return Task.FromResult($"user Unfollowed");
         }
 
+
+        /// <summary>
+        /// Gives the followers amount of a user
+        /// </summary>
+        /// <returns></returns>
         [Route("users/FollowersAmount")]
         [HttpPost]
         public Task<int>? FollowersAmount(UserData CreatorData)
@@ -546,12 +569,21 @@ namespace Tiktok_api.Controllers
             }
         }
 
+        /// <summary>
+        /// Gives the followers amount of the user
+        /// </summary>
+        /// <returns></returns>
         [Authorize]
         [Route("users/MyFollowersAmount")]
         [HttpGet]
-        public Task<int> MyFollowersAmount()
+        public Task<int>? MyFollowersAmount()
         {
             string id = User.FindFirstValue("Id");
+
+            string token = HttpContext.Request.Headers["Authorization"]!;
+
+            if (JWTTokenHandler.IsBlacklisted(token))
+                return null;
 
             using MySqlCommand CheckIfFollowing = new MySqlCommand();
 
