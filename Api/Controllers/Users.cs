@@ -451,6 +451,10 @@ namespace Tiktok_api.Controllers
 
             string id = User.FindFirstValue("Id");
 
+            if(CreatorData.Id == Int32.Parse(id))
+                return Task.FromResult($"you cannnot follow yourself");
+
+
             if (CreatorData.Id == 0)
                 return Task.FromResult($"Failed to follow user");
 
