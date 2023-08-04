@@ -456,9 +456,10 @@ namespace Tiktok_api.Controllers
 
             using MySqlCommand CheckIfAlreadyFollowing = new MySqlCommand();
 
-            CheckIfAlreadyFollowing.CommandText = "SELECT COUNT(User_Id_Followed) FROM Following WHERE User_Id_Follower=@UserFollower;";
+            CheckIfAlreadyFollowing.CommandText = "SELECT COUNT(User_Id_Followed) FROM Following WHERE User_Id_Follower=@UserFollower AND User_Id_Followed=@UserFollowed;";
 
             CheckIfAlreadyFollowing.Parameters.AddWithValue("@UserFollower", id);
+            CheckIfAlreadyFollowing.Parameters.AddWithValue("@UserFollowed", CreatorData.Id);
 
             using MySqlCommand FollowUserCommand = new MySqlCommand();
 
@@ -497,9 +498,10 @@ namespace Tiktok_api.Controllers
 
             using MySqlCommand CheckIfFollowing = new MySqlCommand();
 
-            CheckIfFollowing.CommandText = "SELECT COUNT(User_Id_Followed) FROM Following WHERE User_Id_Follower=@UserFollower;";
+            CheckIfFollowing.CommandText = "SELECT COUNT(User_Id_Followed) FROM Following WHERE User_Id_Follower=@UserFollower AND User_Id_Followed=@UserFollowed;";
 
             CheckIfFollowing.Parameters.AddWithValue("@UserFollower", id);
+            CheckIfFollowing.Parameters.AddWithValue("@UserFollowed", CreatorData.Id);
 
             using MySqlCommand UnFollowUserCommand = new MySqlCommand();
 
@@ -628,7 +630,6 @@ namespace Tiktok_api.Controllers
         {
             //TODO
             return Task.FromResult($"Needs To Be added when videos are done");
-
         }
     }
 }
