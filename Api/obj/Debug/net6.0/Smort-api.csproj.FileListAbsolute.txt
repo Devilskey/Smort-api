@@ -97,3 +97,5 @@ C:\Users\ecola\Documents\gitkraken\Smort-api\Api\obj\Debug\net6.0\refint\Smort-a
 C:\Users\ecola\Documents\gitkraken\Smort-api\Api\obj\Debug\net6.0\Smort-api.pdb
 C:\Users\ecola\Documents\gitkraken\Smort-api\Api\obj\Debug\net6.0\Smort-api.genruntimeconfig.cache
 C:\Users\ecola\Documents\gitkraken\Smort-api\Api\obj\Debug\net6.0\ref\Smort-api.dll
+C:\Users\ecola\Documents\gitkraken\Smort-api\Api\bin\Debug\net6.0\Logs\Smorts-20230803.json
+C:\Users\ecola\Documents\gitkraken\Smort-api\Api\bin\Debug\net6.0\Logs\Smorts-20230804.json

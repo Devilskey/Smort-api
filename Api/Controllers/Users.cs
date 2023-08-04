@@ -410,6 +410,12 @@ namespace Tiktok_api.Controllers
             if (string.IsNullOrEmpty(UserReported.Reason))
                 return Task.FromResult($"User Reported");
 
+
+            using MySqlCommand AlreadyReported = new MySqlCommand();
+            AlreadyReported.CommandText = "SELECT COUNT(*) FROM Report_User WHERE User_Reporter_Id=@IdReporter AND User_Reported_Id=@IdReported;";
+            AlreadyReported.Parameters.AddWithValue("@IdReporter", id);
+            AlreadyReported.Parameters.AddWithValue("@IdReported", UserReported.Id);
+
             using MySqlCommand ReportUserCommand = new MySqlCommand();
 
             ReportUserCommand.CommandText = "INSERT INTO Report_User (User_Reported_Id, User_Reporter_Id, Reason, Reported_At) VALUES (@IdReported, @IdReporter, @Reason, @ReportedAt);";
@@ -422,10 +428,14 @@ namespace Tiktok_api.Controllers
 
             using (DatabaseHandler databaseHandler = new DatabaseHandler())
             {
-                databaseHandler.EditDatabase(ReportUserCommand);
+                if (databaseHandler.GetNumber(AlreadyReported) == 0)
+                {
+                    databaseHandler.EditDatabase(ReportUserCommand);
+                    return Task.FromResult($"User Reported");
+                }
             }
 
-            return Task.FromResult($"User Reported");
+            return Task.FromResult($"User Already Reported by you");
         }
 
         [Authorize]
