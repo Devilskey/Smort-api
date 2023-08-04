@@ -519,6 +519,48 @@ namespace Tiktok_api.Controllers
             return Task.FromResult($"user Unfollowed");
         }
 
+        [Route("users/FollowersAmount")]
+        [HttpPost]
+        public Task<int>? FollowersAmount(UserData CreatorData)
+        {
+            if (CreatorData.Id == 0)
+                return null;
+
+            using MySqlCommand CheckIfFollowing = new MySqlCommand();
+
+            CheckIfFollowing.CommandText = "SELECT COUNT(User_Id_Followed) FROM Following WHERE User_Id_Followed=@UserFollowed;";
+
+            CheckIfFollowing.Parameters.AddWithValue("@UserFollowed", CreatorData.Id);
+
+            using (DatabaseHandler databaseHandler = new DatabaseHandler())
+            {
+                return Task.FromResult(
+                    databaseHandler.GetNumber(CheckIfFollowing)
+                   );
+            }
+        }
+
+        [Authorize]
+        [Route("users/MyFollowersAmount")]
+        [HttpGet]
+        public Task<int> MyFollowersAmount()
+        {
+            string id = User.FindFirstValue("Id");
+
+            using MySqlCommand CheckIfFollowing = new MySqlCommand();
+
+            CheckIfFollowing.CommandText = "SELECT COUNT(User_Id_Followed) FROM Following WHERE User_Id_Followed=@UserFollowed;";
+
+            CheckIfFollowing.Parameters.AddWithValue("@UserFollowed", id);
+
+            using (DatabaseHandler databaseHandler = new DatabaseHandler())
+            {
+                return Task.FromResult(
+                    databaseHandler.GetNumber(CheckIfFollowing)
+                   );
+            }
+        }
+
         /// <summary>
         /// Returns ProfilePicture and username
         /// </summary>
