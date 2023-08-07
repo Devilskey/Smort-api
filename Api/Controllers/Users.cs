@@ -15,10 +15,16 @@ namespace Tiktok_api.Controllers
     {
         private readonly ILogger Logger;
 
-        public Users(ILogger<Users> logger) {
+        public Users(ILogger<Users> logger)
+        {
             Logger = logger;
         }
 
+        /// <summary>
+        /// Create account For user
+        /// </summary>
+        /// <param name="newUser"></param>
+        /// <returns></returns>
         [Route("users/CreateAccount")]
         [HttpPost]
         public Task<ActionResult> CreateAccount(CreateAccount newUser)
@@ -53,7 +59,7 @@ namespace Tiktok_api.Controllers
             CheckUsernameExist.Dispose();
 
             int Exist = databaseHandler.GetNumber(CheckUsernameExist);
-            int id = 1;
+            int id = 0;
 
             if (Exist == 0)
             {
@@ -114,7 +120,7 @@ namespace Tiktok_api.Controllers
             UpdateUsernameAmount.Parameters.AddWithValue("@Username", $"{newUser.Username}");
             UpdateUsernameAmount.Parameters.AddWithValue("@UpdatedAt", DateTime.Now);
 
-            UpdateUsernameAmount.Parameters.AddWithValue("@Amount", (id += 1));
+            UpdateUsernameAmount.Parameters.AddWithValue("@Amount", (id + 1));
 
 
             databaseHandler.EditDatabase(UpdateUsernameAmount);
@@ -126,6 +132,11 @@ namespace Tiktok_api.Controllers
             return Task.FromResult<ActionResult>(Ok("User Created"));
         }
 
+        /// <summary>
+        /// Login for a user returns a jwt token
+        /// </summary>
+        /// <param name="User"></param>
+        /// <returns></returns>
         [Route("users/Login")]
         [HttpPost]
         public Task<string> Login(LoginObject User)
@@ -391,7 +402,7 @@ namespace Tiktok_api.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Reports a users his account
         /// </summary>
         /// <param name="User"></param>
         /// <returns></returns>
@@ -438,6 +449,10 @@ namespace Tiktok_api.Controllers
             return Task.FromResult($"User Already Reported by you");
         }
 
+        /// <summary>
+        /// follows a users his account
+        /// </summary>
+        /// <returns></returns>
         [Authorize]
         [Route("users/FollowUser")]
         [HttpPost]
@@ -450,32 +465,138 @@ namespace Tiktok_api.Controllers
 
             string id = User.FindFirstValue("Id");
 
+            if(CreatorData.Id == Int32.Parse(id))
+                return Task.FromResult($"you cannnot follow yourself");
+
+
             if (CreatorData.Id == 0)
                 return Task.FromResult($"Failed to follow user");
 
-            using MySqlCommand ReportUserCommand = new MySqlCommand();
+            using MySqlCommand CheckIfAlreadyFollowing = new MySqlCommand();
 
-            ReportUserCommand.CommandText = "INSERT INTO Following (User_Id_Followed, User_Id_Follower, Followed_At) VALUES (@UserFollowed, @UserFollower, @FollowedAt);";
+            CheckIfAlreadyFollowing.CommandText = "SELECT COUNT(User_Id_Followed) FROM Following WHERE User_Id_Follower=@UserFollower AND User_Id_Followed=@UserFollowed;";
 
-            ReportUserCommand.Parameters.AddWithValue("@UserFollowed", CreatorData.Id);
-            ReportUserCommand.Parameters.AddWithValue("@UserFollower", id);
+            CheckIfAlreadyFollowing.Parameters.AddWithValue("@UserFollower", id);
+            CheckIfAlreadyFollowing.Parameters.AddWithValue("@UserFollowed", CreatorData.Id);
 
-            ReportUserCommand.Parameters.AddWithValue("@FollowedAt", DateTime.Now);
+            using MySqlCommand FollowUserCommand = new MySqlCommand();
+
+            FollowUserCommand.CommandText = "INSERT INTO Following (User_Id_Followed, User_Id_Follower, Followed_At) VALUES (@UserFollowed, @UserFollower, @FollowedAt);";
+
+            FollowUserCommand.Parameters.AddWithValue("@UserFollowed", CreatorData.Id);
+            FollowUserCommand.Parameters.AddWithValue("@UserFollower", id);
+
+            FollowUserCommand.Parameters.AddWithValue("@FollowedAt", DateTime.Now);
 
             using (DatabaseHandler databaseHandler = new DatabaseHandler())
             {
-                databaseHandler.EditDatabase(ReportUserCommand);
+                if (databaseHandler.GetNumber(CheckIfAlreadyFollowing) == 0)
+                {
+                    databaseHandler.EditDatabase(FollowUserCommand);
+                    return Task.FromResult($"Now following user");
+                }
             }
-
-            return Task.FromResult($"Now following user");
+            return Task.FromResult($"Not able to follow this user");
         }
 
+        /// <summary>
+        /// Unfollows a users his account
+        /// </summary>
+        /// <returns></returns>
         [Authorize]
         [Route("users/UnFollowUser")]
         [HttpDelete]
         public Task<string> UnFollowUser(UserData CreatorData)
         {
-            return Task.FromResult($"Now following user");
+            string token = HttpContext.Request.Headers["Authorization"]!;
+
+            if (JWTTokenHandler.IsBlacklisted(token))
+                return Task.FromResult("token is blacklisted");
+
+            string id = User.FindFirstValue("Id");
+
+            if (CreatorData.Id == 0)
+                return Task.FromResult($"Failed to follow user");
+
+            using MySqlCommand CheckIfFollowing = new MySqlCommand();
+
+            CheckIfFollowing.CommandText = "SELECT COUNT(User_Id_Followed) FROM Following WHERE User_Id_Follower=@UserFollower AND User_Id_Followed=@UserFollowed;";
+
+            CheckIfFollowing.Parameters.AddWithValue("@UserFollower", id);
+            CheckIfFollowing.Parameters.AddWithValue("@UserFollowed", CreatorData.Id);
+
+            using MySqlCommand UnFollowUserCommand = new MySqlCommand();
+
+            UnFollowUserCommand.CommandText = "DELETE FROM Following WHERE User_Id_Followed=@UserFollowed AND User_Id_Follower=@UserFollower;";
+
+            UnFollowUserCommand.Parameters.AddWithValue("@UserFollowed", CreatorData.Id);
+            UnFollowUserCommand.Parameters.AddWithValue("@UserFollower", id);
+
+            using (DatabaseHandler databaseHandler = new DatabaseHandler())
+            {
+                if (databaseHandler.GetNumber(CheckIfFollowing) != 0)
+                {
+                    databaseHandler.EditDatabase(UnFollowUserCommand);
+                }
+            }
+
+            return Task.FromResult($"user Unfollowed");
+        }
+
+
+        /// <summary>
+        /// Gives the followers amount of a user
+        /// </summary>
+        /// <returns></returns>
+        [Route("users/FollowersAmount")]
+        [HttpPost]
+        public Task<int>? FollowersAmount(UserData CreatorData)
+        {
+            if (CreatorData.Id == 0)
+                return null;
+
+            using MySqlCommand CheckIfFollowing = new MySqlCommand();
+
+            CheckIfFollowing.CommandText = "SELECT COUNT(User_Id_Followed) FROM Following WHERE User_Id_Followed=@UserFollowed;";
+
+            CheckIfFollowing.Parameters.AddWithValue("@UserFollowed", CreatorData.Id);
+
+            using (DatabaseHandler databaseHandler = new DatabaseHandler())
+            {
+                return Task.FromResult(
+                    databaseHandler.GetNumber(CheckIfFollowing)
+                   );
+            }
+        }
+
+        /// <summary>
+        /// Gives the followers amount of the user
+        /// </summary>
+        /// <returns></returns>
+        [Authorize]
+        [Route("users/MyFollowersAmount")]
+        [HttpGet]
+        public Task<int>? MyFollowersAmount()
+        {
+            string id = User.FindFirstValue("Id");
+
+            string token = HttpContext.Request.Headers["Authorization"]!;
+
+            if (JWTTokenHandler.IsBlacklisted(token))
+                return null;
+
+            using MySqlCommand CheckIfFollowing = new MySqlCommand();
+
+            CheckIfFollowing.CommandText = "SELECT COUNT(User_Id_Followed) FROM Following WHERE User_Id_Followed=@UserFollowed;";
+
+            CheckIfFollowing.Parameters.AddWithValue("@UserFollowed", id);
+
+            using (DatabaseHandler databaseHandler = new DatabaseHandler())
+            {
+                return Task.FromResult(
+                    databaseHandler.GetNumber(CheckIfFollowing)
+                   );
+            }
         }
 
         /// <summary>
@@ -521,7 +642,7 @@ namespace Tiktok_api.Controllers
             if (JWTTokenHandler.IsBlacklisted(token))
                 return Task.FromResult("token is blacklisted");
 
-            string id = User.FindFirstValue("Id"); 
+            string id = User.FindFirstValue("Id");
 
             using MySqlCommand GetDataUser = new MySqlCommand();
 
@@ -545,7 +666,6 @@ namespace Tiktok_api.Controllers
         {
             //TODO
             return Task.FromResult($"Needs To Be added when videos are done");
-
         }
     }
 }
