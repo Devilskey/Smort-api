@@ -25,7 +25,6 @@ namespace Tiktok_api
                          .AddJsonFile("JWTsettings.json", false)
                          .AddEnvironmentVariables();
                 })
-
                 .ConfigureWebHostDefaults(webBuilder => {
                     webBuilder.UseStartup<Startup>();
                 });

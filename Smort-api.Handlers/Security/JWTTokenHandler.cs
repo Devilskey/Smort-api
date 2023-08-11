@@ -42,7 +42,7 @@ namespace Smort_api.Handlers
             {
                 new("Id", id!),
                 new(JwtRegisteredClaimNames.Email, loginDetails.Email!),
-                new("TimeCreated", DateTime.Now.ToString())
+                new("TimeCreated", DateTime.Now.ToString()),
             };
             SymmetricSecurityKey securiyKey= new SymmetricSecurityKey(key);
 
@@ -51,7 +51,7 @@ namespace Smort_api.Handlers
             SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor()
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddHours(8),
+                Expires = DateTime.Now.AddHours(80000),
                 Issuer = "http://localhost",
                 Audience = "http://localhost",
                 SigningCredentials = Credentials
