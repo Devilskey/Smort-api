@@ -4,8 +4,6 @@ using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 using Smort_api.Handlers;
 using Smort_api.Object.Videos;
-using System.IO;
-using System.Net;
 using System.Security.Claims;
 
 namespace Tiktok_api.Controllers
@@ -69,16 +67,43 @@ namespace Tiktok_api.Controllers
         }
 
         /// <summary>
-        /// returns  a list with 10 random videos
+        /// returns  the data if 10 random videos
         /// </summary>
         /// <param name="videoId"></param>
         /// <returns></returns>
         [Route("Video/GetVideoList")]
         [HttpGet]
-        public int[] GetVideosList(int videoId)
+        public Task<string> GetVideosList()
         {
-            //TODOs
-            return new int[0];
+            using MySqlCommand getRandomVideos = new MySqlCommand();
+            getRandomVideos.CommandText = "SELECT Id, Title, Description, Created_At FROM Video ORDER BY RAND() LIMIT 5;";
+
+            using (DatabaseHandler databaseHandler = new DatabaseHandler())
+            {
+                string json = databaseHandler.Select(getRandomVideos);
+                Logger.LogInformation(json);
+                return Task.FromResult(json);
+            }
+        }
+
+        /// <summary>
+        /// returns the data of 1 random videos
+        /// </summary>
+        /// <param name="videoId"></param>
+        /// <returns></returns>
+        [Route("Video/GetOneVideo")]
+        [HttpGet]
+        public Task<string> GetOneVideo()
+        {
+            using MySqlCommand getRandomVideos = new MySqlCommand();
+            getRandomVideos.CommandText = "SELECT Id, Title, Description, Created_At FROM Video ORDER BY RAND() LIMIT 1;";
+
+            using (DatabaseHandler databaseHandler = new DatabaseHandler())
+            {
+                string json = databaseHandler.Select(getRandomVideos);
+                Logger.LogInformation(json);
+                return Task.FromResult(json);
+            }
         }
 
         //WARNING THIS IS MADE WITH DUCKTAPE AND HOPE THIS WILL BREAKE DOWN SOME DAY UPDATE REQUIRED
@@ -87,7 +112,7 @@ namespace Tiktok_api.Controllers
         /// </summary>
         /// <param name="videoId"></param>
         /// <returns></returns>
-        [Route("Video/GetVideos")]
+        [Route("Video/GetVideo")]
         [HttpGet]
         public ActionResult? GetVideos(int videoId)
         {
@@ -104,7 +129,7 @@ namespace Tiktok_api.Controllers
 
                 VideoPathData[] path = JsonConvert.DeserializeObject<VideoPathData[]>(json)!;
 
-                var filestream = System.IO.File.OpenRead(path[0].File_Location);
+                var filestream = System.IO.File.OpenRead(path[0].File_Location!);
                 return File(filestream, contentType: "video/mkv", enableRangeProcessing: true);
 
             }

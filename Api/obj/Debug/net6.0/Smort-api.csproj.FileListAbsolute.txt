@@ -104,3 +104,4 @@ C:\Users\ecola\Documents\gitkraken\Smort-api\Api\bin\Debug\net6.0\Logs\Smorts-20
 C:\Users\ecola\Documents\gitkraken\Smort-api\Api\bin\Debug\net6.0\Logs\Smorts-20230809.json
 C:\Users\ecola\Documents\gitkraken\Smort-api\Api\bin\Debug\net6.0\Logs\Smorts-20230810.json
 C:\Users\ecola\Documents\gitkraken\Smort-api\Api\bin\Debug\net6.0\Logs\Smorts-20230811.json
+C:\Users\ecola\Documents\gitkraken\Smort-api\Api\bin\Debug\net6.0\Logs\Smorts-20230812.json
