@@ -30,6 +30,11 @@ namespace Tiktok_api.Controllers
         {
             Guid videoSavedId = Guid.NewGuid();
 
+            string token = HttpContext.Request.Headers["Authorization"]!;
+
+            if (JWTTokenHandler.IsBlacklisted(token))
+                return Task.FromResult("token is blacklisted");
+
             if (Data == null)
                 return Task.FromResult("Video Failed to save");
 
@@ -150,6 +155,11 @@ namespace Tiktok_api.Controllers
         [HttpDelete]
         public Task<ActionResult> DeleteVideo(int videoId)
         {
+            string token = HttpContext.Request.Headers["Authorization"]!;
+
+            if (JWTTokenHandler.IsBlacklisted(token))
+                return Task.FromResult<ActionResult>(BadRequest());
+
             string id = User.FindFirstValue("Id");
 
             using MySqlCommand SelectVideoPath = new MySqlCommand();
