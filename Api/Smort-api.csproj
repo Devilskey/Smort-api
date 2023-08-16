@@ -26,6 +26,7 @@
 
   <ItemGroup>
     <Folder Include="Logs\" />
+    <Folder Include="Videos\" />
   </ItemGroup>
 
   <ItemGroup>
