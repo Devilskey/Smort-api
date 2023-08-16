@@ -2,6 +2,7 @@
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Smort_api.Extensions;
+using System.IO;
 using System.Text;
 using Tiktok_api.BackgroundServices;
 
@@ -71,6 +72,11 @@ namespace Tiktok_api
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapGet("Video/GetVideosMap", () =>
+                {
+                    var filestream = File.OpenRead("./Videos/2023-07-23-17-08-42.mkv");
+                    return Results.File(filestream, contentType: "video/mkv", enableRangeProcessing: true);
+                });
             });
         }
     }

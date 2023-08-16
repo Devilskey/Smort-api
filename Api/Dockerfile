@@ -7,16 +7,19 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["Tiktok-api.csproj", "."]
-RUN dotnet restore "./Tiktok-api.csproj"
+COPY ["Api/Smort-api.csproj", "Api/"]
+COPY ["Smort-api.Extensions/Smort-api.Extensions.csproj", "Smort-api.Extensions/"]
+COPY ["Smort-api.Handlers/Smort-api.Handlers.csproj", "Smort-api.Handlers/"]
+COPY ["Smort-api.Object/Smort-api.Objects.csproj", "Smort-api.Object/"]
+RUN dotnet restore "Api/Smort-api.csproj"
 COPY . .
-WORKDIR "/src/."
-RUN dotnet build "Tiktok-api.csproj" -c Release -o /app/build
+WORKDIR "/src/Api"
+RUN dotnet build "Smort-api.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "Tiktok-api.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "Smort-api.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Tiktok-api.dll"]
+ENTRYPOINT ["dotnet", "Smort-api.dll"]

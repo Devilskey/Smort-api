@@ -21,4 +21,10 @@
     <ProjectReference Include="..\Smort-api.Handlers\Smort-api.Handlers.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Migrate.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

@@ -6,14 +6,14 @@ namespace Smort_api.Handlers
 {
     public class DatabaseHandler : IDisposable
     {
-        private static string? Username { get; set; }
-        private static string? Password { get; set; }
-        private static string? Server  { get; set; }
-        private static string? DatabaseName { get; set; }
+        private string? Username { get; set; }
+        private string? Password { get; set; }
+        private string? Server  { get; set; }
+        private string? DatabaseName { get; set; }
 
         private readonly ILogger Logger;
 
-        private static MySqlConnection? connection;
+        private MySqlConnection connection;
 
         public DatabaseHandler(ILogger<DatabaseHandler> logger = null) {
             Logger = logger;
@@ -27,7 +27,7 @@ namespace Smort_api.Handlers
         {
             Username = Environment.GetEnvironmentVariable("UsernameDb") ?? "root";
             Password = Environment.GetEnvironmentVariable("PasswordDb") ?? "password";
-            Server = Environment.GetEnvironmentVariable("ServerDb") ?? "localhost";
+            Server = Environment.GetEnvironmentVariable("ServerDb") ?? "10.0.0.12";
             DatabaseName = Environment.GetEnvironmentVariable("DatabaseName") ?? "SmortTestDb";
 
             if (Username == "" || Password == "" || Server == "" || DatabaseName == "")
@@ -57,6 +57,7 @@ namespace Smort_api.Handlers
             {
                 return $"Json Error {ex}";
             }
+
         }
 
         public int GetNumber(MySqlCommand SqlCommand)
@@ -158,11 +159,8 @@ namespace Smort_api.Handlers
             Password = string.Empty;
             Server = string.Empty;
             DatabaseName = string.Empty;
-            if (connection != null)
-            {
-                connection.Close();
-                connection.Dispose();
-            }
+            connection.Close();
+            connection.Dispose();
         }
     }
 }

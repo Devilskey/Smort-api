@@ -6,7 +6,7 @@ namespace Smort_api.Extensions
 {
     public static class DatabaseExtensions
     {
-        public static string SqlFile = "../Smort-api.Extensions/Migrate.sql";
+        public static string SqlFile = "./Migrate.sql";
 
         public static void MigrateDatabase(this IApplicationBuilder app, IConfiguration configuration)
         {

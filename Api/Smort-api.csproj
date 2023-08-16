@@ -26,6 +26,13 @@
 
   <ItemGroup>
     <Folder Include="Logs\" />
+    <Folder Include="Videos\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Migrate.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

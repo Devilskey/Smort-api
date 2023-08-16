@@ -10,6 +10,9 @@ using System.Security.Claims;
 
 namespace Tiktok_api.Controllers
 {
+    //When i made this only god and i knew how it worked.
+    //Now only god knows
+
     [ApiController]
     public class Users : ControllerBase
     {
@@ -66,7 +69,7 @@ namespace Tiktok_api.Controllers
                 //Insert New Username
                 using MySqlCommand GetUserNameAmount = new MySqlCommand();
 
-                GetUserNameAmount.CommandText = "INSERT INTO Username_Counter (Username, Amount, Created_At, Deleted_At, Updated_At) VALUES (@Username, @Amount, @Created_At, @Deleted_At, @Update_At);";
+                GetUserNameAmount.CommandText = "INSERT INTO Username_Counter (Username, Amount, Created_At, Updated_At) VALUES (@Username, @Amount, @Created_At, @Update_At);";
 
                 GetUserNameAmount.Parameters.AddWithValue("@Username", $"{newUser.Username}");
                 GetUserNameAmount.Parameters.AddWithValue("@Amount", 0);
@@ -618,8 +621,8 @@ namespace Tiktok_api.Controllers
 
             using MySqlCommand GetDataUser = new MySqlCommand();
 
-            GetDataUser.CommandText = "SELECT Profile_Picture, Username FROM Users_Public WHERE Id=@id;";
-            GetDataUser.Parameters.AddWithValue("Id", userData);
+            GetDataUser.CommandText = "SELECT Profile_Picture, Username FROM Users_Public WHERE Id=@Id;";
+            GetDataUser.Parameters.AddWithValue("@Id", userData);
 
             using (DatabaseHandler databaseHandler = new DatabaseHandler())
             {
