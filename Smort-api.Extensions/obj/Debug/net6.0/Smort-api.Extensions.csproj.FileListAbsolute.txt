@@ -15,4 +15,3 @@ C:\Users\ecola\Documents\gitkraken\Smort-api\Smort-api.Extensions\obj\Debug\net6
 C:\Users\ecola\Documents\gitkraken\Smort-api\Smort-api.Extensions\obj\Debug\net6.0\refint\Smort-api.Extensions.dll
 C:\Users\ecola\Documents\gitkraken\Smort-api\Smort-api.Extensions\obj\Debug\net6.0\Smort-api.Extensions.pdb
 C:\Users\ecola\Documents\gitkraken\Smort-api\Smort-api.Extensions\obj\Debug\net6.0\ref\Smort-api.Extensions.dll
-C:\Users\ecola\Documents\gitkraken\Smort-api\Smort-api.Extensions\bin\Debug\net6.0\Migrate.sql
