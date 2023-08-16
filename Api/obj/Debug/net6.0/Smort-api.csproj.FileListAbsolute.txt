@@ -1,6 +1,5 @@
 C:\Users\ecola\Documents\gitkraken\Smort-api\Api\bin\Debug\net6.0\appsettings.Development.json
 C:\Users\ecola\Documents\gitkraken\Smort-api\Api\bin\Debug\net6.0\appsettings.json
-C:\Users\ecola\Documents\gitkraken\Smort-api\Api\bin\Debug\net6.0\BlackList.Json
 C:\Users\ecola\Documents\gitkraken\Smort-api\Api\bin\Debug\net6.0\JWTsettings.json
 C:\Users\ecola\Documents\gitkraken\Smort-api\Api\bin\Debug\net6.0\serilog.json
 C:\Users\ecola\Documents\gitkraken\Smort-api\Api\bin\Debug\net6.0\Smort-api.exe
@@ -108,3 +107,4 @@ C:\Users\ecola\Documents\gitkraken\Smort-api\Api\bin\Debug\net6.0\Logs\Smorts-20
 C:\Users\ecola\Documents\gitkraken\Smort-api\Api\bin\Debug\net6.0\Logs\Smorts-20230813.json
 C:\Users\ecola\Documents\gitkraken\Smort-api\Api\bin\Debug\net6.0\Migrate.sql
 C:\Users\ecola\Documents\gitkraken\Smort-api\Api\bin\Debug\net6.0\Logs\Smorts-20230814.json
+C:\Users\ecola\Documents\gitkraken\Smort-api\Api\bin\Debug\net6.0\Logs\Smorts-20230816.json

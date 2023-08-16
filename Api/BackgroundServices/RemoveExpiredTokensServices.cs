@@ -28,16 +28,19 @@ namespace Tiktok_api.BackgroundServices
 
             while (!stoppingToken.IsCancellationRequested)
             {
-                 foreach (JWTtokenBlacklistItem blacklistItem in JWTTokenHandler.BlackList!)
-                 {
-                     if (blacklistItem.ExpireTime < DateTime.Now)
-                     {
-                        blacklistItemsToRemove.Add(blacklistItem);
-                     }
-                 }
-                foreach (JWTtokenBlacklistItem blacklistItem in blacklistItemsToRemove)
+                if (JWTTokenHandler.BlackList != null)
                 {
-                    JWTTokenHandler.BlackList.Remove(blacklistItem);
+                    foreach (JWTtokenBlacklistItem blacklistItem in JWTTokenHandler.BlackList!)
+                    {
+                        if (blacklistItem.ExpireTime < DateTime.Now)
+                        {
+                            blacklistItemsToRemove.Add(blacklistItem);
+                        }
+                    }
+                    foreach (JWTtokenBlacklistItem blacklistItem in blacklistItemsToRemove)
+                    {
+                        JWTTokenHandler.BlackList.Remove(blacklistItem);
+                    }
                 }
                 JWTTokenHandler.WriteBlackList();
                 await Task.Delay(TimeSpan.FromHours(1), stoppingToken);
