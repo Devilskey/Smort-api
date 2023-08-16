@@ -1,0 +1,7 @@
+{
+  "JWTSettings": {
+    "Issuer": "http://localhost",
+    "Audience": "http://localhost",
+    "Key": "IWANTTOSETHERAINBOWHIGHINTHESKYIWANTTOSOYOUANDMEONABIRDFLYAWAY"
+  }
+}

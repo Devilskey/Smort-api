@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "4sYLsFBSe7sNikxYrMIaOF0XIk8VUttAmH4/KsqCC22da34ruTz4NEApDeU0s7tBMOhE8FdFw15Cs6G2c9bywA==",
+  "dgSpecHash": "nJR/nn3YLIpAzxi6A41qJ/wPH0BCRPAK68RBjT34qjBPeyQrvPkjSx04BwMi3ROJIhUzqLHpyC0/+3GIQNMMYA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\ecola\\Documents\\gitkraken\\Smort-api\\UnitTest\\UnitTest.csproj",
+  "projectFilePath": "C:\\Users\\ecola\\Documents\\gitkraken\\Smort-api\\UnitTest\\Smort-api-UnitTest.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\ecola\\.nuget\\packages\\coverlet.collector\\3.2.0\\coverlet.collector.3.2.0.nupkg.sha512",
     "C:\\Users\\ecola\\.nuget\\packages\\microsoft.codecoverage\\17.5.0\\microsoft.codecoverage.17.5.0.nupkg.sha512",
