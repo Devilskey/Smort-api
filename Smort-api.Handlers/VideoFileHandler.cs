@@ -16,7 +16,6 @@ namespace Smort_api.Handlers
 
             if (!Directory.Exists($"./Videos/{id}")) 
                 Directory.CreateDirectory($"./Videos/{id}");
-            
 
             using (FileStream video = new FileStream($"./Videos/{id}/{filename}", FileMode.Create))
             {

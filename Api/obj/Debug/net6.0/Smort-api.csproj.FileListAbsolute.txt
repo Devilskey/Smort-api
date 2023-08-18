@@ -108,3 +108,5 @@ C:\Users\ecola\Documents\gitkraken\Smort-api\Api\bin\Debug\net6.0\Logs\Smorts-20
 C:\Users\ecola\Documents\gitkraken\Smort-api\Api\bin\Debug\net6.0\Migrate.sql
 C:\Users\ecola\Documents\gitkraken\Smort-api\Api\bin\Debug\net6.0\Logs\Smorts-20230814.json
 C:\Users\ecola\Documents\gitkraken\Smort-api\Api\bin\Debug\net6.0\Logs\Smorts-20230816.json
+C:\Users\ecola\Documents\gitkraken\Smort-api\Api\bin\Debug\net6.0\BlackList.json
+C:\Users\ecola\Documents\gitkraken\Smort-api\Api\bin\Debug\net6.0\Logs\Smorts-20230818.json
