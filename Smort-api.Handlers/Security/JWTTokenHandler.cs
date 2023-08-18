@@ -54,7 +54,7 @@ namespace Smort_api.Handlers
             SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor()
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddHours(80000),
+                Expires = DateTime.Now.AddHours(8),
                 Issuer = "http://localhost",
                 Audience = "http://localhost",
                 SigningCredentials = Credentials
