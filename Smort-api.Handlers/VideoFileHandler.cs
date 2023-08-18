@@ -11,10 +11,11 @@ namespace Smort_api.Handlers
     {
         public static void SaveVideo(byte[] videoBytes, string filename, string id)
         {
-            if (!Directory.Exists($"./Videos/{id}")) { 
-                Directory.CreateDirectory($"./Videos/{id}");
-            }
+            if (!Directory.Exists($"./Videos"))
+                Directory.CreateDirectory($"./Videos");
 
+            if (!Directory.Exists($"./Videos/{id}")) 
+                Directory.CreateDirectory($"./Videos/{id}");
 
             using (FileStream video = new FileStream($"./Videos/{id}/{filename}", FileMode.Create))
             {
