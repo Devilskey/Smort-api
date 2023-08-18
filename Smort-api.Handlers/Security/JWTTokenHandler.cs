@@ -22,6 +22,9 @@ namespace Smort_api.Handlers
 
         public static bool IsBlacklisted(string token)
         {
+            if (BlackList == null) 
+                return false;
+
             foreach (JWTtokenBlacklistItem blacklistItem in BlackList!)
             {
                 if(blacklistItem.Token == token)
@@ -71,7 +74,6 @@ namespace Smort_api.Handlers
             }
             catch (FileNotFoundException ex)
             {
-                Console.WriteLine($"{ex}, BlackList file added");
                 File.WriteAllText("BlackList.json", "[]");
                 return null;
             }
