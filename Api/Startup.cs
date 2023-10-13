@@ -22,6 +22,15 @@ namespace Tiktok_api
         {
             services.AddControllers();
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy("anyCors", Policy =>
+                    Policy.AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader());
+            });
+
+
             services.AddAuthentication(config =>
             {
                 config.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -57,6 +66,8 @@ namespace Tiktok_api
         }
         public void Configure(IApplicationBuilder app)
         {
+            app.UseCors("anyCors");
+
             app.UseSwaggerDocumentation();
 
             app.UseSerilogRequestLogging();
@@ -72,11 +83,6 @@ namespace Tiktok_api
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapGet("Video/GetVideosMap", () =>
-                {
-                    var filestream = File.OpenRead("./Videos/2023-07-23-17-08-42.mkv");
-                    return Results.File(filestream, contentType: "video/mkv", enableRangeProcessing: true);
-                });
             });
         }
     }
