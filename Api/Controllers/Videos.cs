@@ -81,7 +81,8 @@ namespace Tiktok_api.Controllers
         public Task<string> GetVideosList()
         {
             using MySqlCommand getRandomVideos = new MySqlCommand();
-            getRandomVideos.CommandText = "SELECT Id, Title, Description, Created_At FROM Video ORDER BY RAND() LIMIT 5;";
+            getRandomVideos.CommandText = "SELECT Video.Id, Video.Title, Video.Description, Video.User_Id, Users_Public.Username, Video.Created_At " +
+                "FROM Video INNER JOIN Users_Public ON Video.User_Id = Users_Public.Id ORDER BY RAND() LIMIT 5;";
 
             using (DatabaseHandler databaseHandler = new DatabaseHandler())
             {
@@ -136,6 +137,39 @@ namespace Tiktok_api.Controllers
 
                 var filestream = System.IO.File.OpenRead(path[0].File_Location!);
                 return File(filestream, contentType: "video/mkv", enableRangeProcessing: true);
+
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex.Message);
+                return BadRequest();
+            }
+        }
+
+        /// <summary>
+        /// Streams videos to an html element or makes it so that you can download the video
+        /// </summary>
+        /// <param name="videoId"></param>
+        /// <returns></returns>
+        [Route("Video/GetThumbnail")]
+        [HttpGet]
+        public ActionResult? GetThumbnail(int videoId)
+        {
+            try
+            {
+                using MySqlCommand GetVideoPath = new MySqlCommand();
+
+                GetVideoPath.CommandText = "SELECT File_Location FROM File WHERE Id=(SELECT File_Id FROM Video WHERE Id=@Id);";
+                GetVideoPath.Parameters.AddWithValue("@Id", $"{videoId}");
+
+                using DatabaseHandler databaseHandler = new DatabaseHandler();
+
+                string json = databaseHandler.Select(GetVideoPath);
+
+                VideoPathData[] path = JsonConvert.DeserializeObject<VideoPathData[]>(json)!;
+
+                var filestream = System.IO.File.OpenRead(path[0].File_Location!);
+                return File(filestream, contentType: "Image/png", enableRangeProcessing: true);
 
             }
             catch (Exception ex)

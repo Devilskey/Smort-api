@@ -1,12 +1,15 @@
 {
   "version": 2,
-  "dgSpecHash": "0IQNFobgM+txf6eDVIPe5cBLn5IylRjYxUv4eNwDfWQN4lMrs/AcOSM+NGfxsF8U84usRpUHl0Daps8WcDlRMg==",
+  "dgSpecHash": "x4MvwiMa/K4+mHYKJAZRmoK1AR3wjf2VU5wvFNrZracH0j511D5hJwiKpdDKcu8b0bDPpzzv/A8dJo0FeTOW4w==",
   "success": true,
   "projectFilePath": "C:\\Users\\ecola\\Documents\\gitkraken\\Smort-api\\Smort-api.Object\\Smort-api.Objects.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\ecola\\.nuget\\packages\\microsoft.aspnetcore.http.features\\5.0.17\\microsoft.aspnetcore.http.features.5.0.17.nupkg.sha512",
     "C:\\Users\\ecola\\.nuget\\packages\\microsoft.extensions.primitives\\5.0.1\\microsoft.extensions.primitives.5.0.1.nupkg.sha512",
-    "C:\\Users\\ecola\\.nuget\\packages\\system.io.pipelines\\5.0.2\\system.io.pipelines.5.0.2.nupkg.sha512"
+    "C:\\Users\\ecola\\.nuget\\packages\\system.io.pipelines\\5.0.2\\system.io.pipelines.5.0.2.nupkg.sha512",
+    "C:\\Users\\ecola\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\6.0.25\\microsoft.windowsdesktop.app.ref.6.0.25.nupkg.sha512",
+    "C:\\Users\\ecola\\.nuget\\packages\\microsoft.netcore.app.ref\\6.0.25\\microsoft.netcore.app.ref.6.0.25.nupkg.sha512",
+    "C:\\Users\\ecola\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\6.0.25\\microsoft.aspnetcore.app.ref.6.0.25.nupkg.sha512"
   ],
   "logs": []
 }
