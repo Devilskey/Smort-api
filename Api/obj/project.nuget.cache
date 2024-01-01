@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "cAFLsSB4hW9APq7ATL4TkeYm4Bny2bwkUm7Gp4oswMiwnvAxBimRrtZfisJtyswYJmKxP9Dx1i7N3GSfr2LRwA==",
+  "dgSpecHash": "JlKk7CU5iqcjM0FFDuRf+UU3GDoYJy8dJ0eh2dcNZQmf1p5i5Y9IS5lGLNcbRzXjTWnutxSaq2uHtWiD/1W9Sg==",
   "success": true,
   "projectFilePath": "C:\\Users\\ecola\\Documents\\gitkraken\\Smort-api\\Api\\Smort-api.csproj",
   "expectedPackageFiles": [
@@ -138,7 +138,11 @@
     "C:\\Users\\ecola\\.nuget\\packages\\system.threading.timer\\4.3.0\\system.threading.timer.4.3.0.nupkg.sha512",
     "C:\\Users\\ecola\\.nuget\\packages\\system.windows.extensions\\4.7.0\\system.windows.extensions.4.7.0.nupkg.sha512",
     "C:\\Users\\ecola\\.nuget\\packages\\system.xml.readerwriter\\4.3.0\\system.xml.readerwriter.4.3.0.nupkg.sha512",
-    "C:\\Users\\ecola\\.nuget\\packages\\system.xml.xdocument\\4.3.0\\system.xml.xdocument.4.3.0.nupkg.sha512"
+    "C:\\Users\\ecola\\.nuget\\packages\\system.xml.xdocument\\4.3.0\\system.xml.xdocument.4.3.0.nupkg.sha512",
+    "C:\\Users\\ecola\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\6.0.25\\microsoft.windowsdesktop.app.ref.6.0.25.nupkg.sha512",
+    "C:\\Users\\ecola\\.nuget\\packages\\microsoft.netcore.app.ref\\6.0.25\\microsoft.netcore.app.ref.6.0.25.nupkg.sha512",
+    "C:\\Users\\ecola\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\6.0.25\\microsoft.aspnetcore.app.ref.6.0.25.nupkg.sha512",
+    "C:\\Users\\ecola\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\6.0.25\\microsoft.netcore.app.host.win-x64.6.0.25.nupkg.sha512"
   ],
   "logs": [
     {

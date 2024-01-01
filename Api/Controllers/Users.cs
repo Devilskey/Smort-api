@@ -665,8 +665,10 @@ namespace Tiktok_api.Controllers
         /// <returns></returns>
         [Route("users/GetUserDataProfile")]
         [HttpGet]
-        public Task<string> GetUserDataProfile(UserData userData)
+        public Task<string> GetUserDataProfile(int id)
         {
+
+
             //TODO
             return Task.FromResult($"Needs To Be added when videos are done");
         }

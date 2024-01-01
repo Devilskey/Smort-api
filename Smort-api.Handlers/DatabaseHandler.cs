@@ -27,7 +27,7 @@ namespace Smort_api.Handlers
         {
             Username = Environment.GetEnvironmentVariable("UsernameDb") ?? "root";
             Password = Environment.GetEnvironmentVariable("PasswordDb") ?? "password";
-            Server = Environment.GetEnvironmentVariable("ServerDb") ?? "10.0.0.12";
+            Server = Environment.GetEnvironmentVariable("ServerDb") ?? "localhost";
             DatabaseName = Environment.GetEnvironmentVariable("DatabaseName") ?? "SmortTestDb";
 
             if (Username == "" || Password == "" || Server == "" || DatabaseName == "")
