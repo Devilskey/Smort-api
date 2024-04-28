@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Smort_api.Object.Videos
 {
-    public class VideoPathData
+    public class FilePathData
     {
         public string? File_Location { get; set; }
     }
