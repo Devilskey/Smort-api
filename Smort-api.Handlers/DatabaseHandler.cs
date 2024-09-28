@@ -31,7 +31,7 @@ namespace Smort_api.Handlers
             DatabaseName = Environment.GetEnvironmentVariable("DatabaseName") ?? "SmortTestDb";
 
             if (Username == "" || Password == "" || Server == "" || DatabaseName == "")
-                System.Console.WriteLine("No Env found");
+                Console.WriteLine("No Env found");
 
             string connectionString = $"server={Server};port=3306;uid={Username};pwd={Password};database={DatabaseName};";
             connection = new MySqlConnection(connectionString);
