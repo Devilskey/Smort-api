@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "GmiA7EathYAHws1xNau9fTT7nlyCVrnMnlJm233Ido98hEl6CoDKC8p3aqlnFg5q7NB3PuZX5l+zBcF1yNYWYQ==",
+  "dgSpecHash": "AgJM9cZkXUl7qczSlsSKR/l6iYR6EPlx/3NZwauBcj7MtyiBFLTmzyooWX7qh8gR8UWSEFd1mhjRm3mjBl+BkQ==",
   "success": true,
   "projectFilePath": "C:\\Users\\ecola\\Documents\\gitkraken\\Smort-api\\Smort-api.Handlers\\Smort-api.Handlers.csproj",
   "expectedPackageFiles": [
@@ -46,7 +46,10 @@
     "C:\\Users\\ecola\\.nuget\\packages\\system.text.json\\7.0.1\\system.text.json.7.0.1.nupkg.sha512",
     "C:\\Users\\ecola\\.nuget\\packages\\system.threading.tasks\\4.3.0\\system.threading.tasks.4.3.0.nupkg.sha512",
     "C:\\Users\\ecola\\.nuget\\packages\\system.threading.tasks.extensions\\4.5.4\\system.threading.tasks.extensions.4.5.4.nupkg.sha512",
-    "C:\\Users\\ecola\\.nuget\\packages\\system.windows.extensions\\4.7.0\\system.windows.extensions.4.7.0.nupkg.sha512"
+    "C:\\Users\\ecola\\.nuget\\packages\\system.windows.extensions\\4.7.0\\system.windows.extensions.4.7.0.nupkg.sha512",
+    "C:\\Users\\ecola\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\6.0.25\\microsoft.windowsdesktop.app.ref.6.0.25.nupkg.sha512",
+    "C:\\Users\\ecola\\.nuget\\packages\\microsoft.netcore.app.ref\\6.0.25\\microsoft.netcore.app.ref.6.0.25.nupkg.sha512",
+    "C:\\Users\\ecola\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\6.0.25\\microsoft.aspnetcore.app.ref.6.0.25.nupkg.sha512"
   ],
   "logs": []
 }

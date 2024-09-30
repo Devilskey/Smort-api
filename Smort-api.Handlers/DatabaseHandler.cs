@@ -27,11 +27,11 @@ namespace Smort_api.Handlers
         {
             Username = Environment.GetEnvironmentVariable("UsernameDb") ?? "root";
             Password = Environment.GetEnvironmentVariable("PasswordDb") ?? "password";
-            Server = Environment.GetEnvironmentVariable("ServerDb") ?? "10.0.0.12";
+            Server = Environment.GetEnvironmentVariable("ServerDb") ?? "localhost";
             DatabaseName = Environment.GetEnvironmentVariable("DatabaseName") ?? "SmortTestDb";
 
             if (Username == "" || Password == "" || Server == "" || DatabaseName == "")
-                System.Console.WriteLine("No Env found");
+                Console.WriteLine("No Env found");
 
             string connectionString = $"server={Server};port=3306;uid={Username};pwd={Password};database={DatabaseName};";
             connection = new MySqlConnection(connectionString);

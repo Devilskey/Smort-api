@@ -17,7 +17,7 @@ namespace Smort_api.Handlers
             if (!Directory.Exists($"./Videos/{id}")) 
                 Directory.CreateDirectory($"./Videos/{id}");
 
-            using (FileStream video = new FileStream($"./Videos/{id}/{filename}", FileMode.Create))
+            using (FileStream video = new FileStream($"./Videos/{id}/{filename}.mkv", FileMode.Create))
             {
                 using (BinaryWriter binaryWriter = new BinaryWriter(video, System.Text.Encoding.Default, false))
                 {
