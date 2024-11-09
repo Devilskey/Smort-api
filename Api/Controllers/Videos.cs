@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 using Smort_api.Handlers;
@@ -20,6 +19,8 @@ namespace Tiktok_api.Controllers
             Logger = logger;
         }
 
+
+
         /// <summary>
         /// Receives a byte array and saves it as a video
         /// </summary>
@@ -30,72 +31,84 @@ namespace Tiktok_api.Controllers
         [HttpPost]
         public Task<string> UploadVideo(VideoUploadData? Data)
         {
-            Guid videoSavedId = Guid.NewGuid();
 
             string token = HttpContext.Request.Headers["Authorization"]!;
 
             if (JWTTokenHandler.IsBlacklisted(token))
                 return Task.FromResult("token is blacklisted");
 
-            if (Data == null)
+            if (Data == null || Data.MediaData == null || Data.ChunkNumber == null || Data.TotalChunks == null)
                 return Task.FromResult("Video Failed to save");
 
-            Data.FileName = $"{videoSavedId}";
 
-            if (Data.MediaData == null)
-                return Task.FromResult("No Video");
+            Data.FileName = $"{Data.GUIDObjSender}-${Data.ChunkNumber}";
 
             string id = User.FindFirstValue("Id");
 
-            using DatabaseHandler databaseHandler = new DatabaseHandler();
+            VideoFileHandler.SaveVideoChunk(Data.MediaData, Data.FileName);
+            Console.WriteLine(Data.FileName);
 
-            int ThumbnailID = 0;
+            if (VideoFileHandler.AreAllChunksIn($"{Data.GUIDObjSender}-$", (int)(Data.TotalChunks - 1)))
+            {
+                byte[] videoBytes = new byte[0];
 
-            //Creates File
-            if (Data.Thumbnail != null) { 
+                for (int i = 0; i < Data.TotalChunks; i++)
+                {
+                    var tempFileName = $"{Data.GUIDObjSender}-${i}";
+                    videoBytes = videoBytes.Concat(VideoFileHandler.GetChunkFileData(tempFileName)).ToArray();
+                }
+
+                Guid videoSavedId = Guid.NewGuid();
+
+                Data.FileName = videoSavedId.ToString();
+
+                VideoFileHandler.SaveVideo(videoBytes, Data.FileName, id);
+
+                using DatabaseHandler databaseHandler = new DatabaseHandler();
+
+                int ThumbnailID = 0;
+
                 MySqlCommand GetAndAddProfilePicture = new MySqlCommand();
                 GetAndAddProfilePicture.CommandText =
                     @"INSERT INTO File (File_Name, File_Location, Created_At) VALUES (@Name, @Location, @Created);
-                      SELECT LAST_INSERT_ID();";
+                          SELECT LAST_INSERT_ID();";
 
                 GetAndAddProfilePicture.Parameters.AddWithValue("@Name", $"{Data.FileName}.png");
                 GetAndAddProfilePicture.Parameters.AddWithValue("@Location", $"./Videos/{id}/{Data.FileName}.png");
                 GetAndAddProfilePicture.Parameters.AddWithValue("@Created", DateTime.Now);
 
                 ThumbnailID = databaseHandler.GetNumber(GetAndAddProfilePicture);
+                Logger.LogInformation("new id" + ThumbnailID.ToString());
 
                 //SaveThumbnail
                 ImageHandler.SaveThumbnail(Data.Thumbnail, $"{Data.FileName}.png", id.ToString());
+
+
+                using MySqlCommand InsertFileAndVideo = new MySqlCommand();
+
+                InsertFileAndVideo.CommandText =
+                    @"INSERT INTO File (File_Name, File_location, Created_At, Deleted_At) VALUES (@FileName, @FileLocation, @CreatedAt, @DeletedAt);
+                      INSERT INTO Video (User_Id, File_Id, Title, Description, Thumbnail, Created_At, Updated_At, Deleted_At) VALUES (@Id, LAST_INSERT_ID(), @Title, @Description, @Thumbnail, @CreatedAt, @UpdatedAt, @DeletedAt);";
+
+                InsertFileAndVideo.Parameters.AddWithValue("@FileName", $"{Data.FileName}.mkv");
+                InsertFileAndVideo.Parameters.AddWithValue("@Id", id);
+                InsertFileAndVideo.Parameters.AddWithValue("@FileLocation", $"./Videos/{id}/{Data.FileName}.mkv");
+                InsertFileAndVideo.Parameters.AddWithValue("@CreatedAt", DateTime.Now);
+                InsertFileAndVideo.Parameters.AddWithValue("@DeletedAt", DateTime.Now);
+                InsertFileAndVideo.Parameters.AddWithValue("@UpdatedAt", DateTime.Now);
+
+                InsertFileAndVideo.Parameters.AddWithValue("@Title", Data.Title);
+
+                Logger.LogInformation(ThumbnailID.ToString());
+
+                InsertFileAndVideo.Parameters.AddWithValue("@Thumbnail", ThumbnailID.ToString());
+
+                InsertFileAndVideo.Parameters.AddWithValue("@Description", Data.Description);
+
+                databaseHandler.EditDatabase(InsertFileAndVideo);
+
+                VideoFileHandler.TempFileCleanup($"{Data.GUIDObjSender}-$", (int)(Data.TotalChunks - 1));
             }
-
-
-            using MySqlCommand InsertFileAndVideo = new MySqlCommand();
-
-            InsertFileAndVideo.CommandText =
-                @"INSERT INTO File (File_Name, File_location, Created_At, Deleted_At) VALUES (@FileName, @FileLocation, @CreatedAt, @DeletedAt);
-                  INSERT INTO Video (User_Id, File_Id, Title, Description, Thumbnail, Created_At, Updated_At, Deleted_At) VALUES (@Id, LAST_INSERT_ID(), @Title, @Description, @Thumbnail, @CreatedAt, @UpdatedAt, @DeletedAt);";
-
-            InsertFileAndVideo.Parameters.AddWithValue("@FileName", $"{Data.FileName}.mkv");
-            InsertFileAndVideo.Parameters.AddWithValue("@Id", id);
-            InsertFileAndVideo.Parameters.AddWithValue("@FileLocation", $"./Videos/{id}/{Data.FileName}.mkv");
-            InsertFileAndVideo.Parameters.AddWithValue("@CreatedAt", DateTime.Now);
-            InsertFileAndVideo.Parameters.AddWithValue("@DeletedAt", DateTime.Now);
-            InsertFileAndVideo.Parameters.AddWithValue("@UpdatedAt", DateTime.Now);
-
-            InsertFileAndVideo.Parameters.AddWithValue("@Title", Data.Title);
-
-            Logger.LogInformation(ThumbnailID.ToString());
-
-            InsertFileAndVideo.Parameters.AddWithValue("@Thumbnail", ThumbnailID.ToString());
-
-            InsertFileAndVideo.Parameters.AddWithValue("@Description", Data.Description);
-
-            using MySqlCommand GetIdVideo = new MySqlCommand();
-
-            databaseHandler.EditDatabase(InsertFileAndVideo);
-
-            VideoFileHandler.SaveVideo(Data.MediaData, Data.FileName, id);
-
             return Task.FromResult("Video Saved");
         }
 

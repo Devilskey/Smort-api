@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Smort_api.Extensions;
@@ -62,6 +63,8 @@ namespace Tiktok_api
             services.AddEndpointsApiExplorer();
 
             services.AddSerilogLogging(Configuration);
+
+            services.AddKestrelOptions();
 
         }
         public void Configure(IApplicationBuilder app)

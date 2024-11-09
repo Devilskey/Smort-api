@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\ecola\\Documents\\gitkraken\\Smort-api\\UnitTest\\Smort-api-UnitTest.csproj": {}
+    "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api\\UnitTest\\Smort-api-UnitTest.csproj": {}
   },
   "projects": {
-    "C:\\Users\\ecola\\Documents\\gitkraken\\Smort-api\\UnitTest\\Smort-api-UnitTest.csproj": {
+    "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api\\UnitTest\\Smort-api-UnitTest.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\ecola\\Documents\\gitkraken\\Smort-api\\UnitTest\\Smort-api-UnitTest.csproj",
+        "projectUniqueName": "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api\\UnitTest\\Smort-api-UnitTest.csproj",
         "projectName": "Smort-api-UnitTest",
-        "projectPath": "C:\\Users\\ecola\\Documents\\gitkraken\\Smort-api\\UnitTest\\Smort-api-UnitTest.csproj",
-        "packagesPath": "C:\\Users\\ecola\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\ecola\\Documents\\gitkraken\\Smort-api\\UnitTest\\obj\\",
+        "projectPath": "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api\\UnitTest\\Smort-api-UnitTest.csproj",
+        "packagesPath": "C:\\Users\\DevAccount\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api\\UnitTest\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+          "E:\\Visual Studio IDE\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\ecola\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\DevAccount\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -39,6 +39,11 @@
           "warnAsError": [
             "NU1605"
           ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
         }
       },
       "frameworks": {
@@ -78,7 +83,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.400\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.400\\RuntimeIdentifierGraph.json"
         }
       }
     }

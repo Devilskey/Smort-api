@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Smort-api.Extensions")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+40dccd35f07de2ecbddf54e1a62405ab3693db36")]
 [assembly: System.Reflection.AssemblyProductAttribute("Smort-api.Extensions")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Smort-api.Extensions")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

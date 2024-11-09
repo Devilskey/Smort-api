@@ -8,4 +8,6 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = Smort-api-UnitTest
-build_property.ProjectDir = C:\Users\ecola\Documents\gitkraken\Smort-api\UnitTest\
+build_property.ProjectDir = C:\Users\DevAccount\Desktop\Projects\GitKraken\Smort-api\UnitTest\
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 
