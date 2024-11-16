@@ -26,9 +26,9 @@ namespace Smort_api.Handlers
         void Initialize()
         {
             Username = Environment.GetEnvironmentVariable("UsernameDb") ?? "root";
-            Password = Environment.GetEnvironmentVariable("PasswordDb") ?? "DmCm1ta2twnT!FIwntpvSl18fd(ds)!";
-            Server = Environment.GetEnvironmentVariable("ServerDb") ?? "192.168.192.2";
-            DatabaseName = Environment.GetEnvironmentVariable("DatabaseName") ?? "smortDatabase";
+            Password = Environment.GetEnvironmentVariable("PasswordDb") ?? "test";
+            Server = Environment.GetEnvironmentVariable("ServerDb") ?? "localhost";
+            DatabaseName = Environment.GetEnvironmentVariable("DatabaseName") ?? "smorttest";
 
             if (Username == "" || Password == "" || Server == "" || DatabaseName == "")
                 Console.WriteLine("No Env found");
