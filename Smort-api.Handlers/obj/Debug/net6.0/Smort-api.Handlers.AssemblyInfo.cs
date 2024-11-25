@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Smort-api.Handlers")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+bbfcb8a662010256a91d0ce4f8be573d0d4cd201")]
 [assembly: System.Reflection.AssemblyProductAttribute("Smort-api.Handlers")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Smort-api.Handlers")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

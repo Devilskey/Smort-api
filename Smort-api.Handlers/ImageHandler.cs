@@ -18,10 +18,9 @@ namespace Smort_api.Handlers
 
             using (FileStream Image = new FileStream($"./Videos/{id}/{filename}", FileMode.Create))
             {
-                using (BinaryWriter binaryWriter = new BinaryWriter(Image, System.Text.Encoding.Default, false))
-                {
-                    binaryWriter.Write(ImageBytes);
-                }
+
+                Image.Write(ImageBytes);
+                
             }
         }
 
