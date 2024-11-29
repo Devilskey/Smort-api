@@ -83,6 +83,8 @@ namespace Tiktok_api
             app.UseAuthentication();
             app.UseAuthorization();
 
+            app.LogApiInfo();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
