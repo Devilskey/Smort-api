@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS `Page_Views_Monthly`( `Id` integer PRIMARY KEY AUTO_I
 INSERT IGNORE INTO `Role` (Id, Name, Description) VALUES (1, "User", "Someone who has an account on the site");
 INSERT IGNORE INTO `Role` (Id, Name, Description) VALUES (2, "Creator", "Someone who Creates content");
 INSERT IGNORE INTO `Role` (Id, Name, Description) VALUES (3, "Admin", "Someone who has unlimited power");
-INSERT IGNORE INTO `File_Type` (Id, Type) VALUES (1, "post image");
-INSERT IGNORE INTO `File_Type` (Id, Type) VALUES (2, "thumbnail");
+INSERT IGNORE INTO `File_Type` (Id, Type) VALUES (1, "Post image");
+INSERT IGNORE INTO `File_Type` (Id, Type) VALUES (2, "Thumbnail");
 INSERT IGNORE INTO `File_Type` (Id, Type) VALUES (3, "Video");
-INSERT IGNORE INTO `File_Type` (Id, Type) VALUES (4, "Profile Picture");
+INSERT IGNORE INTO `File_Type` (Id, Type) VALUES (4, "Profile picture");
