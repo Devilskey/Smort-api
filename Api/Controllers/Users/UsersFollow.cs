@@ -105,10 +105,8 @@ namespace Tiktok_api.Controllers.Users
                     databaseHandler.EditDatabase(UnFollowUserCommand);
                 }
             }
-
             return Task.FromResult($"user Unfollowed");
         }
-
 
         /// <summary>
         /// Gives the followers amount of a user

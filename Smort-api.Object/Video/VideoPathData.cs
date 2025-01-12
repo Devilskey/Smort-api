@@ -8,6 +8,7 @@ namespace Smort_api.Object.Videos
 {
     public class FilePathData
     {
+
         public string? File_Location { get; set; }
     }
 }

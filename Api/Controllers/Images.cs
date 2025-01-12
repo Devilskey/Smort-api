@@ -88,8 +88,6 @@ namespace Tiktok_api.Controllers
 
                 FilePathData[] path = JsonConvert.DeserializeObject<FilePathData[]>(json)!;
 
-                Logger.LogInformation(path[0].File_Location);
-
                 var filestream = System.IO.File.OpenRead(path[0].File_Location!);
                 return File(filestream, contentType: "image/*", enableRangeProcessing: false);
 

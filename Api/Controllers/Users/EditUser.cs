@@ -6,6 +6,7 @@ using Smort_api.Handlers;
 using Smort_api.Object;
 using Smort_api.Object.Security;
 using Smort_api.Object.User;
+using Smort_api.Object.Videos;
 using System.Security.Claims;
 
 namespace Tiktok_api.Controllers.Users
@@ -29,60 +30,54 @@ namespace Tiktok_api.Controllers.Users
 
             string id = User.FindFirstValue("Id");
 
+            using MySqlCommand DeleteUserAndGetFilePath = new MySqlCommand();
 
-            using MySqlCommand DeleteUserPublic = new MySqlCommand();
+            DeleteUserAndGetFilePath.CommandText =
+                "SELECT File_location FROM File WHERE Id=(SELECT Profile_Picture FROM Users_Public WHERE Id=@id) UNION " +
+                "SELECT File_location FROM File WHERE Id=(SELECT File_Id FROM Image_Post WHERE User_Id=@id) UNION " +
+                "SELECT File_location FROM File WHERE Id=(SELECT File_Id FROM Video WHERE User_Id=@id) UNION " +
+                "SELECT File_location FROM File WHERE Id=(SELECT Thumbnail FROM Video WHERE User_Id=@id); " +
+                "DELETE FROM Users_Public WHERE Person_Id = @id; " +
+                "DELETE FROM Users_Private WHERE Id = @id; " +
+                "DELETE FROM Following WHERE User_Id_Followed = @id; " +
+                "DELETE FROM Following WHERE User_Id_Follower = @id; " +
+                "DELETE FROM Report_User WHERE User_Reported_Id = @id; " +
+                "DELETE FROM Report_User WHERE User_Reporter_Id = @id; " +
+                "UPDATE Reaction SET User_Id=null WHERE User_Id=@Id;" +
+                "DELETE FROM Reaction WHERE Content_Id=(SELECT Id FROM Video WHERE User_Id=@id); " +
+                "DELETE FROM Image_Post WHERE User_Id = @id; " +
+                "DELETE FROM Video WHERE User_Id = @id; ";
 
-            DeleteUserPublic.CommandText = "DELETE FROM Users_Public WHERE Person_Id = @id;";
-            DeleteUserPublic.Parameters.AddWithValue("@id", $"{id}");
-
-            using MySqlCommand DeleteUserPrivate = new MySqlCommand();
-
-            DeleteUserPrivate.CommandText = "DELETE FROM Users_Private WHERE Id = @id;";
-            DeleteUserPrivate.Parameters.AddWithValue("@id", $"{id}");
-
-            using MySqlCommand DeleteFollowed = new MySqlCommand();
-
-            DeleteFollowed.CommandText = "DELETE FROM Following WHERE User_Id_Followed = @id;";
-            DeleteFollowed.Parameters.AddWithValue("@id", $"{id}");
-
-            using MySqlCommand DeleteFollower = new MySqlCommand();
-
-            DeleteFollower.CommandText = "DELETE FROM Following WHERE User_Id_Follower = @id;";
-            DeleteFollower.Parameters.AddWithValue("@id", $"{id}");
-
-            using MySqlCommand DeleteReporter = new MySqlCommand();
-
-            DeleteReporter.CommandText = "DELETE FROM Report_User WHERE User_Reported_Id = @id;";
-            DeleteReporter.Parameters.AddWithValue("@id", $"{id}");
-
-            using MySqlCommand DeleteReported = new MySqlCommand();
-
-            DeleteReported.CommandText = "DELETE FROM Report_User WHERE User_Reporter_Id = @id;";
-            DeleteReported.Parameters.AddWithValue("@id", $"{id}");
+            DeleteUserAndGetFilePath.Parameters.AddWithValue("@id", $"{id}");
 
             using (DatabaseHandler databaseHandler = new DatabaseHandler())
             {
-                databaseHandler.EditDatabase(DeleteFollowed);
-                databaseHandler.EditDatabase(DeleteFollower);
-                databaseHandler.EditDatabase(DeleteReporter);
-                databaseHandler.EditDatabase(DeleteReported);
-                databaseHandler.EditDatabase(DeleteUserPublic);
-                databaseHandler.EditDatabase(DeleteUserPrivate);
+                string jsonFilePaths = databaseHandler.Select(DeleteUserAndGetFilePath);
+
+                Logger.LogInformation(jsonFilePaths);
+
+                var filePaths = JsonConvert.DeserializeObject<FilePathData[]>(jsonFilePaths);
+
+                foreach (var paths in filePaths)
+                {
+                    System.IO.File.Delete(paths.File_Location);
+                }
 
                 Logger.Log(LogLevel.Information, "USER DELETE");
             }
 
             JWTtokenBlacklistItem jwttokenBlacklistItem = new JWTtokenBlacklistItem();
 
-            jwttokenBlacklistItem.Token = token;
-            jwttokenBlacklistItem.ExpireTime = DateTime.Now.AddHours(8);
+            if (token != null && jwttokenBlacklistItem != null)
+            {
+                Logger.LogInformation($"TOKEN = {token}");
+                jwttokenBlacklistItem.Token = token;
+                jwttokenBlacklistItem.ExpireTime = DateTime.Now.AddHours(8);
 
-            Logger.LogInformation(token);
-            Logger.LogInformation(jwttokenBlacklistItem.Token);
 
-
-            JWTTokenHandler.BlackList!.Add(jwttokenBlacklistItem);
-            JWTTokenHandler.WriteBlackList();
+                JWTTokenHandler.BlackList!.Add(jwttokenBlacklistItem);
+                JWTTokenHandler.WriteBlackList();
+            }
 
             return Task.FromResult("User Removed");
         }
@@ -95,7 +90,7 @@ namespace Tiktok_api.Controllers.Users
         [Authorize]
         [Route("users/ChangePassword")]
         [HttpPut]
-        public Task<string> ChangePassword(string newPassword)
+        public Task<string> ChangePassword([FromBody] ChangePasswordObject newPassword)
         {
             string token = HttpContext.Request.Headers["Authorization"]!;
 
@@ -104,7 +99,7 @@ namespace Tiktok_api.Controllers.Users
 
             string id = User.FindFirstValue("Id");
 
-            string[] EncryptedPassword = EncryptionHandler.HashAndSaltData(newPassword);
+            string[] EncryptedPassword = EncryptionHandler.HashAndSaltData(newPassword.newPassword);
 
             using MySqlCommand UpdatePassword = new MySqlCommand();
 
@@ -203,20 +198,60 @@ namespace Tiktok_api.Controllers.Users
             if (JWTTokenHandler.IsBlacklisted(token))
                 return Task.FromResult("token is blacklisted");
 
-            string id = User.FindFirstValue("Id");
+            string Userid = User.FindFirstValue("Id");
 
 
-            using MySqlCommand UpdatePassword = new MySqlCommand();
+            using DatabaseHandler databaseHandler = new DatabaseHandler();
 
-            UpdatePassword.CommandText = "UPDATE Users_Public SET Username=@Username WHERE Id=@Id";
+            using MySqlCommand CheckUsernameExist = new MySqlCommand();
 
-            UpdatePassword.Parameters.AddWithValue("@Username", newUsername);
-            UpdatePassword.Parameters.AddWithValue("@Id", id);
+            CheckUsernameExist.CommandText = "SELECT COUNT(*) FROM Username_Counter WHERE Username=@Username;";
+            CheckUsernameExist.Parameters.AddWithValue("@Username", $"{newUsername}");
 
-            using (DatabaseHandler databaseHandler = new DatabaseHandler())
+            CheckUsernameExist.Dispose();
+
+            int Exist = databaseHandler.GetNumber(CheckUsernameExist);
+            int newNumber = 0;
+            using MySqlCommand GetUserNameAmount = new MySqlCommand();
+
+            if (Exist == 0)
             {
-                databaseHandler.EditDatabase(UpdatePassword);
+                //Insert New Username
+
+                GetUserNameAmount.CommandText = "INSERT INTO Username_Counter (Username, Amount, Created_At, Updated_At) VALUES (@Username, @Amount, @Created_At, @Update_At);";
+
+                GetUserNameAmount.Parameters.AddWithValue("@Username", $"{newUsername}");
+                GetUserNameAmount.Parameters.AddWithValue("@Amount", 0);
+                GetUserNameAmount.Parameters.AddWithValue("@Created_At", DateTime.Now);
+                GetUserNameAmount.Parameters.AddWithValue("@Deleted_At", DateTime.Now);
+                GetUserNameAmount.Parameters.AddWithValue("@Update_At", DateTime.Now);
+
+                databaseHandler.EditDatabase(GetUserNameAmount);
             }
+            else
+            {
+
+                GetUserNameAmount.CommandText = "SELECT Amount FROM Username_Counter WHERE Username=@Username;";
+
+                GetUserNameAmount.Parameters.AddWithValue("@Username", $"{newUsername}");
+
+                newNumber = databaseHandler.GetNumber(GetUserNameAmount);
+            }
+            GetUserNameAmount.Dispose();
+
+
+            using MySqlCommand UpdateUsername = new MySqlCommand();
+            UpdateUsername.CommandText = 
+                "UPDATE Users_Public SET Username=@Username WHERE Id=@Id" +
+                "UPDATE Username_Counter SET Amount=@Amount, Updated_At=@UpdatedAt WHERE Username=@Username;";
+
+            UpdateUsername.Parameters.AddWithValue("@UpdatedAt", DateTime.Now);
+            UpdateUsername.Parameters.AddWithValue("@Amount", newNumber + 1);
+            UpdateUsername.Parameters.AddWithValue("@Username", $"{newUsername}#{(newNumber + 1).ToString("D4")}");
+            UpdateUsername.Parameters.AddWithValue("@Id", Userid);
+
+            databaseHandler.EditDatabase(UpdateUsername);
+            UpdateUsername.Dispose();
 
             return Task.FromResult($"Username Updated");
         }

@@ -219,3 +219,8 @@ C:\Users\DevAccount\Desktop\Projects\GitKraken\Smort-api\Api\bin\Debug\net6.0\lo
 C:\Users\DevAccount\Desktop\Projects\GitKraken\Smort-api\Api\bin\Debug\net6.0\logs\Smorts-20241027.json
 C:\Users\DevAccount\Desktop\Projects\GitKraken\Smort-api\Api\bin\Debug\net6.0\logs\Smorts-20241103.json
 C:\Users\DevAccount\Desktop\Projects\GitKraken\Smort-api\Api\bin\Debug\net6.0\logs\Smorts-20241109.json
+C:\Users\DevAccount\Desktop\Projects\GitKraken\Smort-api\Api\bin\Debug\net6.0\logs\Smorts-20241110.json
+C:\Users\DevAccount\Desktop\Projects\GitKraken\Smort-api\Api\bin\Debug\net6.0\logs\Smorts-20241116.json
+C:\Users\DevAccount\Desktop\Projects\GitKraken\Smort-api\Api\bin\Debug\net6.0\logs\Smorts-20241117.json
+C:\Users\DevAccount\Desktop\Projects\GitKraken\Smort-api\Api\bin\Debug\net6.0\logs\Smorts-20241129.json
+C:\Users\DevAccount\Desktop\Projects\GitKraken\Smort-api\Api\bin\Debug\net6.0\logs\Smorts-20241201.json
