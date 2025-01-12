@@ -2,6 +2,7 @@
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Smort_api.Object;
+using Smort_api.Object.Database;
 using Smort_api.Object.Security;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
@@ -12,13 +13,13 @@ namespace Smort_api.Handlers
 {
     public static class JWTTokenHandler
     {
-        private const string TokenSecret = "IWANTTOSETHERAINBOWHIGHINTHESKYIWANTTOSOYOUANDMEONABIRDFLYAWAY";
+        private static string TokenSecret = Environment.GetEnvironmentVariable("SecretTokenJWT") ?? "IWANTTOSETHERAINBOWHIGHINTHESKYIWANTTOSOYOUANDMEONABIRDFLYAWAY";
         private static readonly TimeSpan TokenLifeTime = TimeSpan.FromHours(8);
 
         /// <summary>
         /// List of tokens from deleted accounts
         /// </summary>
-        public static List<JWTtokenBlacklistItem>? BlackList { get; set; } = new List<JWTtokenBlacklistItem>();
+        public static List<JWTtokenBlacklistItem> BlackList { get; set; } = new List<JWTtokenBlacklistItem>();
 
         public static bool IsBlacklisted(string token)
         {
@@ -36,7 +37,7 @@ namespace Smort_api.Handlers
         }
 
 
-        public static string GenerateToken(LoginObject loginDetails, string id)
+        public static string GenerateToken(LoginObject loginDetails, string id, Roll roll)
         {
             JwtSecurityTokenHandler tokenhandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(TokenSecret);
@@ -46,6 +47,7 @@ namespace Smort_api.Handlers
                 new("Id", id!),
                 new(JwtRegisteredClaimNames.Email, loginDetails.Email!),
                 new("TimeCreated", DateTime.Now.ToString()),
+                new("Roll", roll.ToString()),
             };
             SymmetricSecurityKey securiyKey= new SymmetricSecurityKey(key);
 

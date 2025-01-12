@@ -14,7 +14,8 @@ namespace Smort_api.Extensions
         public static void LogApiInfo (this IApplicationBuilder app)
         {
             Log.Information(
-                "test"
+                "Version first version Made 7-7-2023 V0.01 \n" +
+                "Version Last Made 11-1-2025 V0.5"
                 );
         }
     }

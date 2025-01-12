@@ -3,6 +3,7 @@ using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 using Smort_api.Handlers;
 using Smort_api.Object;
+using Smort_api.Object.Database;
 using Smort_api.Object.Security;
 
 namespace Tiktok_api.Controllers.Users
@@ -93,6 +94,21 @@ namespace Tiktok_api.Controllers.Users
 
             int FileId = databaseHandler.GetNumber(GetAndAddProfilePicture);
 
+            if (newUser.size.Width > 500)
+            {
+                float percentageLesser = (500f / newUser.size.Width);
+
+                int newWidth = (int)(percentageLesser * newUser.size.Width);
+                int newHeight = (int)(percentageLesser * newUser.size.Width);
+                Console.WriteLine(newHeight);
+
+                var ResizedFilePost = ImageHandler.ChangeSizeOfImage(newUser.ProfilePicture, newWidth, newHeight);
+
+                if (ResizedFilePost != null)
+                {
+                    newUser.ProfilePicture = ResizedFilePost;
+                }
+            }
 
             ImageHandler.SaveProfilePictures(newUser.ProfilePicture, $"{ImageGUID}.png");
 
@@ -191,7 +207,7 @@ namespace Tiktok_api.Controllers.Users
 
             if (EncryptionHandler.VerifyData(Passwords[0], User.Password))
             {
-                string token = JWTTokenHandler.GenerateToken(User, id.ToString());
+                string token = JWTTokenHandler.GenerateToken(User, id.ToString(), Roll.User);
                 return Task.FromResult(token);
             }
 

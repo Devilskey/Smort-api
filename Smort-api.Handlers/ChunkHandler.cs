@@ -13,7 +13,6 @@ namespace Smort_api.Handlers
         private string _folderNameFiles = "";
         private string _extensionType = "";
 
-
         public ChunkHandler(string tempfolder, string filesFolder, string extensionType)
         {
             _folderNameTemp = tempfolder;

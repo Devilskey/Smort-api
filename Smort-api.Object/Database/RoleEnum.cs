@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace Smort_api.Object.Database
 {
-    public enum Role
+    public enum Roll
     {
         User = 1,
-        Create = 2,
+        Creator = 2,
         Admin = 3
     }
 }

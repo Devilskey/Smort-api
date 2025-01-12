@@ -28,6 +28,7 @@
   <ItemGroup>
     <Folder Include="Logs\" />
     <Folder Include="ProfilePictures\" />
+    <Folder Include="TempVideos\" />
     <Folder Include="Videos\" />
   </ItemGroup>
 
