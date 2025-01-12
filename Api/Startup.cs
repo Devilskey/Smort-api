@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Smort_api.Extensions;
@@ -43,7 +44,7 @@ namespace Tiktok_api
                     ValidIssuer = Configuration["JwtSettings:Issuer"],
                     ValidAudience = Configuration["JwtSettings:Audience"],
                     IssuerSigningKey = new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(Configuration["JwtSettings:Key"]!)),
+                        Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("SecretTokenJWT") ?? Configuration["JwtSettings:Key"]!)),
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidateLifetime = true,
@@ -63,6 +64,8 @@ namespace Tiktok_api
 
             services.AddSerilogLogging(Configuration);
 
+            services.AddKestrelOptions();
+
         }
         public void Configure(IApplicationBuilder app)
         {
@@ -79,6 +82,8 @@ namespace Tiktok_api
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.LogApiInfo();
 
             app.UseEndpoints(endpoints =>
             {

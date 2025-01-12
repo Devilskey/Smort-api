@@ -1,13 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 using Smort_api.Handlers;
 using Smort_api.Object;
+using Smort_api.Object.Database;
 using Smort_api.Object.Security;
-using Smort_api.Object.User;
-using System.Net.NetworkInformation;
-using System.Security.Claims;
 
 namespace Tiktok_api.Controllers.Users
 {
@@ -82,61 +79,80 @@ namespace Tiktok_api.Controllers.Users
                 GetUserNameAmount.Dispose();
             }
 
-                //Creates File
-                MySqlCommand GetAndAddProfilePicture = new MySqlCommand();
-                GetAndAddProfilePicture.CommandText =
-                    @"INSERT INTO File (File_Name, File_Location, Created_At) VALUES (@Name, @Location, @Created);
+            //Creates File
+            MySqlCommand GetAndAddProfilePicture = new MySqlCommand();
+            GetAndAddProfilePicture.CommandText =
+                @"INSERT INTO File (File_Name, File_Location, Created_At) VALUES (@Name, @Location, @Created);
                   SELECT LAST_INSERT_ID();";
 
-                GetAndAddProfilePicture.Parameters.AddWithValue("@Name", $"{newUser.Username}.png");
-                GetAndAddProfilePicture.Parameters.AddWithValue("@Location", $"./ProfilePictures/{newUser.Username}.png");
-                GetAndAddProfilePicture.Parameters.AddWithValue("@Created", DateTime.Now);
+            var ImageGUID = Guid.NewGuid().ToString();
 
-                int FileId = databaseHandler.GetNumber(GetAndAddProfilePicture);
 
-                ImageHandler.SaveProfilePictures(newUser.ProfilePicture, $"{newUser.Username}.png");
+            GetAndAddProfilePicture.Parameters.AddWithValue("@Name", $"{ImageGUID}.png");
+            GetAndAddProfilePicture.Parameters.AddWithValue("@Location", $"./ProfilePictures/{ImageGUID}.png");
+            GetAndAddProfilePicture.Parameters.AddWithValue("@Created", DateTime.Now);
 
-                // Creates the new user and adds the data to the database
-                MySqlCommand addUser = new MySqlCommand();
+            int FileId = databaseHandler.GetNumber(GetAndAddProfilePicture);
 
-                string[] Results = EncryptionHandler.HashAndSaltData(newUser.Password);
+            if (newUser.size.Width > 500)
+            {
+                float percentageLesser = (500f / newUser.size.Width);
 
-                addUser.CommandText =
-                    @"INSERT INTO Users_Private (Role_Id, Email, Password, Salt)
+                int newWidth = (int)(percentageLesser * newUser.size.Width);
+                int newHeight = (int)(percentageLesser * newUser.size.Width);
+                Console.WriteLine(newHeight);
+
+                var ResizedFilePost = ImageHandler.ChangeSizeOfImage(newUser.ProfilePicture, newWidth, newHeight);
+
+                if (ResizedFilePost != null)
+                {
+                    newUser.ProfilePicture = ResizedFilePost;
+                }
+            }
+
+            ImageHandler.SaveProfilePictures(newUser.ProfilePicture, $"{ImageGUID}.png");
+
+            // Creates the new user and adds the data to the database
+            MySqlCommand addUser = new MySqlCommand();
+
+            string[] Results = EncryptionHandler.HashAndSaltData(newUser.Password);
+
+            addUser.CommandText =
+                @"INSERT INTO Users_Private (Role_Id, Email, Password, Salt)
                  VALUES (1, @Email, @Password, @Salt);
                  INSERT INTO Users_Public (Person_Id, Username, Profile_Picture, Created_At, Updated_At, Deleted_At) 
                  VALUES (LAST_INSERT_ID(), @Username, @ProfilePicture, @CreatedAt, @UpdatedAt, @DeletedAt);";
 
-                addUser.Parameters.AddWithValue("@Email", newUser.Email);
-                addUser.Parameters.AddWithValue("@Password", Results[1]);
-                addUser.Parameters.AddWithValue("@Salt", Results[0]);
-                addUser.Parameters.AddWithValue("@Username", $"{newUser.Username}#{(id + 1).ToString("D4")}");
-                addUser.Parameters.AddWithValue("@ProfilePicture", FileId.ToString());
-                addUser.Parameters.AddWithValue("@DeletedAt", DateTime.Now);
-                addUser.Parameters.AddWithValue("@UpdatedAt", DateTime.Now);
-                addUser.Parameters.AddWithValue("@CreatedAt", DateTime.Now);
+            addUser.Parameters.AddWithValue("@Email", newUser.Email);
+            addUser.Parameters.AddWithValue("@Password", Results[1]);
+            addUser.Parameters.AddWithValue("@Salt", Results[0]);
+            addUser.Parameters.AddWithValue("@Username", $"{newUser.Username}#{(id + 1).ToString("D4")}");
+            addUser.Parameters.AddWithValue("@ProfilePicture", FileId.ToString());
+            addUser.Parameters.AddWithValue("@DeletedAt", DateTime.Now);
+            addUser.Parameters.AddWithValue("@UpdatedAt", DateTime.Now);
+            addUser.Parameters.AddWithValue("@CreatedAt", DateTime.Now);
 
-                databaseHandler.EditDatabase(addUser);
+            databaseHandler.EditDatabase(addUser);
 
-                addUser.Dispose();
+            addUser.Dispose();
 
-                using MySqlCommand UpdateUsernameAmount = new MySqlCommand();
+            using MySqlCommand UpdateUsernameAmount = new MySqlCommand();
 
-                UpdateUsernameAmount.CommandText = "UPDATE Username_Counter SET Amount=@Amount, Updated_At=@UpdatedAt WHERE Username=@Username";
+            UpdateUsernameAmount.CommandText = "UPDATE Username_Counter SET Amount=@Amount, Updated_At=@UpdatedAt WHERE Username=@Username";
 
-                UpdateUsernameAmount.Parameters.AddWithValue("@Username", $"{newUser.Username}");
-                UpdateUsernameAmount.Parameters.AddWithValue("@UpdatedAt", DateTime.Now);
+            UpdateUsernameAmount.Parameters.AddWithValue("@Username", $"{newUser.Username}");
+            UpdateUsernameAmount.Parameters.AddWithValue("@UpdatedAt", DateTime.Now);
 
-                UpdateUsernameAmount.Parameters.AddWithValue("@Amount", id + 1);
+            UpdateUsernameAmount.Parameters.AddWithValue("@Amount", id + 1);
 
 
-                databaseHandler.EditDatabase(UpdateUsernameAmount);
-                UpdateUsernameAmount.Dispose();
+            databaseHandler.EditDatabase(UpdateUsernameAmount);
+            UpdateUsernameAmount.Dispose();
 
-                // Logs the data 
-                Logger.Log(LogLevel.Information, $"Created User: {newUser.Username}");
+            // Logs the data 
+            Logger.Log(LogLevel.Information, $"Created User: {newUser.Username}");
 
-                return Task.FromResult<ActionResult>(Ok("User Created"));
+            return Task.FromResult<ActionResult>(Ok("User Created"));
         }
 
         /// <summary>
@@ -191,7 +207,7 @@ namespace Tiktok_api.Controllers.Users
 
             if (EncryptionHandler.VerifyData(Passwords[0], User.Password))
             {
-                string token = JWTTokenHandler.GenerateToken(User, id.ToString());
+                string token = JWTTokenHandler.GenerateToken(User, id.ToString(), Roll.User);
                 return Task.FromResult(token);
             }
 

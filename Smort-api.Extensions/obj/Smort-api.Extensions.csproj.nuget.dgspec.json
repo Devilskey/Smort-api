@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\ecola\\Documents\\gitkraken\\Smort-api\\Smort-api.Extensions\\Smort-api.Extensions.csproj": {}
+    "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api\\Smort-api.Extensions\\Smort-api.Extensions.csproj": {}
   },
   "projects": {
-    "C:\\Users\\ecola\\Documents\\gitkraken\\Smort-api\\Smort-api.Extensions\\Smort-api.Extensions.csproj": {
+    "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api\\Smort-api.Extensions\\Smort-api.Extensions.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\ecola\\Documents\\gitkraken\\Smort-api\\Smort-api.Extensions\\Smort-api.Extensions.csproj",
+        "projectUniqueName": "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api\\Smort-api.Extensions\\Smort-api.Extensions.csproj",
         "projectName": "Smort-api.Extensions",
-        "projectPath": "C:\\Users\\ecola\\Documents\\gitkraken\\Smort-api\\Smort-api.Extensions\\Smort-api.Extensions.csproj",
-        "packagesPath": "C:\\Users\\ecola\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\ecola\\Documents\\gitkraken\\Smort-api\\Smort-api.Extensions\\obj\\",
+        "projectPath": "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api\\Smort-api.Extensions\\Smort-api.Extensions.csproj",
+        "packagesPath": "C:\\Users\\DevAccount\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api\\Smort-api.Extensions\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+          "E:\\Visual Studio IDE\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\ecola\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\DevAccount\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -33,8 +33,8 @@
           "net6.0": {
             "targetAlias": "net6.0",
             "projectReferences": {
-              "C:\\Users\\ecola\\Documents\\gitkraken\\Smort-api\\Smort-api.Handlers\\Smort-api.Handlers.csproj": {
-                "projectPath": "C:\\Users\\ecola\\Documents\\gitkraken\\Smort-api\\Smort-api.Handlers\\Smort-api.Handlers.csproj"
+              "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api\\Smort-api.Handlers\\Smort-api.Handlers.csproj": {
+                "projectPath": "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api\\Smort-api.Handlers\\Smort-api.Handlers.csproj"
               }
             }
           }
@@ -45,7 +45,9 @@
           ]
         },
         "restoreAuditProperties": {
-          "enableAudit": "default"
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
         }
       },
       "frameworks": {
@@ -92,43 +94,29 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "downloadDependencies": [
-            {
-              "name": "Microsoft.AspNetCore.App.Ref",
-              "version": "[6.0.25, 6.0.25]"
-            },
-            {
-              "name": "Microsoft.NETCore.App.Ref",
-              "version": "[6.0.25, 6.0.25]"
-            },
-            {
-              "name": "Microsoft.WindowsDesktop.App.Ref",
-              "version": "[6.0.25, 6.0.25]"
-            }
-          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.100\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.400\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Users\\ecola\\Documents\\gitkraken\\Smort-api\\Smort-api.Handlers\\Smort-api.Handlers.csproj": {
+    "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api\\Smort-api.Handlers\\Smort-api.Handlers.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\ecola\\Documents\\gitkraken\\Smort-api\\Smort-api.Handlers\\Smort-api.Handlers.csproj",
+        "projectUniqueName": "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api\\Smort-api.Handlers\\Smort-api.Handlers.csproj",
         "projectName": "Smort-api.Handlers",
-        "projectPath": "C:\\Users\\ecola\\Documents\\gitkraken\\Smort-api\\Smort-api.Handlers\\Smort-api.Handlers.csproj",
-        "packagesPath": "C:\\Users\\ecola\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\ecola\\Documents\\gitkraken\\Smort-api\\Smort-api.Handlers\\obj\\",
+        "projectPath": "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api\\Smort-api.Handlers\\Smort-api.Handlers.csproj",
+        "packagesPath": "C:\\Users\\DevAccount\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api\\Smort-api.Handlers\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+          "E:\\Visual Studio IDE\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\ecola\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\DevAccount\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -144,8 +132,8 @@
           "net6.0": {
             "targetAlias": "net6.0",
             "projectReferences": {
-              "C:\\Users\\ecola\\Documents\\gitkraken\\Smort-api\\Smort-api.Object\\Smort-api.Objects.csproj": {
-                "projectPath": "C:\\Users\\ecola\\Documents\\gitkraken\\Smort-api\\Smort-api.Object\\Smort-api.Objects.csproj"
+              "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api\\Smort-api.Object\\Smort-api.Objects.csproj": {
+                "projectPath": "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api\\Smort-api.Object\\Smort-api.Objects.csproj"
               }
             }
           }
@@ -156,7 +144,9 @@
           ]
         },
         "restoreAuditProperties": {
-          "enableAudit": "default"
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
         }
       },
       "frameworks": {
@@ -178,6 +168,14 @@
             "Newtonsoft.Json": {
               "target": "Package",
               "version": "[13.0.1, )"
+            },
+            "SixLabors.ImageSharp": {
+              "target": "Package",
+              "version": "[3.1.6, )"
+            },
+            "System.Drawing.Common": {
+              "target": "Package",
+              "version": "[9.0.0, )"
             }
           },
           "imports": [
@@ -191,43 +189,29 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "downloadDependencies": [
-            {
-              "name": "Microsoft.AspNetCore.App.Ref",
-              "version": "[6.0.25, 6.0.25]"
-            },
-            {
-              "name": "Microsoft.NETCore.App.Ref",
-              "version": "[6.0.25, 6.0.25]"
-            },
-            {
-              "name": "Microsoft.WindowsDesktop.App.Ref",
-              "version": "[6.0.25, 6.0.25]"
-            }
-          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.100\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.400\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Users\\ecola\\Documents\\gitkraken\\Smort-api\\Smort-api.Object\\Smort-api.Objects.csproj": {
+    "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api\\Smort-api.Object\\Smort-api.Objects.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\ecola\\Documents\\gitkraken\\Smort-api\\Smort-api.Object\\Smort-api.Objects.csproj",
+        "projectUniqueName": "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api\\Smort-api.Object\\Smort-api.Objects.csproj",
         "projectName": "Smort-api.Objects",
-        "projectPath": "C:\\Users\\ecola\\Documents\\gitkraken\\Smort-api\\Smort-api.Object\\Smort-api.Objects.csproj",
-        "packagesPath": "C:\\Users\\ecola\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\ecola\\Documents\\gitkraken\\Smort-api\\Smort-api.Object\\obj\\",
+        "projectPath": "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api\\Smort-api.Object\\Smort-api.Objects.csproj",
+        "packagesPath": "C:\\Users\\DevAccount\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api\\Smort-api.Object\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+          "E:\\Visual Studio IDE\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\ecola\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\DevAccount\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -251,7 +235,9 @@
           ]
         },
         "restoreAuditProperties": {
-          "enableAudit": "default"
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
         }
       },
       "frameworks": {
@@ -278,26 +264,12 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "downloadDependencies": [
-            {
-              "name": "Microsoft.AspNetCore.App.Ref",
-              "version": "[6.0.25, 6.0.25]"
-            },
-            {
-              "name": "Microsoft.NETCore.App.Ref",
-              "version": "[6.0.25, 6.0.25]"
-            },
-            {
-              "name": "Microsoft.WindowsDesktop.App.Ref",
-              "version": "[6.0.25, 6.0.25]"
-            }
-          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.100\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.400\\RuntimeIdentifierGraph.json"
         }
       }
     }
