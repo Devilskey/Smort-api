@@ -6,7 +6,7 @@ using Smort_api.Handlers;
 using System.Security.Claims;
 using Tiktok_api.Controllers.Analytics;
 
-namespace Tiktok_api.Controllers
+namespace Tiktok_api.Controllers.Content
 {
     [ApiController]
     public class AllPosts : ControllerBase
@@ -16,6 +16,45 @@ namespace Tiktok_api.Controllers
         {
             _logger = logger;
         }
+
+        [HttpGet]
+        [Route("Posts/GetContentList")]
+        public IActionResult GetContentList(string Search)
+        {
+            MySqlCommand sqlCommand = null;
+
+            var IdFromToken = User.FindFirstValue("Id");
+
+            if (IdFromToken != null)
+            {
+                sqlCommand = ContentHandler.GetContentAlgorithmQueryLoggedIn(IdFromToken);
+            }
+            else
+            {
+                //sqlCommand = ContentHandler.GetContentAlgorithmQuery();
+
+            }
+
+            return Ok();
+        }
+
+
+        [HttpGet]
+        [Route("Posts/GetContentFromId")]
+        public IActionResult SearchForContent(string Search)
+        {
+
+            return Ok();
+        }
+
+
+        [HttpGet]
+        [Route("Posts/GetContentFromId")]
+        public IActionResult GetContentFromId()
+        {
+            return Ok();
+        }
+
 
 
         [Route("Posts/GetAccountContentList")]
@@ -28,13 +67,14 @@ namespace Tiktok_api.Controllers
             if (idUser != null)
             {
                 id = idUser.ToString();
-            }else if (IdFromToken != "[null]" && IdFromToken != null)
+            }
+            else if (IdFromToken != "[null]" && IdFromToken != null)
             {
                 string token = HttpContext.Request.Headers["Authorization"]!;
 
                 if (JWTTokenHandler.IsBlacklisted(token))
                     return Task.FromResult("token is blacklisted");
-                
+
                 id = IdFromToken;
             }
             else

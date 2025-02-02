@@ -9,7 +9,7 @@ using Smort_api.Object.ImagePosts;
 using Smort_api.Object.Videos;
 using System.Security.Claims;
 
-namespace Tiktok_api.Controllers.ImagePost
+namespace Tiktok_api.Controllers.Content.ImagePost
 {
     [ApiController]
     public class ImagePost : ControllerBase
@@ -47,7 +47,8 @@ namespace Tiktok_api.Controllers.ImagePost
                         " WHERE Image_Post.Title LIKE @search OR Image_Post.Description LIKE @search" +
                         " ORDER BY RAND() LIMIT 10; ";
                 }
-                else {
+                else
+                {
                     GetsearchResult.CommandText =
                         " SELECT Image_Post.Id, Image_Post.Title, Image_Post.Description,  Image_Post.File_Id, Image_Post.User_Id, Users_Public.Username, " +
                         " (SELECT COUNT(Id) FROM Reaction WHERE Content_Id = Image_Post.Id AND Reaction = \"Like\" AND Content_Type=\"img\") AS Likes," +
@@ -137,7 +138,7 @@ namespace Tiktok_api.Controllers.ImagePost
                 if (data.size.Width > 1000)
                 {
                     // Resize image
-                    float percentageLesser = (1000f / data.size.Width);
+                    float percentageLesser = 1000f / data.size.Width;
 
                     int newWidth = (int)(percentageLesser * data.size.Width);
                     int newHeight = (int)(percentageLesser * data.size.Width);
