@@ -22,91 +22,6 @@ namespace Tiktok_api.Controllers.Content.ImagePost
             chunkHandler = new ChunkHandler("./TempImagePost", "./ImagePost", "png");
         }
 
-        [HttpGet]
-        [Route("ImagePosts/SearchImagePost")]
-        public Task<string> SearchImagePost(string Search)
-        {
-            string token = HttpContext.Request.Headers["Authorization"]!;
-
-            if (JWTTokenHandler.IsBlacklisted(token))
-                return Task.FromResult("token is blacklisted");
-
-            string id = User.FindFirstValue("Id");
-
-            using (var databaseHandler = new DatabaseHandler())
-            {
-                MySqlCommand GetsearchResult = new MySqlCommand();
-
-                if (string.IsNullOrEmpty(id))
-                {
-                    GetsearchResult.CommandText =
-                        " SELECT Image_Post.Id, Image_Post.Title, Image_Post.Description,  Image_Post.File_Id, Image_Post.User_Id, Users_Public.Username, " +
-                        " (SELECT COUNT(Id) FROM Reaction WHERE Content_Id = Image_Post.Id AND Reaction = \"Like\" AND Content_Type=\"img\") AS Likes" +
-                        " FROM Image_Post" +
-                        " INNER JOIN Users_Public ON Image_Post.User_Id = Users_Public.Id" +
-                        " WHERE Image_Post.Title LIKE @search OR Image_Post.Description LIKE @search" +
-                        " ORDER BY RAND() LIMIT 10; ";
-                }
-                else
-                {
-                    GetsearchResult.CommandText =
-                        " SELECT Image_Post.Id, Image_Post.Title, Image_Post.Description,  Image_Post.File_Id, Image_Post.User_Id, Users_Public.Username, " +
-                        " (SELECT COUNT(Id) FROM Reaction WHERE Content_Id = Image_Post.Id AND Reaction = \"Like\" AND Content_Type=\"img\") AS Likes," +
-                        " (SELECT EXISTS(SELECT Id FROM Reaction WHERE Content_Id = Image_Post.Id AND Reaction = \"Like\" AND Content_Type=\"img\" AND User_Id=@user)) AS AlreadyLiked " +
-                        " FROM Image_Post" +
-                        " INNER JOIN Users_Public ON Image_Post.User_Id = Users_Public.Id" +
-                        " WHERE Image_Post.Title LIKE @search OR Image_Post.Description LIKE @search" +
-                        " ORDER BY RAND() LIMIT 10; ";
-                    GetsearchResult.Parameters.AddWithValue("@user", id);
-                }
-
-                GetsearchResult.Parameters.AddWithValue("@search", $"%{Search}%");
-
-                string json = databaseHandler.Select(GetsearchResult);
-
-                return Task.FromResult(json);
-            }
-        }
-
-
-        [HttpGet]
-        [Route("ImagePosts/GetImagePosts")]
-        public Task<string> GetImagePost()
-        {
-            string token = HttpContext.Request.Headers["Authorization"]!;
-
-            if (JWTTokenHandler.IsBlacklisted(token))
-                return Task.FromResult("token is blacklisted");
-
-            string id = User.FindFirstValue("Id");
-
-            using (var databaseHandler = new DatabaseHandler())
-            {
-                MySqlCommand getPostList = new MySqlCommand();
-                if (string.IsNullOrEmpty(id))
-                {
-                    getPostList.CommandText =
-                    "SELECT Image_Post.Id, Image_Post.Title,  Image_Post.Description,  Image_Post.File_Id, Image_Post.User_Id, Users_Public.Username, " +
-                     "(SELECT COUNT(Id) FROM Reaction WHERE Content_Id = Image_Post.Id AND Reaction = \"Like\" AND Content_Type=\"img\") AS Likes " +
-                    "FROM Image_Post INNER JOIN Users_Public ON Image_Post.User_Id = Users_Public.Id ORDER BY RAND() LIMIT 10; ";
-                }
-                else
-                {
-                    getPostList.CommandText =
-                      "SELECT Image_Post.Id, Image_Post.Title,  Image_Post.Description,  Image_Post.File_Id, Image_Post.User_Id, Users_Public.Username, " +
-                       "(SELECT COUNT(Id) FROM Reaction WHERE Content_Id = Image_Post.Id AND Reaction = \"Like\" AND Content_Type=\"img\") AS Likes, " +
-                        "(SELECT EXISTS(SELECT Id FROM Reaction WHERE Content_Id = Image_Post.Id AND Reaction = \"Like\" AND Content_Type=\"img\" AND User_Id=@user)) AS AlreadyLiked " +
-                      "FROM Image_Post INNER JOIN Users_Public ON Image_Post.User_Id = Users_Public.Id ORDER BY RAND() LIMIT 10; ";
-                    getPostList.Parameters.AddWithValue("@user", id);
-                }
-                string json = databaseHandler.Select(getPostList);
-
-                _logger.LogInformation(json);
-
-                return Task.FromResult(json);
-            }
-        }
-
         [Authorize]
         [HttpPost]
         [Route("ImagePosts/CreateNewPost")]
@@ -163,7 +78,7 @@ namespace Tiktok_api.Controllers.Content.ImagePost
 
                     FileAndPostImage.CommandText =
                         @"INSERT INTO File (File_Name, File_location, file_type_Id, Created_At, Deleted_At) VALUES (@FileName, @FileLocation, @FileType, @CreatedAt, @DeletedAt);
-                      INSERT INTO Image_Post (User_Id, File_Id, Title, Description, Created_At, Updated_At, Deleted_At) VALUES (@Id, LAST_INSERT_ID(), @Title, @Description, @CreatedAt, @UpdatedAt, @DeletedAt);";
+                      INSERT INTO Content (User_Id, File_Id, Title, Type, Description, Created_At, Updated_At, Deleted_At) VALUES (@Id, LAST_INSERT_ID(), @Title, @Type, @Description, @CreatedAt, @UpdatedAt, @DeletedAt);";
 
                     FileAndPostImage.Parameters.AddWithValue("@FileName", $"{filename}.mkv");
                     FileAndPostImage.Parameters.AddWithValue("@Id", id);
@@ -175,6 +90,8 @@ namespace Tiktok_api.Controllers.Content.ImagePost
                     FileAndPostImage.Parameters.AddWithValue("@UpdatedAt", DateTime.Now);
 
                     FileAndPostImage.Parameters.AddWithValue("@Title", data.Title);
+                    FileAndPostImage.Parameters.AddWithValue("@Type", "img");
+
 
                     FileAndPostImage.Parameters.AddWithValue("@Description", data.Description);
 

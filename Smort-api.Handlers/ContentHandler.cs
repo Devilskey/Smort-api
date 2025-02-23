@@ -16,42 +16,51 @@ namespace Smort_api.Handlers
     public static class ContentHandler
     {
         private static readonly int MaxContent = 30;
-        public static MySqlCommand GetContentAlgorithmQueryLoggedIn(string id, int page = 0)
+
+        public static MySqlCommand GetContentAlgorithmQuery(string search, int page = 0)
         {
             MySqlCommand GetContentCmd = new MySqlCommand();
 
             GetContentCmd.CommandText = $@"
-                SELECT Video.Id, Video.Title, Video.Description, Video.User_Id, Video.File_Id, Video.Created_At, Users_Public.Username, 
-                (SELECT COUNT(Id) FROM Reaction WHERE Content_Id = Video.Id AND Reaction = \""Like\"" AND Content_Type=\""vid\"") AS Likes,
-                (SELECT EXISTS(SELECT Id FROM Reaction WHERE Content_Id = Video.Id AND Reaction = \""Like\"" AND Content_Type=\""vid\"" AND User_Id=@user)) AS AlreadyLiked
-                FROM Video INNER JOIN Users_Public On Video.User_Id = Users_Public.Id 
-                UNION 
-                SELECT Image_Post.Id, Image_Post.Title, Image_Post.Description, Image_Post.User_Id, Image_Post.File_Id, Image_Post.Created_At, Users_Public.Username, 
-                (SELECT COUNT(Id) FROM Reaction WHERE Content_Id = Image_Post.Id AND Reaction = \""Like\"" AND Content_Type=\""img\"") AS Likes,
-                (SELECT EXISTS(SELECT Id FROM Reaction WHERE Content_Id = Image_Post.Id AND Reaction = \""Like\"" AND Content_Type=\""img\"" AND User_Id=@user)) AS AlreadyLiked
-                FROM Image_Post INNER JOIN Users_Public On Image_Post.User_Id = Users_Public.Id 
+                SELECT Content.Id, Content.Title, Content.Description, Content.User_Id, Content.File_Id, Content.Created_At, Users_Public.Username, Content.Type,
+                (SELECT COUNT(Id) FROM Reaction WHERE Content_Id = Content.Id AND Reaction = 'Like') AS Likes,
+                null AS AlreadyLiked
+                FROM Content 
+                INNER JOIN Users_Public On Content.User_Id = Users_Public.Id 
+                {(search != "" ? "WHERE Content.Title LIKE @asked OR Content.Description LIKE @asked" : "")}
                 ORDER BY Created_At DESC LIMIT @max OFFSET @offset;
                 ";
+
+            GetContentCmd.Parameters.AddWithValue("@asked", search);
+
+            GetContentCmd.Parameters.AddWithValue("@max", MaxContent);
+            GetContentCmd.Parameters.AddWithValue("@offset", page * MaxContent);
+            Console.WriteLine(GetContentCmd.CommandText);
+
+            return GetContentCmd;
+        }
+
+        public static MySqlCommand GetContentAlgorithmQueryLoggedIn(string id, string search, int page = 0)
+        {
+            MySqlCommand GetContentCmd = new MySqlCommand();
+
+            GetContentCmd.CommandText = $@"
+                SELECT Content.Id, Content.Title, Content.Description, Content.User_Id, Content.File_Id, Content.Created_At, Users_Public.Username, Content.Type,
+                (SELECT COUNT(Id) FROM Reaction WHERE Content_Id = Content.Id AND Reaction = 'Like') AS Likes,
+                (SELECT EXISTS(SELECT Id FROM Reaction WHERE Content_Id = Content.Id AND Reaction = 'Like' AND User_Id=@user)) AS AlreadyLiked
+                FROM Content
+                INNER JOIN Users_Public On Content.User_Id = Users_Public.Id
+                {(search != "" ? "WHERE Content.Title LIKE @asked OR Content.Description LIKE @asked" : "")}
+                ORDER BY Created_At DESC LIMIT @max OFFSET @offset;
+                ";
+
+            GetContentCmd.Parameters.AddWithValue("@asked", search);
             GetContentCmd.Parameters.AddWithValue("@user", id);
             GetContentCmd.Parameters.AddWithValue("@max", MaxContent);
             GetContentCmd.Parameters.AddWithValue("@offset", page * MaxContent);
+            Console.WriteLine(GetContentCmd.CommandText);
 
-            return new MySqlCommand();
+            return GetContentCmd;
         }
     }
 }
-//public Id: number = 0;
-//public Title: string = "";
-//public Description: string = "";
-//public User_Id: number = 0;
-//public File_Id: number = 0;
-//public Username: string = "";
-//public Created_At: string = "";
-
-//public Likes: number = 0;
-//public AlreadyLiked: number = 0;
-
-//"SELECT Image_Post.Id, Image_Post.Title,  Image_Post.Description,  Image_Post.File_Id, Image_Post.User_Id, Users_Public.Username, " +
-// "(SELECT COUNT(Id) FROM Reaction WHERE Content_Id = Image_Post.Id AND Reaction = \"Like\" AND Content_Type=\"img\") AS Likes, " +
-//  "(SELECT EXISTS(SELECT Id FROM Reaction WHERE Content_Id = Image_Post.Id AND Reaction = \"Like\" AND Content_Type=\"img\" AND User_Id=@user)) AS AlreadyLiked " +
-//"FROM Image_Post INNER JOIN Users_Public ON Image_Post.User_Id = Users_Public.Id ORDER BY RAND() LIMIT 10; ";

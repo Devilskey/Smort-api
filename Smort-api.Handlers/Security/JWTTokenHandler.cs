@@ -13,7 +13,7 @@ namespace Smort_api.Handlers
 {
     public static class JWTTokenHandler
     {
-        private static string TokenSecret = Environment.GetEnvironmentVariable("SecretTokenJWT") ?? "IWANTTOSETHERAINBOWHIGHINTHESKYIWANTTOSOYOUANDMEONABIRDFLYAWAY";
+        private static string TokenSecret = Environment.GetEnvironmentVariable("SecretTokenJWT") ?? "IWANTTOSETHERAINBOWHIGHINTHESKYIWANTTOSOYOUANDMEONABIRDFLYAWAYTESTINGITAGAIN";
         private static readonly TimeSpan TokenLifeTime = TimeSpan.FromHours(8);
 
         /// <summary>
