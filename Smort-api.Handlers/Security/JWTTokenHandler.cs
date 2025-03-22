@@ -45,6 +45,7 @@ namespace Smort_api.Handlers
             var claims = new List<Claim>
             {
                 new("Id", id!),
+                new(ClaimTypes.NameIdentifier, id),
                 new(JwtRegisteredClaimNames.Email, loginDetails.Email!),
                 new("TimeCreated", DateTime.Now.ToString()),
                 new("Roll", roll.ToString()),

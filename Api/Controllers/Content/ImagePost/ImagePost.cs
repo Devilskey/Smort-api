@@ -8,6 +8,7 @@ using Smort_api.Object.Database;
 using Smort_api.Object.ImagePosts;
 using Smort_api.Object.Videos;
 using System.Security.Claims;
+using Tiktok_api.Settings_Api;
 
 namespace Tiktok_api.Controllers.Content.ImagePost
 {
@@ -48,29 +49,52 @@ namespace Tiktok_api.Controllers.Content.ImagePost
                     var tempFileName = $"{data.GUIDObjSender}-${i}";
                     filePost = filePost.Concat(chunkHandler.GetChunkFileData(tempFileName)).ToArray();
                 }
-                Console.WriteLine(data.size.Width);
 
-                if (data.size.Width > 1000)
-                {
-                    // Resize image
-                    float percentageLesser = 1000f / data.size.Width;
+                Guid fileSavedId = Guid.NewGuid();
+                filename = fileSavedId.ToString();
+
+                // Resize image for Content
+                foreach (var size in ContentSizingObjects.Content) {
+                    float percentageLesser = (float)size.Width / (float)data.size.Width;
+
+                    if(percentageLesser == 0)
+                    {
+                        percentageLesser = (float)data.size.Width / (float)size.Width;
+                    }
 
                     int newWidth = (int)(percentageLesser * data.size.Width);
-                    int newHeight = (int)(percentageLesser * data.size.Width);
-                    Console.WriteLine(newHeight);
+                    int newHeight = (int)(percentageLesser * data.size.Height);
 
                     var ResizedFilePost = ImageHandler.ChangeSizeOfImage(filePost, newWidth, newHeight);
 
                     if (ResizedFilePost != null)
                     {
-                        filePost = ResizedFilePost;
+                        chunkHandler.SaveFile(ResizedFilePost, filename, id, $"_{size.Size}");
                     }
                 }
 
-                Guid fileSavedId = Guid.NewGuid();
-                filename = fileSavedId.ToString();
+                string Thumbnailfilename = fileSavedId.ToString() + "_Thumb";
 
-                chunkHandler.SaveFile(filePost, filename, id);
+                // Resize image for Thumbnail
+                foreach (var size in ContentSizingObjects.Thumbnails)
+                {
+                    float percentageLesser = (float)size.Width / (float)data.size.Width;
+
+                    if (percentageLesser == 0)
+                    {
+                        percentageLesser = (float)data.size.Width / (float)size.Width;
+                    }
+
+                    int newWidth = (int)(percentageLesser * data.size.Width);
+                    int newHeight = (int)(percentageLesser * data.size.Height);
+
+                    var ResizedFilePost = ImageHandler.ChangeSizeOfImage(filePost, newWidth, newHeight);
+
+                    if (ResizedFilePost != null)
+                    {
+                        chunkHandler.SaveFile(ResizedFilePost, Thumbnailfilename, id, $"_{size.Size}");
+                    }
+                }
 
                 using (var databaseHandler = new DatabaseHandler())
                 {
@@ -80,9 +104,9 @@ namespace Tiktok_api.Controllers.Content.ImagePost
                         @"INSERT INTO File (File_Name, File_location, file_type_Id, Created_At, Deleted_At) VALUES (@FileName, @FileLocation, @FileType, @CreatedAt, @DeletedAt);
                       INSERT INTO Content (User_Id, File_Id, Title, Type, Description, Created_At, Updated_At, Deleted_At) VALUES (@Id, LAST_INSERT_ID(), @Title, @Type, @Description, @CreatedAt, @UpdatedAt, @DeletedAt);";
 
-                    FileAndPostImage.Parameters.AddWithValue("@FileName", $"{filename}.mkv");
+                    FileAndPostImage.Parameters.AddWithValue("@FileName", $"{filename}");
                     FileAndPostImage.Parameters.AddWithValue("@Id", id);
-                    FileAndPostImage.Parameters.AddWithValue("@FileLocation", $"./ImagePost/{id}/{filename}.png");
+                    FileAndPostImage.Parameters.AddWithValue("@FileLocation", $"./ImagePost/{id}/{filename}/{filename}");
                     FileAndPostImage.Parameters.AddWithValue("@FileType", FileType.PostImage);
 
                     FileAndPostImage.Parameters.AddWithValue("@CreatedAt", DateTime.Now);
@@ -124,7 +148,7 @@ namespace Tiktok_api.Controllers.Content.ImagePost
         [Authorize]
         [Route("ImagePosts/DeleteImage")]
         [HttpDelete]
-        public Task<ActionResult> DeleteVideo(int imageId)
+        public Task<ActionResult> DeleteImage(int imageId)
         {
             string token = HttpContext.Request.Headers["Authorization"]!;
 
@@ -136,10 +160,10 @@ namespace Tiktok_api.Controllers.Content.ImagePost
             using MySqlCommand SelectImagePath = new MySqlCommand();
 
             SelectImagePath.CommandText =
-                "SELECT File_Location FROM File WHERE Id IN " +
-                "(SELECT File_Id FROM Image_Post WHERE Id = @ImageId); " +
-                "DELETE FROM Image_Post WHERE Id = @ImageId AND User_Id = @UserId; " +
-                "DELETE FROM File WHERE Id IN (SELECT File_Id FROM Image_Post WHERE Id = @ImageId);";
+                "SELECT File_Location FROM File WHERE Id IN (SELECT File_Id FROM Content WHERE Id = @ImageId); " +
+                                "DELETE FROM Content WHERE Id = @ImageId AND User_Id = @UserId; " +
+            "DELETE FROM File WHERE Id IN (SELECT File_Id FROM Content WHERE Id = @ImageId);";
+
 
             SelectImagePath.Parameters.AddWithValue("@ImageId", imageId);
             SelectImagePath.Parameters.AddWithValue("@UserId", id);
@@ -147,6 +171,8 @@ namespace Tiktok_api.Controllers.Content.ImagePost
             using (DatabaseHandler databaseHandler = new DatabaseHandler())
             {
                 string json = databaseHandler.Select(SelectImagePath);
+
+                _logger.LogInformation(json);
 
                 FilePathData[] paths = JsonConvert.DeserializeObject<FilePathData[]>(json)!;
                 if (paths.Length != 1)
@@ -158,43 +184,6 @@ namespace Tiktok_api.Controllers.Content.ImagePost
                 }
             }
             return Task.FromResult<ActionResult>(Ok());
-        }
-
-        [Route("ImagePosts/GetImageFromId")]
-        [HttpGet]
-        public Task<string> GetImageFromId(int id)
-        {
-            string token = HttpContext.Request.Headers["Authorization"]!;
-
-            if (JWTTokenHandler.IsBlacklisted(token))
-                return Task.FromResult("token is blacklisted");
-
-            string userid = User.FindFirstValue("Id");
-
-            using MySqlCommand GetImage = new MySqlCommand();
-            if (string.IsNullOrEmpty(userid))
-            {
-
-                GetImage.CommandText =
-                    "SELECT Id, Title, Description, File_Id, Created_At, " +
-                    "(SELECT COUNT(Id) FROM Reaction WHERE Content_Id = Image_Post.Id AND Reaction = \"Like\" AND Content_Type=\"img\") AS Likes, " +
-                    "FROM Image_Post WHERE Id=@Id;";
-            }
-            else
-            {
-                GetImage.CommandText =
-                    "SELECT Id, Title, Description, File_Id, Created_At, " +
-                    "(SELECT COUNT(Id) FROM Reaction WHERE Content_Id = Image_Post.Id AND Reaction = \"Like\" AND Content_Type=\"img\") AS Likes, " +
-                    "(SELECT EXISTS(SELECT Id FROM Reaction WHERE Content_Id = Image_Post.Id AND Reaction = \"Like\" AND Content_Type=\"img\" AND User_Id=@user)) AS AlreadyLiked " +
-                    "FROM Image_Post WHERE Id=@Id;";
-                GetImage.Parameters.AddWithValue("@user", userid);
-            }
-            GetImage.Parameters.AddWithValue("@Id", id);
-            using (DatabaseHandler databaseHandler = new DatabaseHandler())
-            {
-                string json = databaseHandler.Select(GetImage);
-                return Task.FromResult(json);
-            }
         }
     }
 }

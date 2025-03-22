@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Security.Policy;
-using SixLabors.ImageSharp.Formats.Png;
+using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 
@@ -14,8 +14,8 @@ namespace Smort_api.Handlers
     {
         public static byte[]? ChangeSizeOfImage(byte[] imgMediaData, int width, int height)
         {
-            Console.WriteLine(width);
-            Console.WriteLine(height);
+            Console.WriteLine("width: " + width);
+            Console.WriteLine("height: " + height);
 
             using (MemoryStream inputMemoryStream = new MemoryStream(imgMediaData))
             {
@@ -34,13 +34,12 @@ namespace Smort_api.Handlers
 
                     using (var outputMemoryStream = new MemoryStream())
                     {
-                        image.Save(outputMemoryStream, new PngEncoder());
+                        image.Save(outputMemoryStream, new JpegEncoder());
                         return outputMemoryStream.ToArray();
                     }
                 }
             }
         }
-
         public static void SaveThumbnail(byte[] ImageBytes, string filename, string id)
         {
             if (!Directory.Exists($"./Videos"))

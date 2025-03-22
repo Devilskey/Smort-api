@@ -58,6 +58,10 @@
               "target": "Package",
               "version": "[5.0.0, )"
             },
+            "FFMpegCore": {
+              "target": "Package",
+              "version": "[5.2.0, )"
+            },
             "Microsoft.AspNetCore.Authentication.JwtBearer": {
               "target": "Package",
               "version": "[8.0.12, )"
@@ -72,7 +76,7 @@
             },
             "SixLabors.ImageSharp": {
               "target": "Package",
-              "version": "[3.1.6, )"
+              "version": "[3.1.7, )"
             },
             "System.Drawing.Common": {
               "target": "Package",
