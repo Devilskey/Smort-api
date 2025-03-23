@@ -1,11 +1,14 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Smort_api.Extensions;
 using System.IO;
 using System.Text;
 using Tiktok_api.BackgroundServices;
+using Tiktok_api.SignalRHubs;
 
 namespace Tiktok_api
 {
@@ -25,8 +28,8 @@ namespace Tiktok_api
 
             services.AddCors(options =>
             {
-                options.AddPolicy("anyCors", Policy =>
-                    Policy.AllowAnyOrigin()
+                options.AddPolicy("SmortSecureOnly", Policy =>
+                    Policy.WithOrigins("https://devilskey.nl", "https://smorthub.nl", "http://localhost:3000", "https://localhost:3000").AllowCredentials()
                         .AllowAnyMethod()
                         .AllowAnyHeader());
             });
@@ -50,6 +53,23 @@ namespace Tiktok_api
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true
                 };
+
+                config.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Query["access_token"];
+
+                        if (!string.IsNullOrEmpty(accessToken) &&
+                            context.HttpContext.Request.Path.StartsWithSegments("/Notify"))
+                        {
+                            context.Token = accessToken;
+                        }
+
+                        return Task.CompletedTask;
+                    }
+                };
+
             });
 
             services.AddSwaggerSecurityConfiguration();
@@ -57,6 +77,13 @@ namespace Tiktok_api
             services.AddAuthorization();
 
             services.AddMvc();
+
+            services.AddSignalR();
+
+            services.AddHostedService(provider => provider.GetRequiredService<ProcessVideoServices>());
+
+            services.AddSingleton<ProcessVideoServices>();
+            services.AddSingleton<NotificationHubHandler>();
 
             services.AddHostedService<RemoveExpiredTokensServices>();
 
@@ -69,7 +96,7 @@ namespace Tiktok_api
         }
         public void Configure(IApplicationBuilder app)
         {
-            app.UseCors("anyCors");
+            app.UseCors("SmortSecureOnly");
 
             app.UseSwaggerDocumentation();
 
@@ -88,7 +115,9 @@ namespace Tiktok_api
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<NotificationHub>("/Notify");
             });
+
         }
     }
 }

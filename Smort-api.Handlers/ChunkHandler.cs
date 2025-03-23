@@ -20,6 +20,10 @@ namespace Smort_api.Handlers
             _extensionType = extensionType;
         }
 
+        public string GetPathContent(string filename, string id) => $"{_folderNameFiles}/{id}/{filename}/{filename}.{_extensionType}";
+        public string GetPath(string filename, string id) => $"{_folderNameFiles}/{id}/{filename}/";
+        public string GetPathContentTemp(string filename) => $"{_folderNameTemp}/{filename}.{_extensionType}";
+
         public bool AreAllChunksIn(string filename, int Chunksmax)
         {
             for (int i = 0; i < Chunksmax; i++)
@@ -40,7 +44,7 @@ namespace Smort_api.Handlers
             return File.ReadAllBytes($"{_folderNameTemp}/{filename}.{_extensionType}");
         }
 
-        public void SaveFile(byte[] videoBytes, string filename, string id)
+        public void SaveFile(byte[] videoBytes, string filename, string id, string size = "")
         {
             if (!Directory.Exists($"{_folderNameFiles}"))
                 Directory.CreateDirectory($"{_folderNameFiles}");
@@ -48,7 +52,10 @@ namespace Smort_api.Handlers
             if (!Directory.Exists($"{_folderNameFiles}/{id}"))
                 Directory.CreateDirectory($"{_folderNameFiles}/{id}");
 
-            using (FileStream video = new FileStream($"{_folderNameFiles}/{id}/{filename}.{_extensionType}", FileMode.Append, FileAccess.Write))
+            if (!Directory.Exists($"{_folderNameFiles}/{id}/{filename}"))
+                Directory.CreateDirectory($"{_folderNameFiles}/{id}/{filename}");
+
+            using (FileStream video = new FileStream($"{_folderNameFiles}/{id}/{filename}/{filename}{size}.{_extensionType}", FileMode.Append, FileAccess.Write))
             {
                 video.Write(videoBytes, 0, videoBytes.Length);
             }

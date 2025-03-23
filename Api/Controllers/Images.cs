@@ -4,6 +4,7 @@ using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 using Smort_api.Handlers;
 using Smort_api.Object.Videos;
+using Tiktok_api.Settings_Api;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace Tiktok_api.Controllers
@@ -73,7 +74,7 @@ namespace Tiktok_api.Controllers
         /// <returns></returns>
         [Route("Images/GetImage")]
         [HttpGet]
-        public ActionResult? GetImage(int ImageId)
+        public ActionResult? GetImage(int ImageId, Sizes size = Sizes.M)
         {
             try
             {
@@ -87,8 +88,16 @@ namespace Tiktok_api.Controllers
                 string json = databaseHandler.Select(GetVideoPath);
 
                 FilePathData[] path = JsonConvert.DeserializeObject<FilePathData[]>(json)!;
+                FileStream filestream = null;
 
-                var filestream = System.IO.File.OpenRead(path[0].File_Location!);
+                try
+                {
+                    filestream = System.IO.File.OpenRead(path[0].File_Location! + $"_{size}.png");
+                }catch(Exception)
+                {
+                    filestream = System.IO.File.OpenRead(path[0].File_Location!);
+                    Console.Write("Returning old image Formate 1000X1000");
+                }
                 return File(filestream, contentType: "image/*", enableRangeProcessing: false);
 
             }

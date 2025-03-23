@@ -133,6 +133,58 @@ namespace Tiktok_api.Controllers.Users
             }
         }
 
+
+        /// <summary>
+        /// Gets the top 5 most followed users.
+        /// </summary>
+        /// <returns></returns>
+        [Route("Following/MostFolowers")]
+        [HttpGet]
+        public string? MostFollowers(int Offset = 5)
+        {
+
+            using MySqlCommand MostFollowers = new MySqlCommand();
+
+            MostFollowers.CommandText = @"
+                SELECT Following.User_Id_Followed, COUNT(User_Id_Follower) as Amount, Users_Public.Profile_Picture, Username
+                FROM Following INNER JOIN Users_Public On Users_Public.Id = Following.User_Id_Followed
+                GROUP BY User_Id_Followed ORDER BY Amount DESC LIMIT @Offset;";
+            MostFollowers.Parameters.AddWithValue("@Offset", Offset);
+            using (DatabaseHandler databaseHandler = new DatabaseHandler())
+            {
+                 return databaseHandler.Select(MostFollowers);
+            }
+        }
+
+        [Authorize]
+        [Route("Following/Following")]
+        [HttpGet]
+        public string? Following(int Offset = 5)
+        {
+            string idUser = User.FindFirstValue("Id");
+
+            if (idUser == "")
+                return null;
+
+
+            using MySqlCommand MostFollowers = new MySqlCommand();
+
+            MostFollowers.CommandText = @"
+                SELECT Following.User_Id_Followed, COUNT(User_Id_Follower) as Amount, Users_Public.Profile_Picture, Username
+                FROM Following INNER JOIN Users_Public On Users_Public.Id = Following.User_Id_Followed 
+                WHERE User_Id_Follower = @id
+                GROUP BY User_Id_Followed ORDER BY Amount DESC LIMIT @Offset;";
+
+            MostFollowers.Parameters.AddWithValue("@Offset", Offset);
+            MostFollowers.Parameters.AddWithValue("@id", idUser);
+
+            using (DatabaseHandler databaseHandler = new DatabaseHandler())
+            {
+                return databaseHandler.Select(MostFollowers);
+            }
+        }
+
+
         /// <summary>
         /// Checks if you are following the user
         /// </summary>

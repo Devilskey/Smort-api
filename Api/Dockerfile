@@ -14,6 +14,8 @@ COPY ["Smort-api.Object/Smort-api.Objects.csproj", "Smort-api.Object/"]
 RUN dotnet restore "Api/Smort-api.csproj"
 COPY . .
 WORKDIR "/src/Api"
+RUN apt-get update && apt-get install -y ffmpeg
+
 RUN dotnet build "Smort-api.csproj" -c Release -o /app/build
 
 FROM build AS publish
