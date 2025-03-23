@@ -1,4 +1,4 @@
-﻿using FFMpegCore;
+using FFMpegCore;
 using FFMpegCore.Enums;
 using FFMpegCore.Pipes;
 using System.Drawing;
@@ -54,7 +54,7 @@ namespace Smort_api.Handlers
         {
             foreach (var sizes in ContentSizingObjects.Thumbnails)
             {
-                FFMpeg.Snapshot(PathVideo, PathThumbnails + $"_{sizes.Size}.png", new Size(sizes.Width, sizes.Width));
+                FFMpeg.Snapshot(PathVideo, PathThumbnails + $"_{sizes.Size}.png", new Size(sizes.Width, sizes.Width), TimeSpan.FromSeconds(10));
             }
 
         }

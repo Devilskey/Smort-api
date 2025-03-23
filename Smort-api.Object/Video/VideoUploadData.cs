@@ -17,8 +17,6 @@ namespace Smort_api.Object.Videos
         public byte[]? MediaData { get; set; }
         public string? Title { get; set; }
         public string? Description { get; set; }
-        public byte[]? Thumbnail { get; set; }
-        public ImageSize Size { get; set; }
 
         //Chunk Data
         public int? ChunkNumber { get; set; } 

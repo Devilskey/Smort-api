@@ -10,7 +10,6 @@
 *.userosscache
 *.sln.docstates
 .vs/
-[Vv]ideos/
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
@@ -34,7 +33,7 @@ bld/
 [Ll]og/
 [Ll]ogs/
 
-Api/temp/
+Api/Temp*
 Api/Videos/
 Api/ProfilePictures/
 Api/ImagePost/

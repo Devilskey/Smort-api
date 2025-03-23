@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.SignalR;
+using Microsoft.AspNetCore.SignalR;
 using Tiktok_api.Controllers.Users;
 using System.Security.Claims;
 using System.Collections.Concurrent;
@@ -29,50 +29,16 @@ namespace Tiktok_api.SignalRHubs
     public class NotificationHubHandler
     {
         private readonly IHubContext<NotificationHub> _notifyHub;
-        private readonly ILogger _logger;
-
-        public NotificationHubHandler(IHubContext<NotificationHub> notifyHub, ILogger<NotificationHubHandler> logger)
+        public NotificationHubHandler(IHubContext<NotificationHub> notifyHub)
         {
-            _logger = logger;
             _notifyHub = notifyHub;
         }
 
-        public async Task SendNotificationVideoToUser(string UserId, string messages)
+        public async Task SendNotificationToUser(string UserId, string messages)
         {
             if (!string.IsNullOrEmpty(UserId))
             {
-                _logger.Log(LogLevel.Information, messages);
-                await _notifyHub.Clients.User(UserId).SendAsync("ReceiveNotificationVideo", messages);
-            }
-        }
-
-        public async Task SendNotificationFollowToUser(string UserId, string messages)
-        {
-            if (!string.IsNullOrEmpty(UserId))
-            {
-                _logger.Log(LogLevel.Information, messages);
-
-                await _notifyHub.Clients.User(UserId).SendAsync("ReceiveNotificationFollow", messages);
-            }
-        }
-
-        public async Task SendNotificationLikeToUser(string UserId, string messages)
-        {
-            if (!string.IsNullOrEmpty(UserId))
-            {
-                _logger.Log(LogLevel.Information, messages);
-
-                await _notifyHub.Clients.User(UserId).SendAsync("ReceiveNotificationLike", messages);
-            }
-        }
-
-        public async Task SendNotificationFollowingToUser(string UserId, string messages)
-        {
-            if (!string.IsNullOrEmpty(UserId))
-            {
-                _logger.Log(LogLevel.Information, messages);
-
-                await _notifyHub.Clients.User(UserId).SendAsync("ReceiveNotificationFollowing", messages);
+                await _notifyHub.Clients.User(UserId).SendAsync("ReceiveNotification", messages);
             }
         }
     }

@@ -27,15 +27,14 @@ namespace Smort_api.Handlers
                 null AS AlreadyLiked
                 FROM Content 
                 INNER JOIN Users_Public On Content.User_Id = Users_Public.Id 
-                {(search != "" ? "WHERE Content.Title LIKE @asked OR Content.Description LIKE @asked" : "")}
+                {(search != "" ? "WHERE (LOWER(Content.Title) LIKE @asked OR LOWER(Content.Description) LIKE @asked)" : "")}
                 ORDER BY Created_At DESC LIMIT @max OFFSET @offset;
                 ";
 
-            GetContentCmd.Parameters.AddWithValue("@asked", search);
+            GetContentCmd.Parameters.AddWithValue("@asked", $"%{search.ToLower()}%");
 
             GetContentCmd.Parameters.AddWithValue("@max", MaxContent);
             GetContentCmd.Parameters.AddWithValue("@offset", page * MaxContent);
-            Console.WriteLine(GetContentCmd.CommandText);
 
             return GetContentCmd;
         }
@@ -50,15 +49,53 @@ namespace Smort_api.Handlers
                 (SELECT EXISTS(SELECT Id FROM Reaction WHERE Content_Id = Content.Id AND Reaction = 'Like' AND User_Id=@user)) AS AlreadyLiked
                 FROM Content
                 INNER JOIN Users_Public On Content.User_Id = Users_Public.Id
-                {(search != "" ? "WHERE Content.Title LIKE @asked OR Content.Description LIKE @asked" : "")}
+                {(search != "" ? "WHERE (LOWER(Content.Title) LIKE @asked OR LOWER(Content.Description) LIKE @asked)" : "")}
                 ORDER BY Created_At DESC LIMIT @max OFFSET @offset;
                 ";
 
-            GetContentCmd.Parameters.AddWithValue("@asked", search);
+            GetContentCmd.Parameters.AddWithValue("@asked",$"%{search.ToLower()}%");
             GetContentCmd.Parameters.AddWithValue("@user", id);
             GetContentCmd.Parameters.AddWithValue("@max", MaxContent);
             GetContentCmd.Parameters.AddWithValue("@offset", page * MaxContent);
-            Console.WriteLine(GetContentCmd.CommandText);
+
+            return GetContentCmd;
+        }
+
+
+
+        public static MySqlCommand GetContentItemAlgorithmQuery(string ContentId, int page = 0)
+        {
+            MySqlCommand GetContentCmd = new MySqlCommand();
+
+            GetContentCmd.CommandText = $@"
+                SELECT Content.Id, Content.Title, Content.Description, Content.User_Id, Content.File_Id, Content.Created_At, Users_Public.Username, Content.Type,
+                (SELECT COUNT(Id) FROM Reaction WHERE Content_Id = Content.Id AND Reaction = 'Like') AS Likes,
+                null AS AlreadyLiked
+                FROM Content 
+                INNER JOIN Users_Public On Content.User_Id = Users_Public.Id 
+                WHERE Content.id = @Contentid;
+                ";
+
+            GetContentCmd.Parameters.AddWithValue("@Contentid", ContentId);
+
+            return GetContentCmd;
+        }
+
+        public static MySqlCommand GetContentItemAlgorithmQueryLoggedIn(string Userid, string ContentId)
+        {
+            MySqlCommand GetContentCmd = new MySqlCommand();
+
+            GetContentCmd.CommandText = $@"
+                SELECT Content.Id, Content.Title, Content.Description, Content.User_Id, Content.File_Id, Content.Created_At, Users_Public.Username, Content.Type,
+                (SELECT COUNT(Id) FROM Reaction WHERE Content_Id = Content.Id AND Reaction = 'Like') AS Likes,
+                (SELECT EXISTS(SELECT Id FROM Reaction WHERE Content_Id = Content.Id AND Reaction = 'Like' AND User_Id=@user)) AS AlreadyLiked
+                FROM Content
+                INNER JOIN Users_Public On Content.User_Id = Users_Public.Id
+                WHERE Content.id = @Contentid;
+                ";
+
+            GetContentCmd.Parameters.AddWithValue("@user", Userid);
+            GetContentCmd.Parameters.AddWithValue("@Contentid", ContentId);
 
             return GetContentCmd;
         }

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Smort_api.Object;
@@ -45,11 +45,7 @@ namespace Smort_api.Handlers
             var claims = new List<Claim>
             {
                 new("Id", id!),
-<<<<<<< Updated upstream
-=======
-                new("Username", id!),
                 new(ClaimTypes.NameIdentifier, id),
->>>>>>> Stashed changes
                 new(JwtRegisteredClaimNames.Email, loginDetails.Email!),
                 new("TimeCreated", DateTime.Now.ToString()),
             };

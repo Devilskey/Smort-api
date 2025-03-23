@@ -8,7 +8,6 @@ using Tiktok_api.Settings_Api;
 using Smort_api.Object.Video;
 using Microsoft.AspNetCore.SignalR;
 using Tiktok_api.SignalRHubs;
-using FFMpegCore;
 
 namespace Tiktok_api.BackgroundServices
 {
@@ -18,6 +17,7 @@ namespace Tiktok_api.BackgroundServices
         private readonly ILogger<ProcessVideoServices> _logger;
 
         private readonly ConcurrentQueue<VideoToProcessObject> _VideosToProcess;
+
 
         private readonly NotificationHubHandler _notificationHub;
 
@@ -111,7 +111,7 @@ namespace Tiktok_api.BackgroundServices
             databaseHandler.EditDatabase(InsertFileAndVideo);
             InsertFileAndVideo.Dispose();
 
-            await _notificationHub.SendNotificationVideoToUser(Video.UserId, "Video has been uploaded");
+            _notificationHub.SendNotificationToUser(Video.UserId, "Video has been uploaded");
         }
 
         public override async Task StopAsync(CancellationToken stoppingToken)
