@@ -15,8 +15,7 @@ namespace Smort_api.Extensions
         {
             Log.Information(
                 "Version first version Made 7-7-2023 V0.01 \n" +
-                "Version Last Made 22-3-2025 V0.4 \n" +
-                "Using Policy SmortSecureOnly"
+                "Version Last Made 11-1-2025 V0.5"
                 );
         }
     }

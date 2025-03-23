@@ -37,8 +37,6 @@ Api/Temp*
 Api/Videos/
 Api/ProfilePictures/
 Api/ImagePost/
-Api/TempImagePost/
-Api/TempVideos/
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/

@@ -29,8 +29,6 @@ namespace Tiktok_api.Controllers.Users
                 return Task.FromResult("token is blacklisted");
 
             string idUser = User.FindFirstValue("Id");
-            string username = User.FindFirstValue("Username");
-
 
             if (id == int.Parse(idUser))
                 return Task.FromResult($"you cannnot follow yourself");
@@ -63,9 +61,6 @@ namespace Tiktok_api.Controllers.Users
                     return Task.FromResult($"Now following user");
                 }
             }
-
-            _notificationHub.SendNotificationFollowToUser(id.ToString(), $"{username} started following you");
-
             return Task.FromResult($"Not able to follow this user");
         }
 

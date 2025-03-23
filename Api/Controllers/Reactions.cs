@@ -1,32 +1,40 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MySql.Data.MySqlClient;
-using Newtonsoft.Json;
 using Smort_api.Handlers;
-using Smort_api.Object.User;
 using System.Security.Claims;
-using Tiktok_api.SignalRHubs;
 
 namespace Tiktok_api.Controllers
 {
     [ApiController]
     public class Reactions : ControllerBase
     {
-        private readonly ILogger<Reactions> _logger;
-        private readonly NotificationHubHandler _notificationHub;
 
-        public Reactions(ILogger<Reactions> logger, NotificationHubHandler notificationHub) { 
-            _logger = logger;
-            _notificationHub = notificationHub;
-        }
+        //[HttpGet]
+        //[Route("Reactions/AmountOfLikes")]
+        //public IActionResult AmountOfLikes(string videoId)
+        //{
+
+        //    using (DatabaseHandler database = new DatabaseHandler())
+        //    {
+        //        MySqlCommand HasAlreadyLiked = new MySqlCommand();
+
+        //        HasAlreadyLiked.CommandText = "SELECT COUNT(Id) FROM Reaction WHERE Video_Id=@video AND Reaction=@reaction; ";
+        //        HasAlreadyLiked.Parameters.AddWithValue("@video", videoId);
+        //        HasAlreadyLiked.Parameters.AddWithValue("@reaction", "Like");
+
+        //        int Amount = database.GetNumber(HasAlreadyLiked);
+
+        //        return Ok(Amount);
+        //    }
+        //}
 
         [HttpPost]
         [Authorize]
         [Route("Reactions/Like")]
-        public async Task<IActionResult> Like(string contentId, string ContentType)
+        public IActionResult Like(string contentId, string ContentType)
         {
             string token = HttpContext.Request.Headers["Authorization"]!;
-
 
             if (JWTTokenHandler.IsBlacklisted(token))
                 return Unauthorized();
@@ -39,8 +47,6 @@ namespace Tiktok_api.Controllers
             }
 
             string userId = User.FindFirstValue("Id");
-            string username = User.FindFirstValue("Username");
-
 
             using (DatabaseHandler database = new DatabaseHandler())
             {
@@ -60,33 +66,19 @@ namespace Tiktok_api.Controllers
                 if (Amount == 0)
                 {
                     TypeOfLike = "Like";
-                    nextStep.CommandText = @"
-                        INSERT INTO Reaction (User_Id, Content_Id, Content_Type, Reaction) VALUES (@user, @content, @type, @reaction); 
-                        SELECT Id, Username FROM Users_Public WHERE Id=(SELECT User_Id FROM Content WHERE id=@content);";
+                    nextStep.CommandText = "INSERT INTO Reaction (User_Id, Content_Id, Content_Type, Reaction) VALUES (@user, @content, @type, @reaction); ";
                 }
                 else
                 {
                     TypeOfLike = "RemoveLike";
-                    nextStep.CommandText = @"
-                        DELETE FROM Reaction WHERE User_Id=@user AND Content_Id=@content AND Reaction=@reaction AND Content_Type=@type; ";
+                    nextStep.CommandText = "DELETE FROM Reaction WHERE User_Id=@user AND Content_Id=@content AND Reaction=@reaction AND Content_Type=@type; ";
                 }
-
                 nextStep.Parameters.AddWithValue("@user", userId);
                 nextStep.Parameters.AddWithValue("@content", contentId);
                 nextStep.Parameters.AddWithValue("@reaction", "Like");
                 nextStep.Parameters.AddWithValue("@type", ContentType);
 
-                string json  = database.Select(nextStep);
-
-
-                if (TypeOfLike == "Like")
-                {
-
-                    UserData ? user = JsonConvert.DeserializeObject<UserData[]>(json).First();
-
-                    await _notificationHub.SendNotificationLikeToUser(user.Id.ToString(), $"{username} liked your video");
-                }
-
+                Console.WriteLine( database.Select(nextStep));
                 return Ok(TypeOfLike);
             }
         }

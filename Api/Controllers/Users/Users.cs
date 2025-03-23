@@ -7,7 +7,6 @@ using Smort_api.Object;
 using Smort_api.Object.Security;
 using Smort_api.Object.User;
 using System.Security.Claims;
-using Tiktok_api.SignalRHubs;
 
 namespace Tiktok_api.Controllers.Users
 {
@@ -18,12 +17,9 @@ namespace Tiktok_api.Controllers.Users
     public partial class Users : ControllerBase
     {
         private readonly ILogger Logger;
-        private readonly NotificationHubHandler _notificationHub;
 
-
-        public Users(ILogger<Users> logger, NotificationHubHandler notificationHub)
+        public Users(ILogger<Users> logger)
         {
-            _notificationHub = notificationHub;
             Logger = logger;
         }
 
@@ -71,7 +67,6 @@ namespace Tiktok_api.Controllers.Users
                     return Task.FromResult($"User Reported");
                 }
             }
-
 
             return Task.FromResult($"User Already Reported by you");
         }

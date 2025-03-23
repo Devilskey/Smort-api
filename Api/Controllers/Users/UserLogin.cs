@@ -5,7 +5,6 @@ using Smort_api.Handlers;
 using Smort_api.Object;
 using Smort_api.Object.Database;
 using Smort_api.Object.Security;
-using Smort_api.Object.User;
 
 namespace Tiktok_api.Controllers.Users
 {
@@ -184,19 +183,18 @@ namespace Tiktok_api.Controllers.Users
             }
 
             MySqlCommand getId = new MySqlCommand();
-            getId.CommandText = "SELECT Id, Username FROM Users_Public WHERE Person_Id=(SELECT Id FROM Users_Private WHERE Email=@Email);";
+            getId.CommandText = "SELECT Id FROM Users_Private WHERE Email=@Email;";
 
             getId.Parameters.AddWithValue("@Email", User.Email);
 
-            UserData[]? user = null;
+            int id = -1;
 
             using (DatabaseHandler databaseHandler = new DatabaseHandler())
             {
-                string json = databaseHandler.Select(getId);
-                user = JsonConvert.DeserializeObject<UserData[]>(json);
+                id = databaseHandler.GetNumber(getId);
             }
 
-            if (user == null) return Task.FromResult($"User Id not found");
+            if (id == -1) return Task.FromResult($"User Id not found");
 
             PasswordObject[]? Passwords = JsonConvert.DeserializeObject<PasswordObject[]>(jsonData);
 
@@ -209,7 +207,7 @@ namespace Tiktok_api.Controllers.Users
 
             if (EncryptionHandler.VerifyData(Passwords[0], User.Password))
             {
-                string token = JWTTokenHandler.GenerateToken(User, user.First().Id.ToString(), user.First().UserName);
+                string token = JWTTokenHandler.GenerateToken(User, id.ToString(), Roll.User);
                 return Task.FromResult(token);
             }
 

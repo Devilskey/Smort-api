@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Options;
@@ -97,11 +97,6 @@ namespace Tiktok_api
         public void Configure(IApplicationBuilder app)
         {
             app.UseCors("SmortSecureOnly");
-
-            app.UseMiddleware<LogRequestMiddleware>();
-
-            app.UseCors("SmortSecureOnly");
->>>>>>> Stashed changes
 
             app.UseSwaggerDocumentation();
 

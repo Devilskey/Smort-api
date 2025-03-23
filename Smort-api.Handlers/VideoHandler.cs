@@ -1,4 +1,4 @@
-using FFMpegCore;
+﻿using FFMpegCore;
 using FFMpegCore.Enums;
 using FFMpegCore.Pipes;
 using System.Drawing;
