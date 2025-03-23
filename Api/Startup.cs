@@ -6,6 +6,11 @@ using Smort_api.Extensions;
 using System.IO;
 using System.Text;
 using Tiktok_api.BackgroundServices;
+<<<<<<< Updated upstream
+=======
+using Tiktok_api.Controllers;
+using Tiktok_api.SignalRHubs;
+>>>>>>> Stashed changes
 
 namespace Tiktok_api
 {
@@ -25,8 +30,14 @@ namespace Tiktok_api
 
             services.AddCors(options =>
             {
+<<<<<<< Updated upstream
                 options.AddPolicy("anyCors", Policy =>
                     Policy.AllowAnyOrigin()
+=======
+                options.AddPolicy("SmortSecureOnly", Policy =>
+                    Policy.WithOrigins("https://smorthub.nl", "https://smorthub.nl/", "http://localhost:3000", "https://localhost:3000")
+                        .AllowCredentials()
+>>>>>>> Stashed changes
                         .AllowAnyMethod()
                         .AllowAnyHeader());
             });
@@ -69,7 +80,14 @@ namespace Tiktok_api
         }
         public void Configure(IApplicationBuilder app)
         {
+<<<<<<< Updated upstream
             app.UseCors("anyCors");
+=======
+
+            app.UseMiddleware<LogRequestMiddleware>();
+
+            app.UseCors("SmortSecureOnly");
+>>>>>>> Stashed changes
 
             app.UseSwaggerDocumentation();
 
