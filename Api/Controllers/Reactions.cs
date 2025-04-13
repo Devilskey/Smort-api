@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MySql.Data.MySqlClient;
+using Newtonsoft.Json;
 using Smort_api.Handlers;
+using Smort_api.Object.User;
 using System.Security.Claims;
+using Tiktok_api.SignalRHubs;
 
 namespace Tiktok_api.Controllers
 {
@@ -10,29 +13,20 @@ namespace Tiktok_api.Controllers
     public class Reactions : ControllerBase
     {
 
-        //[HttpGet]
-        //[Route("Reactions/AmountOfLikes")]
-        //public IActionResult AmountOfLikes(string videoId)
-        //{
+        private readonly ILogger<Reactions> _logger;
+        private readonly NotificationHubHandler _notificationHub;
 
-        //    using (DatabaseHandler database = new DatabaseHandler())
-        //    {
-        //        MySqlCommand HasAlreadyLiked = new MySqlCommand();
+        public Reactions(ILogger<Reactions> logger, NotificationHubHandler notificationHub)
+        {
+            _logger = logger;
+            _notificationHub = notificationHub;
+        }
 
-        //        HasAlreadyLiked.CommandText = "SELECT COUNT(Id) FROM Reaction WHERE Video_Id=@video AND Reaction=@reaction; ";
-        //        HasAlreadyLiked.Parameters.AddWithValue("@video", videoId);
-        //        HasAlreadyLiked.Parameters.AddWithValue("@reaction", "Like");
-
-        //        int Amount = database.GetNumber(HasAlreadyLiked);
-
-        //        return Ok(Amount);
-        //    }
-        //}
 
         [HttpPost]
         [Authorize]
         [Route("Reactions/Like")]
-        public IActionResult Like(string contentId, string ContentType)
+        public async Task<IActionResult> Like(string contentId, string ContentType)
         {
             string token = HttpContext.Request.Headers["Authorization"]!;
 
@@ -47,6 +41,7 @@ namespace Tiktok_api.Controllers
             }
 
             string userId = User.FindFirstValue("Id");
+            string username = User.FindFirstValue("Username");
 
             using (DatabaseHandler database = new DatabaseHandler())
             {
@@ -78,7 +73,15 @@ namespace Tiktok_api.Controllers
                 nextStep.Parameters.AddWithValue("@reaction", "Like");
                 nextStep.Parameters.AddWithValue("@type", ContentType);
 
-                Console.WriteLine( database.Select(nextStep));
+                string json = database.Select(nextStep);
+
+                if (TypeOfLike == "Like")
+                {
+                    UserData? user = JsonConvert.DeserializeObject<UserData[]>(json).First();
+
+                    await _notificationHub.SendNotificationLikeToUser(user.Id.ToString(), $"{username} liked your video");
+                }
+
                 return Ok(TypeOfLike);
             }
         }

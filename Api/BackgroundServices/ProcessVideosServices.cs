@@ -111,7 +111,7 @@ namespace Tiktok_api.BackgroundServices
             databaseHandler.EditDatabase(InsertFileAndVideo);
             InsertFileAndVideo.Dispose();
 
-            _notificationHub.SendNotificationToUser(Video.UserId, "Video has been uploaded");
+            await _notificationHub.SendNotificationVideoToUser(Video.UserId, "Video has been uploaded");
         }
 
         public override async Task StopAsync(CancellationToken stoppingToken)

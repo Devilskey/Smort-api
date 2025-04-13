@@ -29,7 +29,8 @@ namespace Tiktok_api
             services.AddCors(options =>
             {
                 options.AddPolicy("SmortSecureOnly", Policy =>
-                    Policy.WithOrigins("https://devilskey.nl", "https://smorthub.nl", "http://localhost:3000", "https://localhost:3000").AllowCredentials()
+                    Policy.WithOrigins("https://smorthub.nl", "https://smorthub.nl/", "http://localhost:3000", "https://localhost:3000")
+                        .AllowCredentials()
                         .AllowAnyMethod()
                         .AllowAnyHeader());
             });
