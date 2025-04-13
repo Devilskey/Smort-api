@@ -30,18 +30,20 @@ namespace Tiktok_api.Controllers
         {
             string token = HttpContext.Request.Headers["Authorization"]!;
 
+
             if (JWTTokenHandler.IsBlacklisted(token))
                 return Unauthorized();
 
             Console.WriteLine(ContentType);
 
-            if(ContentType != "img" && ContentType != "vid")
+            if (ContentType != "img" && ContentType != "vid")
             {
                 return BadRequest();
             }
 
             string userId = User.FindFirstValue("Id");
             string username = User.FindFirstValue("Username");
+
 
             using (DatabaseHandler database = new DatabaseHandler())
             {
@@ -61,13 +63,17 @@ namespace Tiktok_api.Controllers
                 if (Amount == 0)
                 {
                     TypeOfLike = "Like";
-                    nextStep.CommandText = "INSERT INTO Reaction (User_Id, Content_Id, Content_Type, Reaction) VALUES (@user, @content, @type, @reaction); ";
+                    nextStep.CommandText = @"
+                        INSERT INTO Reaction (User_Id, Content_Id, Content_Type, Reaction) VALUES (@user, @content, @type, @reaction); 
+                        SELECT Id, Username FROM Users_Public WHERE Id=(SELECT User_Id FROM Content WHERE id=@content);";
                 }
                 else
                 {
                     TypeOfLike = "RemoveLike";
-                    nextStep.CommandText = "DELETE FROM Reaction WHERE User_Id=@user AND Content_Id=@content AND Reaction=@reaction AND Content_Type=@type; ";
+                    nextStep.CommandText = @"
+                        DELETE FROM Reaction WHERE User_Id=@user AND Content_Id=@content AND Reaction=@reaction AND Content_Type=@type; ";
                 }
+
                 nextStep.Parameters.AddWithValue("@user", userId);
                 nextStep.Parameters.AddWithValue("@content", contentId);
                 nextStep.Parameters.AddWithValue("@reaction", "Like");
@@ -75,8 +81,10 @@ namespace Tiktok_api.Controllers
 
                 string json = database.Select(nextStep);
 
+
                 if (TypeOfLike == "Like")
                 {
+
                     UserData? user = JsonConvert.DeserializeObject<UserData[]>(json).First();
 
                     await _notificationHub.SendNotificationLikeToUser(user.Id.ToString(), $"{username} liked your video");
