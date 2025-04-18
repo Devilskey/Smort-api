@@ -1,11 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 using Smort_api.Handlers;
 using Smort_api.Object.Videos;
 using Tiktok_api.Settings_Api;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Tiktok_api.Controllers
 {
@@ -89,6 +87,7 @@ namespace Tiktok_api.Controllers
 
                 FilePathData[] path = JsonConvert.DeserializeObject<FilePathData[]>(json)!;
                 FileStream filestream = null;
+                Logger.LogInformation(size.ToString());
 
                 try
                 {
@@ -98,7 +97,7 @@ namespace Tiktok_api.Controllers
                     filestream = System.IO.File.OpenRead(path[0].File_Location!);
                     Console.Write("Returning old image Formate 1000X1000");
                 }
-                return File(filestream, contentType: "image/*", enableRangeProcessing: false);
+                return File(filestream, contentType: "image/*", enableRangeProcessing: true);
 
             }
             catch (Exception ex)

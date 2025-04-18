@@ -69,6 +69,10 @@
               "target": "Package",
               "version": "[8.0.12, )"
             },
+            "Microsoft.AspNetCore.ResponseCompression": {
+              "target": "Package",
+              "version": "[2.3.0, )"
+            },
             "Microsoft.AspNetCore.SignalR.Common": {
               "target": "Package",
               "version": "[9.0.3, )"
@@ -265,6 +269,10 @@
             "FFMpegCore": {
               "target": "Package",
               "version": "[5.2.0, )"
+            },
+            "Lib.Net.Http.WebPush": {
+              "target": "Package",
+              "version": "[3.3.1, )"
             },
             "Microsoft.AspNetCore.Authentication.JwtBearer": {
               "target": "Package",

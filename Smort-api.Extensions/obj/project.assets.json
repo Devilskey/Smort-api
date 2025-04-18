@@ -110,6 +110,35 @@
           }
         }
       },
+      "Lib.Net.Http.EncryptedContentEncoding/2.1.1": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.1/Lib.Net.Http.EncryptedContentEncoding.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.1/Lib.Net.Http.EncryptedContentEncoding.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "Lib.Net.Http.WebPush/3.3.1": {
+        "type": "package",
+        "dependencies": {
+          "Lib.Net.Http.EncryptedContentEncoding": "2.1.1"
+        },
+        "compile": {
+          "lib/net6.0/Lib.Net.Http.WebPush.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net6.0/Lib.Net.Http.WebPush.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "Microsoft.AspNetCore.Authentication.JwtBearer/8.0.12": {
         "type": "package",
         "dependencies": {
@@ -1231,6 +1260,7 @@
         "dependencies": {
           "CryptSharp.Core": "5.0.0",
           "FFMpegCore": "5.2.0",
+          "Lib.Net.Http.WebPush": "3.3.1",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "8.0.12",
           "MySql.Data": "9.2.0",
           "Newtonsoft.Json": "13.0.3",
@@ -1408,6 +1438,47 @@
         "lib/netstandard2.0/K4os.Hash.xxHash.xml",
         "lib/netstandard2.1/K4os.Hash.xxHash.dll",
         "lib/netstandard2.1/K4os.Hash.xxHash.xml"
+      ]
+    },
+    "Lib.Net.Http.EncryptedContentEncoding/2.1.1": {
+      "sha512": "n+CuGyBCZ9zLT3p39sab1bSL2FRCoXHXUM/T7jXwZlibOE+mASOqXcKD9LzNjH+VZTdA0mn02EdBww06DzD9IA==",
+      "type": "package",
+      "path": "lib.net.http.encryptedcontentencoding/2.1.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib.net.http.encryptedcontentencoding.2.1.1.nupkg.sha512",
+        "lib.net.http.encryptedcontentencoding.nuspec",
+        "lib/net451/Lib.Net.Http.EncryptedContentEncoding.dll",
+        "lib/net451/Lib.Net.Http.EncryptedContentEncoding.xml",
+        "lib/net461/Lib.Net.Http.EncryptedContentEncoding.dll",
+        "lib/net461/Lib.Net.Http.EncryptedContentEncoding.xml",
+        "lib/netstandard2.0/Lib.Net.Http.EncryptedContentEncoding.dll",
+        "lib/netstandard2.0/Lib.Net.Http.EncryptedContentEncoding.xml",
+        "lib/netstandard2.1/Lib.Net.Http.EncryptedContentEncoding.dll",
+        "lib/netstandard2.1/Lib.Net.Http.EncryptedContentEncoding.xml"
+      ]
+    },
+    "Lib.Net.Http.WebPush/3.3.1": {
+      "sha512": "5ByiHRcY3lF/4LA7ZbgzBEUmX6oYlPTS1NzXEom3uvT7wFHeZ8Q9DOQcPG6awFqS8yGUuyTvxrHyBzTOwe8Fpg==",
+      "type": "package",
+      "path": "lib.net.http.webpush/3.3.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "lib.net.http.webpush.3.3.1.nupkg.sha512",
+        "lib.net.http.webpush.nuspec",
+        "lib/net451/Lib.Net.Http.WebPush.dll",
+        "lib/net451/Lib.Net.Http.WebPush.xml",
+        "lib/net461/Lib.Net.Http.WebPush.dll",
+        "lib/net461/Lib.Net.Http.WebPush.xml",
+        "lib/net5.0/Lib.Net.Http.WebPush.dll",
+        "lib/net5.0/Lib.Net.Http.WebPush.xml",
+        "lib/net6.0/Lib.Net.Http.WebPush.dll",
+        "lib/net6.0/Lib.Net.Http.WebPush.xml",
+        "lib/netstandard2.0/Lib.Net.Http.WebPush.dll",
+        "lib/netstandard2.0/Lib.Net.Http.WebPush.xml"
       ]
     },
     "Microsoft.AspNetCore.Authentication.JwtBearer/8.0.12": {

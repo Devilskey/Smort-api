@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "L5aNjH+1uCU=",
+  "dgSpecHash": "IzDaVY93Uqc=",
   "success": true,
   "projectFilePath": "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api\\Smort-api.Extensions\\Smort-api.Extensions.csproj",
   "expectedPackageFiles": [
@@ -12,6 +12,8 @@
     "C:\\Users\\DevAccount\\.nuget\\packages\\k4os.compression.lz4\\1.3.8\\k4os.compression.lz4.1.3.8.nupkg.sha512",
     "C:\\Users\\DevAccount\\.nuget\\packages\\k4os.compression.lz4.streams\\1.3.8\\k4os.compression.lz4.streams.1.3.8.nupkg.sha512",
     "C:\\Users\\DevAccount\\.nuget\\packages\\k4os.hash.xxhash\\1.0.8\\k4os.hash.xxhash.1.0.8.nupkg.sha512",
+    "C:\\Users\\DevAccount\\.nuget\\packages\\lib.net.http.encryptedcontentencoding\\2.1.1\\lib.net.http.encryptedcontentencoding.2.1.1.nupkg.sha512",
+    "C:\\Users\\DevAccount\\.nuget\\packages\\lib.net.http.webpush\\3.3.1\\lib.net.http.webpush.3.3.1.nupkg.sha512",
     "C:\\Users\\DevAccount\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\8.0.12\\microsoft.aspnetcore.authentication.jwtbearer.8.0.12.nupkg.sha512",
     "C:\\Users\\DevAccount\\.nuget\\packages\\microsoft.aspnetcore.http.features\\5.0.17\\microsoft.aspnetcore.http.features.5.0.17.nupkg.sha512",
     "C:\\Users\\DevAccount\\.nuget\\packages\\microsoft.extensions.apidescription.server\\6.0.5\\microsoft.extensions.apidescription.server.6.0.5.nupkg.sha512",

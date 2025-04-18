@@ -174,37 +174,5 @@ namespace Tiktok_api.Controllers.Videos
             var filestream = System.IO.File.OpenRead(path[0].File_Location! + $"_{size}.mp4");
             return File(filestream, contentType: "video/mkv", enableRangeProcessing: true);
         }
-
-        /// <summary>
-        /// Streams videos to an html element or makes it so that you can download the video
-        /// </summary>
-        /// <param name="videoId"></param>
-        /// <returns></returns>
-        [Route("Video/GetThumbnail")]
-        [HttpGet]
-        public ActionResult? GetThumbnail(int videoId)
-        {
-            try
-            {
-                using MySqlCommand GetVideoPath = new MySqlCommand();
-
-                GetVideoPath.CommandText = "SELECT Thumbnail FROM Video WHERE Id=@Id;";
-                GetVideoPath.Parameters.AddWithValue("@Id", $"{videoId}");
-
-                using DatabaseHandler databaseHandler = new DatabaseHandler();
-
-                string json = databaseHandler.Select(GetVideoPath);
-
-                ThumbnailData[] path = JsonConvert.DeserializeObject<ThumbnailData[]>(json)!;
-
-                return File(path[0].Thumbnail, contentType: "Image/png", enableRangeProcessing: false);
-
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                return BadRequest();
-            }
-        }
     }
 }

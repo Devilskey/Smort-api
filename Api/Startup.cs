@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -94,6 +95,21 @@ namespace Tiktok_api
 
             services.AddKestrelOptions();
 
+            services.AddResponseCompression(options =>
+            {
+                options.EnableForHttps = true; 
+                options.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(new[] {
+                    "image/jpeg",  
+                    "image/png",  
+                    "image/webp",  
+                    "image/gif",   
+                    "image/svg+xml",
+                    "video/mp4",   
+                    "video/webm",  
+                    "video/ogg"    
+                }); 
+            });
+
         }
         public void Configure(IApplicationBuilder app)
         {
@@ -106,6 +122,9 @@ namespace Tiktok_api
             app.UseHttpsRedirection();
 
             app.MigrateDatabase(Configuration);
+
+            app.UseResponseCompression();
+
 
             app.UseRouting();
             app.UseAuthentication();

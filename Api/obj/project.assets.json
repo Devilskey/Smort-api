@@ -110,6 +110,35 @@
           }
         }
       },
+      "Lib.Net.Http.EncryptedContentEncoding/2.1.1": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.1/Lib.Net.Http.EncryptedContentEncoding.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.1/Lib.Net.Http.EncryptedContentEncoding.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "Lib.Net.Http.WebPush/3.3.1": {
+        "type": "package",
+        "dependencies": {
+          "Lib.Net.Http.EncryptedContentEncoding": "2.1.1"
+        },
+        "compile": {
+          "lib/net6.0/Lib.Net.Http.WebPush.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net6.0/Lib.Net.Http.WebPush.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "Microsoft.AspNet.Cors/5.3.0": {
         "type": "package",
         "compile": {
@@ -191,6 +220,42 @@
           }
         }
       },
+      "Microsoft.AspNetCore.Http.Abstractions/2.3.0": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNetCore.Http.Features": "2.3.0",
+          "System.Text.Encodings.Web": "8.0.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/Microsoft.AspNetCore.Http.Abstractions.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/Microsoft.AspNetCore.Http.Abstractions.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "Microsoft.AspNetCore.Http.Extensions/2.3.0": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNetCore.Http.Abstractions": "2.3.0",
+          "Microsoft.Extensions.FileProviders.Abstractions": "8.0.0",
+          "Microsoft.Net.Http.Headers": "2.3.0",
+          "System.Buffers": "4.6.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/Microsoft.AspNetCore.Http.Extensions.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/Microsoft.AspNetCore.Http.Extensions.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "Microsoft.AspNetCore.Http.Features/5.0.17": {
         "type": "package",
         "dependencies": {
@@ -204,6 +269,23 @@
         },
         "runtime": {
           "lib/net5.0/Microsoft.AspNetCore.Http.Features.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "Microsoft.AspNetCore.ResponseCompression/2.3.0": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNetCore.Http.Extensions": "2.3.0",
+          "Microsoft.Extensions.Options": "8.0.2"
+        },
+        "compile": {
+          "lib/netstandard2.0/Microsoft.AspNetCore.ResponseCompression.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/Microsoft.AspNetCore.ResponseCompression.dll": {
             "related": ".xml"
           }
         }
@@ -594,6 +676,23 @@
           }
         }
       },
+      "Microsoft.Net.Http.Headers/2.3.0": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.Primitives": "8.0.0",
+          "System.Buffers": "4.6.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/Microsoft.Net.Http.Headers.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/Microsoft.Net.Http.Headers.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "Microsoft.NETCore.Platforms/1.1.0": {
         "type": "package",
         "compile": {
@@ -972,13 +1071,13 @@
           "Microsoft.AspNetCore.App"
         ]
       },
-      "System.Buffers/4.5.1": {
+      "System.Buffers/4.6.0": {
         "type": "package",
         "compile": {
-          "ref/netcoreapp2.0/_._": {}
+          "lib/netcoreapp2.1/_._": {}
         },
         "runtime": {
-          "lib/netcoreapp2.0/_._": {}
+          "lib/netcoreapp2.1/_._": {}
         }
       },
       "System.Configuration.ConfigurationManager/8.0.0": {
@@ -1392,6 +1491,7 @@
         "dependencies": {
           "CryptSharp.Core": "5.0.0",
           "FFMpegCore": "5.2.0",
+          "Lib.Net.Http.WebPush": "3.3.1",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "8.0.12",
           "MySql.Data": "9.2.0",
           "Newtonsoft.Json": "13.0.3",
@@ -1571,6 +1671,47 @@
         "lib/netstandard2.1/K4os.Hash.xxHash.xml"
       ]
     },
+    "Lib.Net.Http.EncryptedContentEncoding/2.1.1": {
+      "sha512": "n+CuGyBCZ9zLT3p39sab1bSL2FRCoXHXUM/T7jXwZlibOE+mASOqXcKD9LzNjH+VZTdA0mn02EdBww06DzD9IA==",
+      "type": "package",
+      "path": "lib.net.http.encryptedcontentencoding/2.1.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib.net.http.encryptedcontentencoding.2.1.1.nupkg.sha512",
+        "lib.net.http.encryptedcontentencoding.nuspec",
+        "lib/net451/Lib.Net.Http.EncryptedContentEncoding.dll",
+        "lib/net451/Lib.Net.Http.EncryptedContentEncoding.xml",
+        "lib/net461/Lib.Net.Http.EncryptedContentEncoding.dll",
+        "lib/net461/Lib.Net.Http.EncryptedContentEncoding.xml",
+        "lib/netstandard2.0/Lib.Net.Http.EncryptedContentEncoding.dll",
+        "lib/netstandard2.0/Lib.Net.Http.EncryptedContentEncoding.xml",
+        "lib/netstandard2.1/Lib.Net.Http.EncryptedContentEncoding.dll",
+        "lib/netstandard2.1/Lib.Net.Http.EncryptedContentEncoding.xml"
+      ]
+    },
+    "Lib.Net.Http.WebPush/3.3.1": {
+      "sha512": "5ByiHRcY3lF/4LA7ZbgzBEUmX6oYlPTS1NzXEom3uvT7wFHeZ8Q9DOQcPG6awFqS8yGUuyTvxrHyBzTOwe8Fpg==",
+      "type": "package",
+      "path": "lib.net.http.webpush/3.3.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "lib.net.http.webpush.3.3.1.nupkg.sha512",
+        "lib.net.http.webpush.nuspec",
+        "lib/net451/Lib.Net.Http.WebPush.dll",
+        "lib/net451/Lib.Net.Http.WebPush.xml",
+        "lib/net461/Lib.Net.Http.WebPush.dll",
+        "lib/net461/Lib.Net.Http.WebPush.xml",
+        "lib/net5.0/Lib.Net.Http.WebPush.dll",
+        "lib/net5.0/Lib.Net.Http.WebPush.xml",
+        "lib/net6.0/Lib.Net.Http.WebPush.dll",
+        "lib/net6.0/Lib.Net.Http.WebPush.xml",
+        "lib/netstandard2.0/Lib.Net.Http.WebPush.dll",
+        "lib/netstandard2.0/Lib.Net.Http.WebPush.xml"
+      ]
+    },
     "Microsoft.AspNet.Cors/5.3.0": {
       "sha512": "GmnL9NNGTheEcUVSzjnFaMaCEIwWdvP6mBed1ux/7M0D2yc+uzZ6UN/gAA5mva1BZmah0G+F+MVaPkoValWpmQ==",
       "type": "package",
@@ -1656,6 +1797,32 @@
         "microsoft.aspnetcore.connections.abstractions.nuspec"
       ]
     },
+    "Microsoft.AspNetCore.Http.Abstractions/2.3.0": {
+      "sha512": "39r9PPrjA6s0blyFv5qarckjNkaHRA5B+3b53ybuGGNTXEj1/DStQJ4NWjFL6QTRQpL9zt7nDyKxZdJOlcnq+Q==",
+      "type": "package",
+      "path": "microsoft.aspnetcore.http.abstractions/2.3.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/netstandard2.0/Microsoft.AspNetCore.Http.Abstractions.dll",
+        "lib/netstandard2.0/Microsoft.AspNetCore.Http.Abstractions.xml",
+        "microsoft.aspnetcore.http.abstractions.2.3.0.nupkg.sha512",
+        "microsoft.aspnetcore.http.abstractions.nuspec"
+      ]
+    },
+    "Microsoft.AspNetCore.Http.Extensions/2.3.0": {
+      "sha512": "EY2u/wFF5jsYwGXXswfQWrSsFPmiXsniAlUWo3rv/MGYf99ZFsENDnZcQP6W3c/+xQmQXq0NauzQ7jyy+o1LDQ==",
+      "type": "package",
+      "path": "microsoft.aspnetcore.http.extensions/2.3.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/netstandard2.0/Microsoft.AspNetCore.Http.Extensions.dll",
+        "lib/netstandard2.0/Microsoft.AspNetCore.Http.Extensions.xml",
+        "microsoft.aspnetcore.http.extensions.2.3.0.nupkg.sha512",
+        "microsoft.aspnetcore.http.extensions.nuspec"
+      ]
+    },
     "Microsoft.AspNetCore.Http.Features/5.0.17": {
       "sha512": "3jG2xS+dx8DDCGV/F+STdPTg89lX3ao3dF/VEPvJaz3wzBIjuadipTtYNEXDIVuOPZwb6jdmhrX9jkzOIBm5cw==",
       "type": "package",
@@ -1673,6 +1840,21 @@
         "lib/netstandard2.0/Microsoft.AspNetCore.Http.Features.xml",
         "microsoft.aspnetcore.http.features.5.0.17.nupkg.sha512",
         "microsoft.aspnetcore.http.features.nuspec"
+      ]
+    },
+    "Microsoft.AspNetCore.ResponseCompression/2.3.0": {
+      "sha512": "rXV53hXICmm70Ib5ODvmlfL12ktNVD3ScosMa0mXOKe0j1jeR1Lxvuz8Ux4Kgn322GuJ4WmhK2t74s2EySY+sg==",
+      "type": "package",
+      "path": "microsoft.aspnetcore.responsecompression/2.3.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net462/Microsoft.AspNetCore.ResponseCompression.dll",
+        "lib/net462/Microsoft.AspNetCore.ResponseCompression.xml",
+        "lib/netstandard2.0/Microsoft.AspNetCore.ResponseCompression.dll",
+        "lib/netstandard2.0/Microsoft.AspNetCore.ResponseCompression.xml",
+        "microsoft.aspnetcore.responsecompression.2.3.0.nupkg.sha512",
+        "microsoft.aspnetcore.responsecompression.nuspec"
       ]
     },
     "Microsoft.AspNetCore.SignalR.Common/9.0.3": {
@@ -2522,6 +2704,19 @@
         "microsoft.identitymodel.tokens.nuspec"
       ]
     },
+    "Microsoft.Net.Http.Headers/2.3.0": {
+      "sha512": "/M0wVg6tJUOHutWD3BMOUVZAioJVXe0tCpFiovzv0T9T12TBf4MnaHP0efO8TCr1a6O9RZgQeZ9Gdark8L9XdA==",
+      "type": "package",
+      "path": "microsoft.net.http.headers/2.3.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/netstandard2.0/Microsoft.Net.Http.Headers.dll",
+        "lib/netstandard2.0/Microsoft.Net.Http.Headers.xml",
+        "microsoft.net.http.headers.2.3.0.nupkg.sha512",
+        "microsoft.net.http.headers.nuspec"
+      ]
+    },
     "Microsoft.NETCore.Platforms/1.1.0": {
       "sha512": "kz0PEW2lhqygehI/d6XsPCQzD7ff7gUJaVGPVETX611eadGsA3A877GdSlU0LRVMCTH/+P3o2iDTak+S08V2+A==",
       "type": "package",
@@ -3071,35 +3266,24 @@
         "swashbuckle.aspnetcore.swaggerui.nuspec"
       ]
     },
-    "System.Buffers/4.5.1": {
-      "sha512": "Rw7ijyl1qqRS0YQD/WycNst8hUUMgrMH4FCn1nNm27M4VxchZ1js3fVjQaANHO5f3sN4isvP4a+Met9Y4YomAg==",
+    "System.Buffers/4.6.0": {
+      "sha512": "lN6tZi7Q46zFzAbRYXTIvfXcyvQQgxnY7Xm6C6xQ9784dEL1amjM6S6Iw4ZpsvesAKnRVsM4scrDQaDqSClkjA==",
       "type": "package",
-      "path": "system.buffers/4.5.1",
+      "path": "system.buffers/4.6.0",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "LICENSE.TXT",
-        "THIRD-PARTY-NOTICES.TXT",
-        "lib/net461/System.Buffers.dll",
-        "lib/net461/System.Buffers.xml",
-        "lib/netcoreapp2.0/_._",
-        "lib/netstandard1.1/System.Buffers.dll",
-        "lib/netstandard1.1/System.Buffers.xml",
+        "Icon.png",
+        "PACKAGE.md",
+        "buildTransitive/net461/System.Buffers.targets",
+        "buildTransitive/net462/_._",
+        "lib/net462/System.Buffers.dll",
+        "lib/net462/System.Buffers.xml",
+        "lib/netcoreapp2.1/_._",
         "lib/netstandard2.0/System.Buffers.dll",
         "lib/netstandard2.0/System.Buffers.xml",
-        "lib/uap10.0.16299/_._",
-        "ref/net45/System.Buffers.dll",
-        "ref/net45/System.Buffers.xml",
-        "ref/netcoreapp2.0/_._",
-        "ref/netstandard1.1/System.Buffers.dll",
-        "ref/netstandard1.1/System.Buffers.xml",
-        "ref/netstandard2.0/System.Buffers.dll",
-        "ref/netstandard2.0/System.Buffers.xml",
-        "ref/uap10.0.16299/_._",
-        "system.buffers.4.5.1.nupkg.sha512",
-        "system.buffers.nuspec",
-        "useSharedDesignerContext.txt",
-        "version.txt"
+        "system.buffers.4.6.0.nupkg.sha512",
+        "system.buffers.nuspec"
       ]
     },
     "System.Configuration.ConfigurationManager/8.0.0": {
@@ -4137,6 +4321,7 @@
       "Microsoft.AspNet.Cors >= 5.3.0",
       "Microsoft.AspNet.WebApi.Core >= 5.3.0",
       "Microsoft.AspNetCore.Authentication.JwtBearer >= 8.0.12",
+      "Microsoft.AspNetCore.ResponseCompression >= 2.3.0",
       "Microsoft.AspNetCore.SignalR.Common >= 9.0.3",
       "Microsoft.VisualStudio.Azure.Containers.Tools.Targets >= 1.21.0",
       "Newtonsoft.Json >= 13.0.3",
@@ -4213,6 +4398,10 @@
           "Microsoft.AspNetCore.Authentication.JwtBearer": {
             "target": "Package",
             "version": "[8.0.12, )"
+          },
+          "Microsoft.AspNetCore.ResponseCompression": {
+            "target": "Package",
+            "version": "[2.3.0, )"
           },
           "Microsoft.AspNetCore.SignalR.Common": {
             "target": "Package",

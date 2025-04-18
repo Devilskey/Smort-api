@@ -17,11 +17,6 @@ namespace Tiktok_api.SignalRHubs
         {
             string userId = Context.UserIdentifier;
 
-            if (!string.IsNullOrEmpty(userId))
-            {
-                await Clients.User(userId).SendAsync("ReceiveNotification", "Welcome back!");
-            }
-
             await base.OnConnectedAsync();
         }
     }

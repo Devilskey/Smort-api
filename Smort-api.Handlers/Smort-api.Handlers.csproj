@@ -10,6 +10,7 @@
   <ItemGroup>
     <PackageReference Include="CryptSharp.Core" Version="5.0.0" />
     <PackageReference Include="FFMpegCore" Version="5.2.0" />
+    <PackageReference Include="Lib.Net.Http.WebPush" Version="3.3.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.12" />
     <PackageReference Include="MySql.Data" Version="9.2.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
