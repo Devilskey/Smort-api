@@ -28,6 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="ImagePost\" />
     <Folder Include="Logs\" />
     <Folder Include="TempCompleteVideos\" />
     <Folder Include="ProfilePictures\" />

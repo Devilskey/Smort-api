@@ -54,7 +54,7 @@ namespace Smort_api.Handlers
         {
             foreach (var sizes in ContentSizingObjects.Thumbnails)
             {
-                FFMpeg.Snapshot(PathVideo, PathThumbnails + $"_{sizes.Size}.png", new Size(sizes.Width, sizes.Width), TimeSpan.FromSeconds(10));
+                FFMpeg.Snapshot(PathVideo, PathThumbnails + $"_{sizes.Size}.webp", new Size(sizes.Width, sizes.Width), TimeSpan.FromSeconds(10));
             }
 
         }

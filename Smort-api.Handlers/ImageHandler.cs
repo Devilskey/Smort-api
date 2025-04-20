@@ -7,6 +7,7 @@ using System.Security.Policy;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
+using SixLabors.ImageSharp.Formats.Webp;
 
 namespace Smort_api.Handlers
 {
@@ -34,7 +35,8 @@ namespace Smort_api.Handlers
 
                     using (var outputMemoryStream = new MemoryStream())
                     {
-                        image.Save(outputMemoryStream, new JpegEncoder());
+                        image.Mutate(x => x.AutoOrient());
+                        image.Save(outputMemoryStream, new WebpEncoder());
                         return outputMemoryStream.ToArray();
                     }
                 }

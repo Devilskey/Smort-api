@@ -6,6 +6,7 @@ using Smort_api.Object;
 using Smort_api.Object.Database;
 using Smort_api.Object.Security;
 using Smort_api.Object.User;
+using Tiktok_api.Settings_Api;
 
 namespace Tiktok_api.Controllers.Users
 {
@@ -89,29 +90,30 @@ namespace Tiktok_api.Controllers.Users
             var ImageGUID = Guid.NewGuid().ToString();
 
 
-            GetAndAddProfilePicture.Parameters.AddWithValue("@Name", $"{ImageGUID}.png");
-            GetAndAddProfilePicture.Parameters.AddWithValue("@Location", $"./ProfilePictures/{ImageGUID}.png");
+            GetAndAddProfilePicture.Parameters.AddWithValue("@Name", $"{ImageGUID}.webp");
+            GetAndAddProfilePicture.Parameters.AddWithValue("@Location", $"./ProfilePictures/{ImageGUID}");
             GetAndAddProfilePicture.Parameters.AddWithValue("@Created", DateTime.Now);
 
             int FileId = databaseHandler.GetNumber(GetAndAddProfilePicture);
 
-            if (newUser.size.Width > 500)
+            foreach (var sizes in ContentSizingObjects.ProfilePictures)
             {
-                float percentageLesser = (500f / newUser.size.Width);
+
+                float percentageLesser = ((float)sizes.Width / (float)newUser.size.Width);
+
+                Console.WriteLine(percentageLesser);
 
                 int newWidth = (int)(percentageLesser * newUser.size.Width);
-                int newHeight = (int)(percentageLesser * newUser.size.Width);
+                Console.WriteLine(newWidth);
+
+                int newHeight = (int)(percentageLesser * newUser.size.Height);
                 Console.WriteLine(newHeight);
+
 
                 var ResizedFilePost = ImageHandler.ChangeSizeOfImage(newUser.ProfilePicture, newWidth, newHeight);
 
-                if (ResizedFilePost != null)
-                {
-                    newUser.ProfilePicture = ResizedFilePost;
-                }
+                ImageHandler.SaveProfilePictures(ResizedFilePost, $"{ImageGUID}_{sizes.Size}.webp");
             }
-
-            ImageHandler.SaveProfilePictures(newUser.ProfilePicture, $"{ImageGUID}.png");
 
             // Creates the new user and adds the data to the database
             MySqlCommand addUser = new MySqlCommand();
@@ -152,6 +154,11 @@ namespace Tiktok_api.Controllers.Users
 
             // Logs the data 
             Logger.Log(LogLevel.Information, $"Created User: {newUser.Username}");
+
+            using (MailHandler mail = new MailHandler())
+            {
+                mail.SendMail(newUser.Email);
+            }
 
             return Task.FromResult<ActionResult>(Ok("User Created"));
         }

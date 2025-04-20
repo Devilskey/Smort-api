@@ -19,7 +19,7 @@ namespace Tiktok_api.Controllers
 
         [Route("Images/GetUsersProfileImage")]
         [HttpGet]
-        public ActionResult? GetUsersProfileImage(int UserId)
+        public ActionResult? GetUsersProfileImage(int UserId, Sizes size = Sizes.M)
         {
             try
             {
@@ -51,10 +51,19 @@ namespace Tiktok_api.Controllers
 
                 FilePathData[] path = JsonConvert.DeserializeObject<FilePathData[]>(json)!;
 
-                Logger.LogInformation(path[0].File_Location);
+                FileStream filestream = null;
+                Logger.LogInformation(size.ToString());
 
-                var filestream = System.IO.File.OpenRead(path[0].File_Location!);
-                return File(filestream, contentType: "image/*", enableRangeProcessing: false);
+                try
+                {
+                    filestream = System.IO.File.OpenRead(path[0].File_Location! + $"_{size}.webp");
+                }
+                catch (Exception)
+                {
+                    filestream = System.IO.File.OpenRead(path[0].File_Location!);
+                    Console.Write($"Returning old image Formate 1000X1000 {path[0].File_Location}");
+                }
+                return File(filestream, contentType: "image/*", enableRangeProcessing: true);
 
             }
             catch (Exception ex)
@@ -91,11 +100,11 @@ namespace Tiktok_api.Controllers
 
                 try
                 {
-                    filestream = System.IO.File.OpenRead(path[0].File_Location! + $"_{size}.png");
+                    filestream = System.IO.File.OpenRead(path[0].File_Location! + $"_{size}.webp");
                 }catch(Exception)
                 {
                     filestream = System.IO.File.OpenRead(path[0].File_Location!);
-                    Console.Write("Returning old image Formate 1000X1000");
+                    Console.Write($"Returning old image Formate 1000X1000 {path[0].File_Location}");
                 }
                 return File(filestream, contentType: "image/*", enableRangeProcessing: true);
 

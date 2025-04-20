@@ -20,7 +20,7 @@ namespace Tiktok_api.Controllers.Content.ImagePost
         public ImagePost(ILogger<ImagePost> logger)
         {
             _logger = logger;
-            chunkHandler = new ChunkHandler("./TempImagePost", "./ImagePost", "png");
+            chunkHandler = new ChunkHandler("./TempImagePost", "./ImagePost", "webp");
         }
 
         [Authorize]
