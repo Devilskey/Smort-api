@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Net.Mail;
 using System.Net;
 using Microsoft.AspNetCore.Hosting.Server;
+using Microsoft.Extensions.Logging;
 
 namespace Smort_api.Handlers;
 public class MailHandler :IDisposable
@@ -37,22 +38,29 @@ public class MailHandler :IDisposable
 
     public void Dispose()
     {
-        smtp.Dispose();
+        if(smtp != null)
+        {
+            smtp.Dispose();
+        }
     }
 
     public void SendMail(string UserEmail)
     {
-        Console.WriteLine(UserEmail);
-        MailAddress to = new MailAddress(UserEmail);
-        MailAddress from = new MailAddress(MailAccount);
+        try
+        {
+            Console.WriteLine(UserEmail);
+            MailAddress to = new MailAddress(UserEmail);
+            MailAddress from = new MailAddress(MailAccount);
 
-        MailMessage email = new MailMessage(from, to);
-        email.Subject = "Welcome To Smorthub";
-        email.Body = "Hello, Your account is not yet active please wait for the admin to aprove your account.";
+            MailMessage email = new MailMessage(from, to);
+            email.Subject = "Welcome To Smorthub";
+            email.Body = "Hello, Your account is not yet active please wait for the admin to aprove your account.";
 
-        smtp.Send(email);
-
+            smtp.Send(email);
+        }
+        catch (NullReferenceException ex)
+        {
+            Console.WriteLine("Could not send an mail to user...");
+        }
     }
-
-
 }
