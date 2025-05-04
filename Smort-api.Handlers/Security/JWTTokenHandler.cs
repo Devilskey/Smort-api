@@ -37,18 +37,19 @@ namespace Smort_api.Handlers
         }
 
 
-        public static string GenerateToken(LoginObject loginDetails, string id, string Username)
+        public static string GenerateToken(LoginObject loginDetails, string id, string username, int role)
         {
             JwtSecurityTokenHandler tokenhandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(TokenSecret);
 
             var claims = new List<Claim>
             {
-                new("Id", id!),
-                new("Username", Username!),
+                new("id", id!),
+                new("username", username!),
+                new("role", role.ToString()!),
                 new(ClaimTypes.NameIdentifier, id),
                 new(JwtRegisteredClaimNames.Email, loginDetails.Email!),
-                new("TimeCreated", DateTime.Now.ToString()),
+                new("timeCreated", DateTime.Now.ToString()),
             };
             SymmetricSecurityKey securiyKey= new SymmetricSecurityKey(key);
 

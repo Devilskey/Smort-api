@@ -47,8 +47,8 @@ public class MailHandler :IDisposable
         MailAddress from = new MailAddress(MailAccount);
 
         MailMessage email = new MailMessage(from, to);
-        email.Subject = "Testing out email sending";
-        email.Body = "Hello all the way from the land of C#";
+        email.Subject = "Welcome To Smorthub";
+        email.Body = "Hello, Your account is not yet active please wait for the admin to aprove your account.";
 
         smtp.Send(email);
 

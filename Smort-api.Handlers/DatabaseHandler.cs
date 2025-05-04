@@ -8,14 +8,15 @@ namespace Smort_api.Handlers
     {
         private string? Username { get; set; }
         private string? Password { get; set; }
-        private string? Server  { get; set; }
+        private string? Server { get; set; }
         private string? DatabaseName { get; set; }
 
         private readonly ILogger Logger;
 
         private MySqlConnection connection;
 
-        public DatabaseHandler(ILogger<DatabaseHandler> logger = null) {
+        public DatabaseHandler(ILogger<DatabaseHandler> logger = null)
+        {
             Logger = logger;
             Initialize();
         }
@@ -125,7 +126,7 @@ namespace Smort_api.Handlers
             {
                 return reader.GetInt32(0);
             }
-            
+
             return 0;
         }
 
@@ -136,7 +137,8 @@ namespace Smort_api.Handlers
         public void Migrate(string[] sqlFileContent)
         {
             MySqlCommand sqlCommand = new MySqlCommand();
-            foreach (string query in sqlFileContent) {
+            foreach (string query in sqlFileContent)
+            {
                 sqlCommand.CommandText = query;
                 sqlCommand.Connection = connection;
                 try

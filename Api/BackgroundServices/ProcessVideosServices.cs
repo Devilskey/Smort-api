@@ -70,7 +70,7 @@ namespace Tiktok_api.BackgroundServices
             }
             _logger.LogInformation($"Thumbnail Start");
 
-            VideoHandler.CreateThumbnails(Video.Input, Video.Output + Video.FileName);
+           await VideoHandler.CreateThumbnails(Video.Input, Video.Output + Video.FileName);
             _logger.LogInformation($"Thumbnail Done");
 
             using DatabaseHandler databaseHandler = new DatabaseHandler();

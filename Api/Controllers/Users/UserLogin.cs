@@ -191,11 +191,12 @@ namespace Tiktok_api.Controllers.Users
             }
 
             MySqlCommand getId = new MySqlCommand();
-            getId.CommandText = "SELECT Id, Username FROM Users_Public WHERE Person_Id=(SELECT Id FROM Users_Private WHERE Email=@Email);";
+            getId.CommandText = "SELECT Id, Username, AllowedUser, (SELECT Role_Id FROM Users_Private WHERE Email=@Email) Role FROM Users_Public WHERE Person_Id=(SELECT Id FROM Users_Private WHERE Email=@Email);";
 
             getId.Parameters.AddWithValue("@Email", User.Email);
 
             UserData[]? user = null;
+
 
             using (DatabaseHandler databaseHandler = new DatabaseHandler())
             {
@@ -203,7 +204,15 @@ namespace Tiktok_api.Controllers.Users
                 user = JsonConvert.DeserializeObject<UserData[]>(json);
             }
 
-            if (user == null) return Task.FromResult($"User Id not found");
+            if (user == null) {
+                return Task.FromResult($"User Id not found");
+            }
+
+            if (user[0].AllowedUser == false)
+            {
+                Logger.LogInformation($"{user[0].UserName} Failed To login cuz he or she is not allowed to");
+                return Task.FromResult($"User Not Allowed");
+            }
 
             PasswordObject[]? Passwords = JsonConvert.DeserializeObject<PasswordObject[]>(jsonData);
 
@@ -216,7 +225,7 @@ namespace Tiktok_api.Controllers.Users
 
             if (EncryptionHandler.VerifyData(Passwords[0], User.Password))
             {
-                string token = JWTTokenHandler.GenerateToken(User, user.First().Id.ToString(), user.First().UserName);
+                string token = JWTTokenHandler.GenerateToken(User, user.First().Id.ToString(), user.First().UserName, user.First().Role);
                 return Task.FromResult(token);
             }
 

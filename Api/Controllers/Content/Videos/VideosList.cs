@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MySql.Data.MySqlClient;
 using Smort_api.Handlers;
-
 using System.Security.Claims;
 
 namespace Tiktok_api.Controllers.Videos
@@ -13,6 +12,7 @@ namespace Tiktok_api.Controllers.Videos
         /// </summary>
         /// <param name="videoId"></param>
         /// <returns></returns>
+
         [Route("Video/GetVideoFromId")]
         [HttpGet]
         public Task<string> GetVideoFromId(int id)

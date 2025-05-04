@@ -1,9 +1,12 @@
 ﻿using FFMpegCore;
 using FFMpegCore.Enums;
 using FFMpegCore.Pipes;
-using System.Drawing;
+using SixLabors.ImageSharp.Formats.Webp;
 using System.Globalization;
 using Tiktok_api.Settings_Api;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
+using SixLabors.ImageSharp.Formats.Webp;
 
 namespace Smort_api.Handlers
 {
@@ -47,14 +50,25 @@ namespace Smort_api.Handlers
                     .ForceFormat("mp4")
                     .WithVideoFilters(filterOptions => filterOptions
                     .Scale(Sizewidth, newheight)))
-                
+
                 .ProcessAsynchronously();
         }
-        public static void CreateThumbnails(string PathVideo, string PathThumbnails)
+        public static async Task CreateThumbnails(string PathVideo, string PathThumbnails)
         {
             foreach (var sizes in ContentSizingObjects.Thumbnails)
             {
-                FFMpeg.Snapshot(PathVideo, PathThumbnails + $"_{sizes.Size}.webp", new Size(sizes.Width, sizes.Width), TimeSpan.FromSeconds(10));
+                await FFMpeg.SnapshotAsync(PathVideo, PathThumbnails + $"_{sizes.Size}.png", new System.Drawing.Size(sizes.Width, sizes.Width), TimeSpan.FromSeconds(10));
+                
+                using (Image image = Image.Load(PathThumbnails + $"_{sizes.Size}.png"))
+                {
+
+                    using (var outputMemoryStream = new MemoryStream())
+                    {
+                        image.Mutate(x => x.AutoOrient());
+                        image.Save(PathThumbnails + $"_{sizes.Size}.webp", new WebpEncoder());
+                    }
+                }
+                File.Delete(PathThumbnails + $"_{sizes.Size}.png");
             }
 
         }

@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Security.Policy;
-using SixLabors.ImageSharp.Formats.Jpeg;
-using SixLabors.ImageSharp;
+﻿using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Formats.Webp;
 
@@ -15,9 +8,6 @@ namespace Smort_api.Handlers
     {
         public static byte[]? ChangeSizeOfImage(byte[] imgMediaData, int width, int height)
         {
-            Console.WriteLine("width: " + width);
-            Console.WriteLine("height: " + height);
-
             using (MemoryStream inputMemoryStream = new MemoryStream(imgMediaData))
             {
                 using (Image image = Image.Load(inputMemoryStream))
