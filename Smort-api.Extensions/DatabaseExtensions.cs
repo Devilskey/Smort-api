@@ -12,10 +12,9 @@ namespace Smort_api.Extensions
         {
             using (DatabaseHandler databaseHandler = new())
             {
+                string[] sqlContent = File.ReadAllLines(SqlFile);
 
-                //string[] sqlContent = File.ReadAllLines(SqlFile);
-
-                //databaseHandler.Migrate(sqlContent);
+                databaseHandler.Migrate(sqlContent);
             }
         }
     }
