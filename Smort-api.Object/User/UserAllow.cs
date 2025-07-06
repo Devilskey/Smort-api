@@ -6,11 +6,9 @@ using System.Threading.Tasks;
 
 namespace Smort_api.Object.User
 {
-    public class UserData
+    public class UserAllow
     {
         public int Id { get; set; }
-        public string? UserName { get; set; }
-        public bool? AllowedUser { get; set; }
-        public int Role { get; set; }
+        public bool Allow { get; set; }
     }
 }

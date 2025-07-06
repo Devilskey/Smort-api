@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 using Smort_api.Handlers;
@@ -101,14 +102,8 @@ namespace Tiktok_api.Controllers.Users
 
                 float percentageLesser = ((float)sizes.Width / (float)newUser.size.Width);
 
-                Console.WriteLine(percentageLesser);
-
                 int newWidth = (int)(percentageLesser * newUser.size.Width);
-                Console.WriteLine(newWidth);
-
                 int newHeight = (int)(percentageLesser * newUser.size.Height);
-                Console.WriteLine(newHeight);
-
 
                 var ResizedFilePost = ImageHandler.ChangeSizeOfImage(newUser.ProfilePicture, newWidth, newHeight);
 
@@ -201,14 +196,18 @@ namespace Tiktok_api.Controllers.Users
             using (DatabaseHandler databaseHandler = new DatabaseHandler())
             {
                 string json = databaseHandler.Select(getId);
-                user = JsonConvert.DeserializeObject<UserData[]>(json);
+                Logger.LogInformation(json);
+
+                user = JsonConvert.DeserializeObject<UserData[]?>(json);
             }
 
-            if (user == null) {
+            if (user == null || user.Length == 0) {
                 return Task.FromResult($"User Id not found");
             }
 
-            if (user[0].AllowedUser == false)
+            Logger.LogInformation(user.Length.ToString());
+
+            if (user[0].AllowedUser == false || user[0].AllowedUser == null)
             {
                 Logger.LogInformation($"{user[0].UserName} Failed To login cuz he or she is not allowed to");
                 return Task.FromResult($"User Not Allowed");

@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using MySql.Data.MySqlClient;
 using Smort_api.Handlers;
+using Smort_api.Object.User;
 using System.Security.Claims;
 
 namespace Tiktok_api.Controllers.Users
@@ -11,7 +13,7 @@ namespace Tiktok_api.Controllers.Users
     {
         [Authorize]
         [HttpPost("Admin/users/PlatformAccess")]
-        public ActionResult AllowUser([FromBody] int UserId, bool Allow)
+        public ActionResult AllowUser(UserAllow user)
         {
             string token = HttpContext.Request.Headers["Authorization"]!;
 
@@ -33,12 +35,16 @@ namespace Tiktok_api.Controllers.Users
             sqlCommand.CommandText = @"
                 UPDATE Users_Public SET AllowedUser=@Allow WHERE Id=@Id;
             ";
-            sqlCommand.Parameters.AddWithValue("@Allow", Allow);
-            sqlCommand.Parameters.AddWithValue("@Id", UserId);
+            sqlCommand.Parameters.AddWithValue("@Allow", user.Allow ? 1 : 0);
+            sqlCommand.Parameters.AddWithValue("@Id", user.Id);
+
+            Logger.LogInformation(user.Id.ToString());
+            Logger.LogInformation(user.Allow.ToString());
+
 
             using (DatabaseHandler database = new DatabaseHandler())
             {
-                database.Select(sqlCommand);
+                database.EditDatabase(sqlCommand);
                 return Ok();
             }
         }

@@ -8,8 +8,6 @@ CREATE TABLE IF NOT EXISTS `Following` ( `User_Id_Followed` integer,`User_Id_Fol
 CREATE TABLE IF NOT EXISTS `Content` ( `Id` integer PRIMARY KEY AUTO_INCREMENT, `User_Id` integer, `File_Id` integer, `Title` varchar(32), `Type` varchar(3), `Description` varchar(128), `Thumbnail` integer, `Created_At` DateTime, `Updated_At` DateTime, `Deleted_At` DateTime, FOREIGN KEY (`File_Id`) REFERENCES `File` (`Id`), FOREIGN KEY (`User_Id`) REFERENCES `Users_Public` (`Id`), FOREIGN KEY (`Thumbnail`) REFERENCES `File` (`Id`));
 CREATE TABLE IF NOT EXISTS `Reaction` ( `Id` integer PRIMARY KEY AUTO_INCREMENT, `User_Id` integer, `Content_Id` integer, `Content_Type` varchar(10), `Reaction` Text, `Created_At` DateTime, `Updated_At` DateTime, FOREIGN KEY (`User_Id`) REFERENCES `Users_Public` (`Id`));
 CREATE TABLE IF NOT EXISTS `Report_User`( `Id` integer PRIMARY KEY AUTO_INCREMENT, `User_Reported_Id` integer, `User_Reporter_Id` integer, `Reason` varchar(512), `Reported_At` DateTime, FOREIGN KEY (`User_Reporter_Id`) REFERENCES `Users_Public` (`Id`),FOREIGN KEY (`User_Reported_Id`) REFERENCES `Users_Public` (`Id`));
-CREATE TABLE IF NOT EXISTS `Pages`( `Id` integer PRIMARY KEY AUTO_INCREMENT, `Name` varchar(128), `Description` Text);
-CREATE TABLE IF NOT EXISTS `Page_Views_Monthly`( `Id` integer PRIMARY KEY AUTO_INCREMENT, `Page_Id` integer, `Month` DateTime, `ViewCount` integer, FOREIGN KEY (`Page_Id`) REFERENCES `Pages` (`Id`));
 INSERT IGNORE INTO `Role` (Id, Name, Description) VALUES (1, "User", "Someone who has an account on the site");
 INSERT IGNORE INTO `Role` (Id, Name, Description) VALUES (2, "Creator", "Someone who Creates content");
 INSERT IGNORE INTO `Role` (Id, Name, Description) VALUES (3, "Admin", "Someone who has unlimited power");

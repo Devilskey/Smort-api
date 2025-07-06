@@ -22,7 +22,6 @@ namespace Tiktok_api.Controllers
             _notificationHub = notificationHub;
         }
 
-
         [HttpPost]
         [Authorize]
         [Route("Reactions/Like")]
