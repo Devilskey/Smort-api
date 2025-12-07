@@ -4,7 +4,6 @@ using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 using Smort_api.Handlers;
 using Smort_api.Object;
-using Smort_api.Object.Database;
 using Smort_api.Object.Security;
 using Smort_api.Object.User;
 using Tiktok_api.Settings_Api;
@@ -85,7 +84,7 @@ namespace Tiktok_api.Controllers.Users
             //Creates File
             MySqlCommand GetAndAddProfilePicture = new MySqlCommand();
             GetAndAddProfilePicture.CommandText =
-                @"INSERT INTO File (File_Name, File_Location, Created_At) VALUES (@Name, @Location, @Created);
+                @"INSERT INTO File_Image (File_Name, File_Location, file_type_Id, Created_At) VALUES (@Name, @Location, @file_type_Id, @Created);
                   SELECT LAST_INSERT_ID();";
 
             var ImageGUID = Guid.NewGuid().ToString();
@@ -93,6 +92,8 @@ namespace Tiktok_api.Controllers.Users
 
             GetAndAddProfilePicture.Parameters.AddWithValue("@Name", $"{ImageGUID}.webp");
             GetAndAddProfilePicture.Parameters.AddWithValue("@Location", $"./ProfilePictures/{ImageGUID}");
+            GetAndAddProfilePicture.Parameters.AddWithValue("@file_type_Id", 4);
+
             GetAndAddProfilePicture.Parameters.AddWithValue("@Created", DateTime.Now);
 
             int FileId = databaseHandler.GetNumber(GetAndAddProfilePicture);
@@ -150,9 +151,35 @@ namespace Tiktok_api.Controllers.Users
             // Logs the data 
             Logger.Log(LogLevel.Information, $"Created User: {newUser.Username}");
 
-            using (MailHandler mail = new MailHandler())
+            _mail.SendMail(
+                    newUser.Email,
+                    "Hello, Your account is not yet active please wait for the admin to aprove your account",
+                    "Welcome To Smorthub");
+
+            // Send email to admin
+
+            using MySqlCommand getAdministrator = new MySqlCommand();
+
+            getAdministrator.CommandText = @" 
+                SELECT Email FROM Users_Private WHERE Role_Id=3;
+            ";
+
+            var jsonresponcee = databaseHandler.Select(getAdministrator);
+
+            List<EmailEntry>? emailEntries = JsonConvert.DeserializeObject<List<EmailEntry>>(jsonresponcee);
+
+            if (emailEntries == null)
             {
-                mail.SendMail(newUser.Email);
+                Logger.LogError("NO ADMIN NO ADMIN ERROR ERROR SOMEONE FUCKED UP");
+                return Task.FromResult<ActionResult>(Ok("User Created"));
+            }
+
+            foreach (var entry in emailEntries)
+            {
+                _mail.SendMail(
+                    newUser.Email,
+                    $"Hello Admin, {newUser.Username} is waiting to be aproved by U",
+                    "New user waiting to be aproved");
             }
 
             return Task.FromResult<ActionResult>(Ok("User Created"));
@@ -201,7 +228,8 @@ namespace Tiktok_api.Controllers.Users
                 user = JsonConvert.DeserializeObject<UserData[]?>(json);
             }
 
-            if (user == null || user.Length == 0) {
+            if (user == null || user.Length == 0)
+            {
                 return Task.FromResult($"User Id not found");
             }
 

@@ -216,8 +216,6 @@ namespace Tiktok_api.Controllers.Users
 
             if (Exist == 0)
             {
-                //Insert New Username
-
                 GetUserNameAmount.CommandText = "INSERT INTO Username_Counter (Username, Amount, Created_At, Updated_At) VALUES (@Username, @Amount, @Created_At, @Update_At);";
 
                 GetUserNameAmount.Parameters.AddWithValue("@Username", $"{newUsername}");

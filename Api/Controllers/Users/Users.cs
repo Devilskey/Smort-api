@@ -19,12 +19,13 @@ namespace Tiktok_api.Controllers.Users
     {
         private readonly ILogger Logger;
         private readonly NotificationHubHandler _notificationHub;
+        private readonly MailHandler _mail;
 
-        public Users(ILogger<Users> logger, NotificationHubHandler notificationHub)
+        public Users(ILogger<Users> logger, NotificationHubHandler notificationHub, MailHandler mail)
         {
             Logger = logger;
             _notificationHub = notificationHub;
-
+            _mail = mail;
         }
 
         /// <summary>
@@ -122,7 +123,7 @@ namespace Tiktok_api.Controllers.Users
 
             using MySqlCommand GetDataUser = new MySqlCommand();
 
-            GetDataUser.CommandText = "SELECT Profile_Picture, Username FROM Users_Public WHERE Id=@id;";
+            GetDataUser.CommandText = "SELECT Id, Profile_Picture, Username FROM Users_Public WHERE Id=@id;";
             GetDataUser.Parameters.AddWithValue("Id", id);
             GetMyUserDataSimpel Userdata = new GetMyUserDataSimpel();
 

@@ -1,12 +1,11 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Builder;
+﻿using FluentMigrator.Runner;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.ResponseCompression;
-using Microsoft.AspNetCore.Server.Kestrel.Core;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using MySql.Data.MySqlClient;
 using Serilog;
 using Smort_api.Extensions;
-using System.IO;
+using Smort_api.Handlers;
 using System.Text;
 using Tiktok_api.BackgroundServices;
 using Tiktok_api.SignalRHubs;
@@ -15,27 +14,29 @@ namespace Tiktok_api
 {
     public class Startup
     {
-        private IConfiguration Configuration { get; }
+        private IConfiguration _configuration { get; }
 
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            _configuration = configuration;
         }
-
 
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
 
+            string[] allowedUrls = _configuration
+                .GetSection("CorsAllowedUrls")
+                .Get<string[]>() ?? Array.Empty<string>();
+
             services.AddCors(options =>
             {
                 options.AddPolicy("SmortSecureOnly", Policy =>
-                    Policy.WithOrigins("https://smorthub.nl", "https://smorthub.nl/", "http://localhost:3000", "https://localhost:3000")
+                    Policy.WithOrigins(allowedUrls)
                         .AllowCredentials()
                         .AllowAnyMethod()
                         .AllowAnyHeader());
             });
-
 
             services.AddAuthentication(config =>
             {
@@ -46,10 +47,10 @@ namespace Tiktok_api
             {
                 config.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidIssuer = Configuration["JwtSettings:Issuer"],
-                    ValidAudience = Configuration["JwtSettings:Audience"],
+                    ValidIssuer = _configuration["JwtSettings:Issuer"],
+                    ValidAudience = _configuration["JwtSettings:Audience"],
                     IssuerSigningKey = new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("SecretTokenJWT") ?? Configuration["JwtSettings:Key"]!)),
+                        Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("SecretTokenJWT") ?? _configuration["JwtSettings:Key"]!)),
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidateLifetime = true,
@@ -86,28 +87,41 @@ namespace Tiktok_api
 
             services.AddSingleton<ProcessVideoServices>();
             services.AddSingleton<NotificationHubHandler>();
+            services.AddSingleton<MailHandler>(new MailHandler());
+
+
+            string connectionString = _configuration.GetSection("Database:ConnectionString").Get<string>()!;
+
+            if (connectionString == null)
+            {
+                Console.WriteLine("No connection string found");
+                return;
+            }
+            else
+            {
+                services.AddTransient<MySqlConnection>(x => new MySqlConnection(connectionString));
+            }
+
+            services.MigrateDatabase(_configuration);
+
 
             services.AddHostedService<RemoveExpiredTokensServices>();
 
             services.AddEndpointsApiExplorer();
 
-            services.AddSerilogLogging(Configuration);
+            services.AddSerilogLogging(_configuration);
 
             services.AddKestrelOptions();
 
+            string[] allowedMimicTypes = _configuration
+                .GetSection("AllowedMimicTypes")
+                .Get<string[]>() ?? Array.Empty<string>();
+
+
             services.AddResponseCompression(options =>
             {
-                options.EnableForHttps = true; 
-                options.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(new[] {
-                    "image/jpeg",  
-                    "image/png",  
-                    "image/webp",  
-                    "image/gif",   
-                    "image/svg+xml",
-                    "video/mp4",   
-                    "video/webm",  
-                    "video/ogg"    
-                }); 
+                options.EnableForHttps = true;
+                options.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(allowedMimicTypes);
             });
 
         }
@@ -121,16 +135,21 @@ namespace Tiktok_api
 
             app.UseHttpsRedirection();
 
-            app.MigrateDatabase(Configuration);
 
             app.UseResponseCompression();
-
 
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
 
             app.LogApiInfo();
+
+
+            using (var scope = app.ApplicationServices.CreateScope())
+            {
+                var runner = scope.ServiceProvider.GetRequiredService<IMigrationRunner>();
+                runner.MigrateUp();
+            }
 
             app.UseEndpoints(endpoints =>
             {

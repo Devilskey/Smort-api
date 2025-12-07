@@ -57,6 +57,14 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "FluentMigrator": {
+              "target": "Package",
+              "version": "[7.1.0, )"
+            },
+            "FluentMigrator.Runner.MySql": {
+              "target": "Package",
+              "version": "[7.1.0, )"
+            },
             "Microsoft.AspNet.Cors": {
               "target": "Package",
               "version": "[5.3.0, )"
@@ -163,6 +171,10 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "FluentMigrator.Runner.MySql": {
+              "target": "Package",
+              "version": "[7.1.0, )"
+            },
             "Serilog": {
               "target": "Package",
               "version": "[4.2.0, )"
@@ -269,6 +281,10 @@
             "FFMpegCore": {
               "target": "Package",
               "version": "[5.2.0, )"
+            },
+            "FluentMigrator.Runner.MySql": {
+              "target": "Package",
+              "version": "[7.1.0, )"
             },
             "Lib.Net.Http.WebPush": {
               "target": "Package",

@@ -11,6 +11,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentMigrator" Version="7.1.0" />
+    <PackageReference Include="FluentMigrator.Runner.MySql" Version="7.1.0" />
     <PackageReference Include="Microsoft.AspNet.Cors" Version="5.3.0" />
     <PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="5.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.12" />
@@ -28,19 +30,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ImagePost\" />
-    <Folder Include="Logs\" />
-    <Folder Include="TempCompleteVideos\" />
+    <Folder Include="logs\" />
     <Folder Include="ProfilePictures\" />
     <Folder Include="TempImagePost\" />
     <Folder Include="TempVideos\" />
     <Folder Include="Videos\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Migrate.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
 </Project>

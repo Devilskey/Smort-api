@@ -1,13 +1,9 @@
 ﻿using Microsoft.AspNetCore.SignalR;
-using Tiktok_api.Controllers.Users;
-using System.Security.Claims;
-using System.Collections.Concurrent;
-using MySqlX.XDevAPI;
-using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Logging;
+
 
 namespace Tiktok_api.SignalRHubs
 {
-    [Authorize]
     public class NotificationHub : Hub
     {
         private readonly ILogger<NotificationHub> _logger;

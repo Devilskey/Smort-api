@@ -1,21 +1,35 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using FluentMigrator.Runner;
+using Google.Protobuf.WellKnownTypes;
 using Microsoft.Extensions.Configuration;
-using Smort_api.Handlers;
+using Microsoft.Extensions.DependencyInjection;
+using Smort_api.Handlers.Database;
 
 namespace Smort_api.Extensions
 {
     public static class DatabaseExtensions
     {
-        public static string SqlFile = "./Migrate.sql";
-
-        public static void MigrateDatabase(this IApplicationBuilder app, IConfiguration configuration)
+        public static IServiceCollection MigrateDatabase(this IServiceCollection services, IConfiguration configuration)
         {
-            using (DatabaseHandler databaseHandler = new())
-            {
-                string[] sqlContent = File.ReadAllLines(SqlFile);
+            string connectionString = configuration.GetSection("Database:ConnectionString").Get<string>()! ;
 
-                databaseHandler.Migrate(sqlContent);
+            if(connectionString == null)
+            {
+                Console.WriteLine("No Connectionstring");
+                return services;
             }
+
+            services
+                .AddFluentMigratorCore()
+                .ConfigureRunner(r =>
+                r.AddMySql8()
+                .WithGlobalConnectionString(connectionString)
+                .ScanIn(typeof(PrimairyDatabaseMigration).Assembly).For.Migrations())
+                .AddLogging(l => l.AddFluentMigratorConsole());
+
+
+            return services;
+
         }
+
     }
 }

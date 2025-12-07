@@ -22,13 +22,15 @@ namespace Smort_api.Handlers
             MySqlCommand GetContentCmd = new MySqlCommand();
 
             GetContentCmd.CommandText = $@"
-                SELECT Content.Id, Content.Title, Content.Description, Content.User_Id, Content.File_Id, Content.Created_At, Users_Public.Username, Content.Type,
+                SELECT Content.Id, Content.Description, Content.User_Id,
+                (SELECT Id FROM File_Content WHERE Content_Id=Content.Id) As File_Id,
+                Content.Created_At, Users_Public.Username, Content.Type,
                 (SELECT COUNT(Id) FROM Reaction WHERE Content_Id = Content.Id AND Reaction = 'Like') AS Likes,
                 null AS AlreadyLiked
-                FROM Content 
+                FROM Content
                 INNER JOIN Users_Public On Content.User_Id = Users_Public.Id 
-                {(search != "" ? "WHERE (LOWER(Content.Title) LIKE @asked OR LOWER(Content.Description) LIKE @asked)" : "")}
-                ORDER BY Created_At DESC LIMIT @max OFFSET @offset;
+                {(search != "" ? "WHERE LOWER(Content.Description) LIKE @asked " : "")}
+                ORDER BY Content.Created_At DESC LIMIT @max OFFSET @offset;
                 ";
 
             GetContentCmd.Parameters.AddWithValue("@asked", $"%{search.ToLower()}%");
@@ -44,13 +46,14 @@ namespace Smort_api.Handlers
             MySqlCommand GetContentCmd = new MySqlCommand();
 
             GetContentCmd.CommandText = $@"
-                SELECT Content.Id, Content.Title, Content.Description, Content.User_Id, Content.File_Id, Content.Created_At, Users_Public.Username, Content.Type,
+                SELECT Content.Id, Content.Description, Content.User_Id, Content.Created_At, Users_Public.Username, Content.Type,
                 (SELECT COUNT(Id) FROM Reaction WHERE Content_Id = Content.Id AND Reaction = 'Like') AS Likes,
-                (SELECT EXISTS(SELECT Id FROM Reaction WHERE Content_Id = Content.Id AND Reaction = 'Like' AND User_Id=@user)) AS AlreadyLiked
+                (SELECT EXISTS(SELECT Id FROM Reaction WHERE Content_Id = Content.Id AND Reaction = 'Like' AND User_Id=@user)) AS AlreadyLiked,
+                (SELECT Id FROM File_Content WHERE Content_Id=Content.Id) As File_Id
                 FROM Content
-                INNER JOIN Users_Public On Content.User_Id = Users_Public.Id
-                {(search != "" ? "WHERE (LOWER(Content.Title) LIKE @asked OR LOWER(Content.Description) LIKE @asked)" : "")}
-                ORDER BY Created_At DESC LIMIT @max OFFSET @offset;
+                INNER JOIN Users_Public On Content.User_Id=Users_Public.Id
+                {(search != "" ? "WHERE LOWER(Content.Description) LIKE @asked " : "")}
+                ORDER BY Content.Created_At DESC LIMIT @max OFFSET @offset;
                 ";
 
             GetContentCmd.Parameters.AddWithValue("@asked",$"%{search.ToLower()}%");
@@ -68,8 +71,9 @@ namespace Smort_api.Handlers
             MySqlCommand GetContentCmd = new MySqlCommand();
 
             GetContentCmd.CommandText = $@"
-                SELECT Content.Id, Content.Title, Content.Description, Content.User_Id, Content.File_Id, Content.Created_At, Users_Public.Username, Content.Type,
+                SELECT Content.Id, Content.Description, Content.User_Id, Content.Created_At, Users_Public.Username, Content.Type,
                 (SELECT COUNT(Id) FROM Reaction WHERE Content_Id = Content.Id AND Reaction = 'Like') AS Likes,
+                (SELECT Id FROM File_Content WHERE Content_Id=Content.Id) As File_Id,
                 null AS AlreadyLiked
                 FROM Content 
                 INNER JOIN Users_Public On Content.User_Id = Users_Public.Id 
@@ -86,8 +90,9 @@ namespace Smort_api.Handlers
             MySqlCommand GetContentCmd = new MySqlCommand();
 
             GetContentCmd.CommandText = $@"
-                SELECT Content.Id, Content.Title, Content.Description, Content.User_Id, Content.File_Id, Content.Created_At, Users_Public.Username, Content.Type,
+                SELECT Content.Id, Content.Description, Content.User_Id, Content.Created_At, Users_Public.Username, Content.Type,
                 (SELECT COUNT(Id) FROM Reaction WHERE Content_Id = Content.Id AND Reaction = 'Like') AS Likes,
+                (SELECT Id FROM File_Content WHERE Content_Id=Content.Id) As File_Id,
                 (SELECT EXISTS(SELECT Id FROM Reaction WHERE Content_Id = Content.Id AND Reaction = 'Like' AND User_Id=@user)) AS AlreadyLiked
                 FROM Content
                 INNER JOIN Users_Public On Content.User_Id = Users_Public.Id

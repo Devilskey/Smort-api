@@ -22,9 +22,8 @@ namespace Tiktok_api.Controllers
             _notificationHub = notificationHub;
         }
 
-        [HttpPost]
+        [HttpPost("Reactions/Like")]
         [Authorize]
-        [Route("Reactions/Like")]
         public async Task<IActionResult> Like(string contentId, string ContentType)
         {
             string token = HttpContext.Request.Headers["Authorization"]!;
@@ -57,13 +56,14 @@ namespace Tiktok_api.Controllers
                 HasAlreadyLiked.Parameters.AddWithValue("@type", ContentType);
 
                 int Amount = database.GetNumber(HasAlreadyLiked);
+                Console.WriteLine(Amount);
                 MySqlCommand nextStep = new MySqlCommand();
 
                 if (Amount == 0)
                 {
                     TypeOfLike = "Like";
                     nextStep.CommandText = @"
-                        INSERT INTO Reaction (User_Id, Content_Id, Content_Type, Reaction) VALUES (@user, @content, @type, @reaction); 
+                        INSERT INTO Reaction (User_Id, Content_Id, Content_Type, Reaction, Created_At) VALUES (@user, @content, @type, @reaction, @Created_At); 
                         SELECT Id, Username FROM Users_Public WHERE Id=(SELECT User_Id FROM Content WHERE id=@content);";
                 }
                 else
@@ -77,9 +77,10 @@ namespace Tiktok_api.Controllers
                 nextStep.Parameters.AddWithValue("@content", contentId);
                 nextStep.Parameters.AddWithValue("@reaction", "Like");
                 nextStep.Parameters.AddWithValue("@type", ContentType);
+                nextStep.Parameters.AddWithValue("@Created_At", new DateTime());
 
                 string json = database.Select(nextStep);
-
+                Console.WriteLine(json);
 
                 if (TypeOfLike == "Like")
                 {

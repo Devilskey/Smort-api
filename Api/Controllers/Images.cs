@@ -43,7 +43,7 @@ namespace Tiktok_api.Controllers
 
                 using MySqlCommand GetVideoPath = new MySqlCommand();
 
-                GetVideoPath.CommandText = "SELECT File_Location FROM File WHERE Id=@Id;";
+                GetVideoPath.CommandText = "SELECT File_Location FROM File_Image WHERE Id=@Id;";
                 GetVideoPath.Parameters.AddWithValue("@Id", $"{id.First().Profile_Picture}");
 
 
@@ -81,14 +81,22 @@ namespace Tiktok_api.Controllers
         /// <returns></returns>
         [Route("Images/GetImage")]
         [HttpGet]
-        public ActionResult? GetImage(int ImageId, Sizes size = Sizes.M)
+        public ActionResult? GetImage(int ImageId, Sizes size = Sizes.M, bool IsContent = true)
         {
             try
             {
                 using MySqlCommand GetVideoPath = new MySqlCommand();
 
-                GetVideoPath.CommandText = "SELECT File_Location FROM File WHERE Id=@Id;";
-                GetVideoPath.Parameters.AddWithValue("@Id", $"{ImageId}");
+                if (IsContent)
+                {
+                    GetVideoPath.CommandText = "SELECT File_Location FROM File_Content WHERE Id=@Id;";
+                    GetVideoPath.Parameters.AddWithValue("@Id", $"{ImageId}");
+                }
+                else
+                {
+                    GetVideoPath.CommandText = "SELECT File_Location FROM File_Image WHERE Id=@Id;";
+                    GetVideoPath.Parameters.AddWithValue("@Id", $"{ImageId}");
+                }
 
                 using DatabaseHandler databaseHandler = new DatabaseHandler();
 

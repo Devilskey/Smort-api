@@ -1,5 +1,4 @@
-﻿using FFMpegCore.Enums;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
@@ -67,7 +66,7 @@ namespace Tiktok_api.Controllers.Videos
                 Guid videoSavedId = Guid.NewGuid();
                 Data.FileName = videoSavedId.ToString();
 
-                chunkHandler.SaveFileChunk(videoBytes, Data.FileName+"TS");
+                chunkHandler.SaveFileChunk(videoBytes, Data.FileName + "TS");
 
                 string input = chunkHandler.GetPathContentTemp(Data.FileName + "TS");
                 string output = chunkHandler.GetPath(Data.FileName, id);
@@ -123,11 +122,18 @@ namespace Tiktok_api.Controllers.Videos
 
             using MySqlCommand SelectVideoPath = new MySqlCommand();
 
-            SelectVideoPath.CommandText =
-                "SELECT File_Location FROM File WHERE Id IN " +
-                "((SELECT File_Id FROM Content WHERE Id = @VideoId) UNION (SELECT Thumbnail FROM Content WHERE Id = @VideoId)); " +
-                "DELETE FROM Content WHERE Id = @VideoId AND User_Id = @UserId; " +
-                "DELETE FROM File WHERE Id IN (SELECT File_Id FROM Video WHERE Id = @VideoId UNION SELECT Thumbnail FROM Content WHERE Id = @VideoId);";
+            SelectVideoPath.CommandText = @"
+                SELECT File_Location FROM File_Content WHERE Content_Id=@VideoId UNION 
+                SELECT File_Location FROM File_Image WHERE Id=(SELECT Thumbnail FROM Content WHERE id=@VideoId);
+                DELETE FROM File_Content WHERE Content_Id= @VideoId;
+                DELETE FROM Content WHERE Id = @VideoId AND User_Id = @UserId;
+                DELETE FROM File_Image WHERE Id In (SELECT Thumbnail FROM Content WHERE Id = @VideoId);
+            ";
+            //"SELECT File_Location FROM File WHERE Id IN " +
+            //"((SELECT File_Id FROM Content WHERE Id = @VideoId) UNION (SELECT Thumbnail FROM Content WHERE Id = @VideoId)); " +
+            //" " +
+            //" +
+            //"DELETE FROM File_Image WHERE Id In (SELECT Thumbnail FROM Content WHERE Id = @VideoId)';";
 
             SelectVideoPath.Parameters.AddWithValue("@VideoId", videoId);
             SelectVideoPath.Parameters.AddWithValue("@UserId", id);
@@ -162,7 +168,7 @@ namespace Tiktok_api.Controllers.Videos
         {
             using MySqlCommand GetVideoPath = new MySqlCommand();
 
-            GetVideoPath.CommandText = "SELECT File_Location FROM File WHERE Id=(SELECT File_Id FROM Content WHERE Id=@Id);";
+            GetVideoPath.CommandText = "SELECT File_Location FROM File_Content WHERE Content_Id=(SELECT Id FROM Content WHERE Id=@Id);";
             GetVideoPath.Parameters.AddWithValue("@Id", $"{videoId}");
 
             using DatabaseHandler databaseHandler = new DatabaseHandler();

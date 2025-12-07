@@ -1,11 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using MySql.Data.MySqlClient;
-using Newtonsoft.Json.Linq;
-using SixLabors.ImageSharp;
 using Smort_api.Handlers;
 using System.Security.Claims;
-using Tiktok_api.Controllers.Analytics;
 
 namespace Tiktok_api.Controllers.Content.Posts
 {
@@ -37,13 +33,14 @@ namespace Tiktok_api.Controllers.Content.Posts
 
             using (DatabaseHandler database = new())
             {
+                Console.WriteLine(sqlCommand.CommandText);
+
                 string json = database.Select(sqlCommand);
+                Console.WriteLine(json);
                 return Ok(json);
             }
 
         }
-
-
 
 
         [HttpGet]
@@ -101,12 +98,14 @@ namespace Tiktok_api.Controllers.Content.Posts
             _logger.LogInformation(id);
 
             GetVideoPath.CommandText =
-                " SELECT Id, Title, Thumbnail, File_Id, Type AS Type  FROM Content WHERE User_Id=@Id ";
-
+                @" SELECT Content.Id, Content.Thumbnail, Content.Type, File_Content.Id as File_Id
+                FROM Content LEFT JOIN File_Content ON  Content.Id=File_Content.Content_Id 
+                WHERE User_Id=@Id ";
+            //(SELECT Id FROM File_Content WHERE Id = Id) as File_Id
             GetVideoPath.Parameters.AddWithValue("@Id", $"{id}");
 
             using DatabaseHandler databaseHandler = new DatabaseHandler();
-
+            Console.WriteLine(databaseHandler.Select(GetVideoPath));
 
             return Task.FromResult(databaseHandler.Select(GetVideoPath));
         }

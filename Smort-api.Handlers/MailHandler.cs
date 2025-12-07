@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.Extensions.Logging;
 
 namespace Smort_api.Handlers;
-public class MailHandler :IDisposable
+public class MailHandler 
 {
     protected string MailAccount { get; set; }
     protected string Password { get; set; }
@@ -19,10 +19,10 @@ public class MailHandler :IDisposable
     public MailHandler()
     {
 
-        MailAccount = Environment.GetEnvironmentVariable("SmtpMail") ?? "";
+        MailAccount = Environment.GetEnvironmentVariable("SmtpMail") ?? "smort@example.com";
         Password = Environment.GetEnvironmentVariable("SmtpPassword") ?? "";
-        SMTPserver = Environment.GetEnvironmentVariable("SmtpServer") ?? "";
-        port = Environment.GetEnvironmentVariable("SmtpPort") ?? "";
+        SMTPserver = Environment.GetEnvironmentVariable("SmtpServer") ?? "127.0.0.1";
+        port = Environment.GetEnvironmentVariable("SmtpPort") ?? "25";
 
         int portInt = 0;
         if (int.TryParse(port, out portInt))
@@ -32,7 +32,7 @@ public class MailHandler :IDisposable
             smtp.Port = portInt;
             smtp.Credentials = new NetworkCredential(MailAccount, Password);
             smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
-            smtp.EnableSsl = true;
+            smtp.EnableSsl = false;
         }
     }
 
@@ -44,17 +44,17 @@ public class MailHandler :IDisposable
         }
     }
 
-    public void SendMail(string UserEmail)
+    public void SendMail(string userEmail, string body, string subject)
     {
         try
         {
-            Console.WriteLine(UserEmail);
-            MailAddress to = new MailAddress(UserEmail);
+            Console.WriteLine(userEmail);
+            MailAddress to = new MailAddress(userEmail);
             MailAddress from = new MailAddress(MailAccount);
 
             MailMessage email = new MailMessage(from, to);
-            email.Subject = "Welcome To Smorthub";
-            email.Body = "Hello, Your account is not yet active please wait for the admin to aprove your account.";
+            email.Subject = subject;  
+            email.Body = body;
 
             smtp.Send(email);
         }

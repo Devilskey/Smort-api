@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Smort_api.Object.Database.Interfaces
+namespace Smort_api.Object.User
 {
-    public interface IDatabaseModel
-    { 
-
+    public class EmailEntry
+    {
+        public string Email { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 
@@ -11,13 +12,11 @@ namespace Smort_api.Handlers
         private string? Server { get; set; }
         private string? DatabaseName { get; set; }
 
-        private readonly ILogger Logger;
 
         private MySqlConnection connection;
 
-        public DatabaseHandler(ILogger<DatabaseHandler> logger = null)
+        public DatabaseHandler()
         {
-            Logger = logger;
             Initialize();
         }
 
@@ -73,7 +72,7 @@ namespace Smort_api.Handlers
             }
             catch (Exception ex)
             {
-                Logger.Log(LogLevel.Error, $"message: {ex.Message}, source {ex.Source}");
+                Console.WriteLine($"message: {ex.Message}, source {ex.Source}");
                 return 0;
             }
         }
@@ -128,28 +127,6 @@ namespace Smort_api.Handlers
             }
 
             return 0;
-        }
-
-        /// <summary>
-        /// Migrates the database
-        /// </summary>
-        /// <param name="sqlFileContent"></param>
-        public void Migrate(string[] sqlFileContent)
-        {
-            MySqlCommand sqlCommand = new MySqlCommand();
-            foreach (string query in sqlFileContent)
-            {
-                sqlCommand.CommandText = query;
-                sqlCommand.Connection = connection;
-                try
-                {
-                    sqlCommand.ExecuteNonQuery();
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
-            }
         }
 
         /// <summary>

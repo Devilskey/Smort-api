@@ -30,7 +30,7 @@ namespace Tiktok_api.BackgroundServices
 
         public void AddToQueue(VideoToProcessObject item)
         {
-            _logger.LogInformation($"{item.FileName} Added to the processing list" );
+            _logger.LogInformation($"{item.FileName} Added to the processing list");
             _VideosToProcess.Enqueue(item);
         }
 
@@ -70,7 +70,7 @@ namespace Tiktok_api.BackgroundServices
             }
             _logger.LogInformation($"Thumbnail Start");
 
-           await VideoHandler.CreateThumbnails(Video.Input, Video.Output + Video.FileName);
+            await VideoHandler.CreateThumbnails(Video.Input, Video.Output + Video.FileName);
             _logger.LogInformation($"Thumbnail Done");
 
             using DatabaseHandler databaseHandler = new DatabaseHandler();
@@ -79,7 +79,7 @@ namespace Tiktok_api.BackgroundServices
 
             MySqlCommand GetAndAddThumbnail = new MySqlCommand();
             GetAndAddThumbnail.CommandText =
-                @"INSERT INTO File (File_Name, File_Location, Created_At) VALUES (@Name, @Location, @Created); 
+                @"INSERT INTO File_Image (File_Name, File_Location, file_type_Id, Created_At) VALUES (@Name, @Location, 2, @Created); 
                       SELECT LAST_INSERT_ID();";
 
             GetAndAddThumbnail.Parameters.AddWithValue("@Name", $"{Video.FileName}.png");
@@ -93,14 +93,16 @@ namespace Tiktok_api.BackgroundServices
             using MySqlCommand InsertFileAndVideo = new MySqlCommand();
 
             InsertFileAndVideo.CommandText =
-                @"INSERT INTO File (File_Name, File_location, Created_At, Deleted_At) VALUES (@FileName, @FileLocation, @CreatedAt, @DeletedAt);
-                      INSERT INTO Content (User_Id, File_Id, Type, Description, Thumbnail, Created_At, Updated_At, Deleted_At) VALUES (@Id, LAST_INSERT_ID(), @Type, @Description, @Thumbnail, @CreatedAt, @UpdatedAt, @DeletedAt);";
+                @"
+                INSERT INTO Content (User_Id, Type, Description, Thumbnail, Created_At, Updated_At, Deleted_At) VALUES (@Id, @Type, @Description, @Thumbnail, @CreatedAt, @UpdatedAt, @DeletedAt);
+                INSERT INTO File_Content (File_Name, File_location,file_type_Id, Content_Id, Created_At, Deleted_At) VALUES (@FileName, @FileLocation, @fileType, LAST_INSERT_ID(), @CreatedAt, @DeletedAt);";
 
             InsertFileAndVideo.Parameters.AddWithValue("@FileName", $"{Video.FileName}.mkv");
             InsertFileAndVideo.Parameters.AddWithValue("@Id", Video.UserId);
             InsertFileAndVideo.Parameters.AddWithValue("@FileLocation", $"{Video.Output}{Video.FileName}");
             InsertFileAndVideo.Parameters.AddWithValue("@CreatedAt", DateTime.Now);
             InsertFileAndVideo.Parameters.AddWithValue("@DeletedAt", DateTime.Now);
+            InsertFileAndVideo.Parameters.AddWithValue("@fileType", 3);
             InsertFileAndVideo.Parameters.AddWithValue("@UpdatedAt", DateTime.Now);
 
             InsertFileAndVideo.Parameters.AddWithValue("@Type", "vid");

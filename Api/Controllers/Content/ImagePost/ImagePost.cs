@@ -101,8 +101,11 @@ namespace Tiktok_api.Controllers.Content.ImagePost
                     using MySqlCommand FileAndPostImage = new MySqlCommand();
 
                     FileAndPostImage.CommandText =
-                        @"INSERT INTO File (File_Name, File_location, file_type_Id, Created_At, Deleted_At) VALUES (@FileName, @FileLocation, @FileType, @CreatedAt, @DeletedAt);
-                      INSERT INTO Content (User_Id, File_Id, Title, Type, Description, Created_At, Updated_At, Deleted_At) VALUES (@Id, LAST_INSERT_ID(), @Title, @Type, @Description, @CreatedAt, @UpdatedAt, @DeletedAt);";
+                        @"
+                        INSERT INTO Content (User_Id, Type, Description, Created_At, Updated_At, Deleted_At) 
+                        VALUES (@Id,  @Type, @Description, @CreatedAt, @UpdatedAt, @DeletedAt);
+                        INSERT INTO File_Content (File_Name, Content_Id, File_location, file_type_Id, Created_At, Deleted_At) 
+                        VALUES (@FileName, LAST_INSERT_ID(), @FileLocation, @FileType, @CreatedAt, @DeletedAt)";
 
                     FileAndPostImage.Parameters.AddWithValue("@FileName", $"{filename}");
                     FileAndPostImage.Parameters.AddWithValue("@Id", id);
@@ -113,7 +116,6 @@ namespace Tiktok_api.Controllers.Content.ImagePost
                     FileAndPostImage.Parameters.AddWithValue("@DeletedAt", DateTime.Now);
                     FileAndPostImage.Parameters.AddWithValue("@UpdatedAt", DateTime.Now);
 
-                    FileAndPostImage.Parameters.AddWithValue("@Title", data.Title);
                     FileAndPostImage.Parameters.AddWithValue("@Type", "img");
 
 
@@ -160,9 +162,9 @@ namespace Tiktok_api.Controllers.Content.ImagePost
             using MySqlCommand SelectImagePath = new MySqlCommand();
 
             SelectImagePath.CommandText =
-                "SELECT File_Location FROM File WHERE Id IN (SELECT File_Id FROM Content WHERE Id = @ImageId); " +
-                                "DELETE FROM Content WHERE Id = @ImageId AND User_Id = @UserId; " +
-            "DELETE FROM File WHERE Id IN (SELECT File_Id FROM Content WHERE Id = @ImageId);";
+            "SELECT File_Location FROM File_Content WHERE Content_Id IN (SELECT Id FROM Content WHERE Id = @ImageId); " +
+            "DELETE FROM File_Content WHERE Content_Id IN (SELECT Id FROM Content WHERE Id = @ImageId);" +
+            "DELETE FROM Content WHERE Id = @ImageId AND User_Id = @UserId; ";
 
 
             SelectImagePath.Parameters.AddWithValue("@ImageId", imageId);
