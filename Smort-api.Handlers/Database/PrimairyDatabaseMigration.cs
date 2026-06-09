@@ -44,8 +44,14 @@ namespace Smort_api.Handlers.Database
                 .WithColumn("Id").AsInt32().PrimaryKey().Identity()
                 .WithColumn("Role_Id").AsInt32()
                 .WithColumn("Email").AsString(64)
-                .WithColumn("Password").AsString(128)
-                .WithColumn("Salt").AsString(64);
+                .WithColumn("Password").AsString(128).Nullable()
+                .WithColumn("Salt").AsString(64).Nullable()
+                .WithColumn("Firebase_Uid").AsString(128).Nullable()
+                .WithColumn("Provider").AsString(32).WithDefaultValue("local")
+                .WithColumn("Last_Login_At").AsDateTime().Nullable();
+
+            Create.UniqueConstraint("UQ_UsersPrivate_FirebaseUid")
+                .OnTable("Users_Private").Column("Firebase_Uid");
 
             Create.Table("Users_Public")
                 .WithColumn("Id").AsInt32().PrimaryKey().Identity()
@@ -179,6 +185,7 @@ namespace Smort_api.Handlers.Database
             Delete.ForeignKey("FK_Reaction_User").OnTable("Reaction");
             Delete.ForeignKey("FK_ReportUser_Reported").OnTable("Report_User");
             Delete.ForeignKey("FK_ReportUser_Reporter").OnTable("Report_User");
+            Delete.UniqueConstraint("UQ_UsersPrivate_FirebaseUid").FromTable("Users_Private");
 
             Delete.Table("Report_User");
             Delete.Table("Reaction");

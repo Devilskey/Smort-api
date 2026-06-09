@@ -23,17 +23,31 @@ namespace Smort_api.Handlers
 
         public static bool IsBlacklisted(string token)
         {
-            if (BlackList == null) 
+            if (BlackList == null)
                 return false;
+
+            token = ExtractBearerToken(token);
 
             foreach (JWTtokenBlacklistItem blacklistItem in BlackList!)
             {
-                if(blacklistItem.Token == token)
+                if (blacklistItem.Token == token)
                 {
                     return true;
                 }
             }
             return false;
+        }
+
+        public static string? ExtractBearerToken(string? rawToken)
+        {
+            if (string.IsNullOrWhiteSpace(rawToken))
+                return null;
+
+            var parts = rawToken.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            if (parts.Length == 2 && parts[0].Equals("Bearer", StringComparison.OrdinalIgnoreCase))
+                return parts[1];
+
+            return rawToken;
         }
 
 

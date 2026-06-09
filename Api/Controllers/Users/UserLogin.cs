@@ -6,6 +6,7 @@ using Smort_api.Handlers;
 using Smort_api.Object;
 using Smort_api.Object.Security;
 using Smort_api.Object.User;
+using Tiktok_api.Auth;
 using Tiktok_api.Settings_Api;
 
 namespace Tiktok_api.Controllers.Users
@@ -192,73 +193,16 @@ namespace Tiktok_api.Controllers.Users
         /// <returns></returns>
         [Route("users/Login")]
         [HttpPost]
-        public Task<string> Login(LoginObject User)
+        public async Task<ActionResult<string>> Login(LoginObject user)
         {
-            // Checks if the data that has been received is not empty
-            if (string.IsNullOrEmpty(User.Email) || string.IsNullOrEmpty(User.Password))
-                return Task.FromResult("Data received Empty");
+            if (string.IsNullOrEmpty(user.FirebaseIdToken))
+                return BadRequest("Firebase ID token is required for login.");
 
-            // Checks if the email adress exists
-            using MySqlCommand addUser = new MySqlCommand();
-            addUser.CommandText =
-                @"SELECT Password, Salt FROM Users_Private WHERE Email = @EmailGiven;";
+            var loginResult = await _firebaseAuthService.LoginWithFirebaseTokenAsync(user.FirebaseIdToken);
+            if (!loginResult.Success)
+                return BadRequest(loginResult.ErrorMessage ?? "Unable to sign in with Firebase.");
 
-            addUser.Parameters.AddWithValue("@EmailGiven", User.Email);
-
-            string jsonData = "[{}]";
-
-            using (DatabaseHandler databaseHandler = new DatabaseHandler())
-            {
-                jsonData = databaseHandler.Select(addUser);
-            }
-
-            MySqlCommand getId = new MySqlCommand();
-            getId.CommandText = "SELECT Id, Username, AllowedUser, (SELECT Role_Id FROM Users_Private WHERE Email=@Email) Role FROM Users_Public WHERE Person_Id=(SELECT Id FROM Users_Private WHERE Email=@Email);";
-
-            getId.Parameters.AddWithValue("@Email", User.Email);
-
-            UserData[]? user = null;
-
-
-            using (DatabaseHandler databaseHandler = new DatabaseHandler())
-            {
-                string json = databaseHandler.Select(getId);
-                Logger.LogInformation(json);
-
-                user = JsonConvert.DeserializeObject<UserData[]?>(json);
-            }
-
-            if (user == null || user.Length == 0)
-            {
-                return Task.FromResult($"User Id not found");
-            }
-
-            Logger.LogInformation(user.Length.ToString());
-
-            if (user[0].AllowedUser == false || user[0].AllowedUser == null)
-            {
-                Logger.LogInformation($"{user[0].UserName} Failed To login cuz he or she is not allowed to");
-                return Task.FromResult($"User Not Allowed");
-            }
-
-            PasswordObject[]? Passwords = JsonConvert.DeserializeObject<PasswordObject[]>(jsonData);
-
-
-            if (Passwords == null || Passwords.Length == 0)
-                return Task.FromResult("No accounts found");
-
-            // Hashes the the password that has been givens
-            string[] Results = EncryptionHandler.HashAndSaltData(User.Password);
-
-            if (EncryptionHandler.VerifyData(Passwords[0], User.Password))
-            {
-                string token = JWTTokenHandler.GenerateToken(User, user.First().Id.ToString(), user.First().UserName, user.First().Role);
-                return Task.FromResult(token);
-            }
-
-            Logger.Log(LogLevel.Warning, $"Failed Login attempt at {DateTime.Now}");
-
-            return Task.FromResult("Failed to login");
+            return Ok(loginResult.Token);
         }
     }
 }

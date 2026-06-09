@@ -3,5 +3,8 @@
     "Issuer": "http://localhost",
     "Audience": "http://localhost",
     "Key": "IWANTTOSETHERAINBOWHIGHINTHESKYIWANTTOSOYOUANDMEONABIRDFLYAWAYTESTINGITAGAIN"
+  },
+  "Firebase": {
+    "ProjectId": "your-firebase-project-id"
   }
 }
