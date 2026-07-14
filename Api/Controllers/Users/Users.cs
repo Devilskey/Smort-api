@@ -32,16 +32,14 @@ namespace Tiktok_api.Controllers.Users
         private readonly IUserService _userService;
 
         /// <summary>Firebase authentication service for verifying tokens and generating local JWTs.</summary>
-        private readonly IFirebaseAuthService _firebaseAuthService;
 
         /// <summary>Constructor - initializes the controller with dependencies.</summary>
-        public Users(ILogger<Users> logger, NotificationHubHandler notificationHub, MailHandler mail, IUserService userService, IFirebaseAuthService firebaseAuthService)
+        public Users(ILogger<Users> logger, NotificationHubHandler notificationHub, MailHandler mail, IUserService userService)
         {
             Logger = logger;
             _notificationHub = notificationHub;
             _mail = mail;
             _userService = userService;
-            _firebaseAuthService = firebaseAuthService;
         }
 
         /// <summary>
@@ -105,9 +103,14 @@ namespace Tiktok_api.Controllers.Users
             if (JWTTokenHandler.IsBlacklisted(token))
                 return BadRequest("Token Black listed");
 
-            int id = int.Parse(User.FindFirstValue("Id") ?? "0");
+            var userIdClaim = User.FindFirstValue("app_user_id");
+
+            if (!int.TryParse(userIdClaim, out var id))
+                return Unauthorized("Invalid user identity");
 
             var userdata = await _userService.GetMyProfileAsync(id);
+            Console.WriteLine(id);
+
             if (userdata == null)
                 return BadRequest("Data not found");
 

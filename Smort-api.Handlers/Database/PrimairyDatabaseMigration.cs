@@ -56,11 +56,12 @@ namespace Smort_api.Handlers.Database
             Create.Table("Users_Public")
                 .WithColumn("Id").AsInt32().PrimaryKey().Identity()
                 .WithColumn("Person_Id").AsInt32()
-                .WithColumn("Username").AsString(32)
-                .WithColumn("Profile_Picture").AsInt32()
+                .WithColumn("Username").AsString(32).Nullable()
+                .WithColumn("Profile_Picture").AsInt32().Nullable()
                 .WithColumn("Created_At").AsDateTime()
                 .WithColumn("Updated_At").AsDateTime().Nullable()
                 .WithColumn("Deleted_At").AsDateTime().Nullable()
+                .WithColumn("Is_Account_Configured").AsBoolean().WithDefaultValue(false)
                 .WithColumn("AllowedUser").AsBoolean().WithDefaultValue(false);
 
             Create.Table("Following")
@@ -101,6 +102,8 @@ namespace Smort_api.Handlers.Database
                 .WithColumn("Answer").AsString()
                 .WithColumn("Created_At").AsDateTime()
                 .WithColumn("Updated_At").AsDateTime().Nullable();
+
+            // KEY CONNECTIONS 
 
             Create.ForeignKey("FK_File_Image_FileType")
                 .FromTable("File_Image").ForeignColumn("file_type_Id")

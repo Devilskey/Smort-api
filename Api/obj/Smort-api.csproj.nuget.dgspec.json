@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\bhendriks\\Gitkraken\\Kembit_Portals\\Smort-api\\Api\\Smort-api.csproj": {}
+    "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Api\\Smort-api.csproj": {}
   },
   "projects": {
-    "C:\\Users\\bhendriks\\Gitkraken\\Kembit_Portals\\Smort-api\\Api\\Smort-api.csproj": {
+    "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Api\\Smort-api.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\bhendriks\\Gitkraken\\Kembit_Portals\\Smort-api\\Api\\Smort-api.csproj",
+        "projectUniqueName": "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Api\\Smort-api.csproj",
         "projectName": "Smort-api",
-        "projectPath": "C:\\Users\\bhendriks\\Gitkraken\\Kembit_Portals\\Smort-api\\Api\\Smort-api.csproj",
-        "packagesPath": "C:\\Users\\bhendriks\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\bhendriks\\Gitkraken\\Kembit_Portals\\Smort-api\\Api\\obj\\",
+        "projectPath": "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Api\\Smort-api.csproj",
+        "packagesPath": "C:\\Users\\DevAccount\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Api\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+          "E:\\Visual Studio IDE\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\bhendriks\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\DevAccount\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -34,11 +34,11 @@
             "framework": "net10.0",
             "targetAlias": "net10.0",
             "projectReferences": {
-              "C:\\Users\\bhendriks\\Gitkraken\\Kembit_Portals\\Smort-api\\Smort-api.Extensions\\Smort-api.Extensions.csproj": {
-                "projectPath": "C:\\Users\\bhendriks\\Gitkraken\\Kembit_Portals\\Smort-api\\Smort-api.Extensions\\Smort-api.Extensions.csproj"
+              "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Smort-api.Extensions\\Smort-api.Extensions.csproj": {
+                "projectPath": "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Smort-api.Extensions\\Smort-api.Extensions.csproj"
               },
-              "C:\\Users\\bhendriks\\Gitkraken\\Kembit_Portals\\Smort-api\\Smort-api.Object\\Smort-api.Objects.csproj": {
-                "projectPath": "C:\\Users\\bhendriks\\Gitkraken\\Kembit_Portals\\Smort-api\\Smort-api.Object\\Smort-api.Objects.csproj"
+              "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Smort-api.Object\\Smort-api.Objects.csproj": {
+                "projectPath": "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Smort-api.Object\\Smort-api.Objects.csproj"
               }
             }
           }
@@ -124,7 +124,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.300/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.301/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.AspNetCore": "(,10.0.32767]",
             "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",
@@ -542,20 +542,20 @@
         }
       }
     },
-    "C:\\Users\\bhendriks\\Gitkraken\\Kembit_Portals\\Smort-api\\Smort-api.Extensions\\Smort-api.Extensions.csproj": {
+    "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Smort-api.Extensions\\Smort-api.Extensions.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\bhendriks\\Gitkraken\\Kembit_Portals\\Smort-api\\Smort-api.Extensions\\Smort-api.Extensions.csproj",
+        "projectUniqueName": "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Smort-api.Extensions\\Smort-api.Extensions.csproj",
         "projectName": "Smort-api.Extensions",
-        "projectPath": "C:\\Users\\bhendriks\\Gitkraken\\Kembit_Portals\\Smort-api\\Smort-api.Extensions\\Smort-api.Extensions.csproj",
-        "packagesPath": "C:\\Users\\bhendriks\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\bhendriks\\Gitkraken\\Kembit_Portals\\Smort-api\\Smort-api.Extensions\\obj\\",
+        "projectPath": "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Smort-api.Extensions\\Smort-api.Extensions.csproj",
+        "packagesPath": "C:\\Users\\DevAccount\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Smort-api.Extensions\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+          "E:\\Visual Studio IDE\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\bhendriks\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\DevAccount\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -572,8 +572,8 @@
             "framework": "net10.0",
             "targetAlias": "net10.0",
             "projectReferences": {
-              "C:\\Users\\bhendriks\\Gitkraken\\Kembit_Portals\\Smort-api\\Smort-api.Handlers\\Smort-api.Handlers.csproj": {
-                "projectPath": "C:\\Users\\bhendriks\\Gitkraken\\Kembit_Portals\\Smort-api\\Smort-api.Handlers\\Smort-api.Handlers.csproj"
+              "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Smort-api.Handlers\\Smort-api.Handlers.csproj": {
+                "projectPath": "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Smort-api.Handlers\\Smort-api.Handlers.csproj"
               }
             }
           }
@@ -644,7 +644,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.300/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.301/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",
@@ -922,20 +922,20 @@
         }
       }
     },
-    "C:\\Users\\bhendriks\\Gitkraken\\Kembit_Portals\\Smort-api\\Smort-api.Handlers\\Smort-api.Handlers.csproj": {
+    "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Smort-api.Handlers\\Smort-api.Handlers.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\bhendriks\\Gitkraken\\Kembit_Portals\\Smort-api\\Smort-api.Handlers\\Smort-api.Handlers.csproj",
+        "projectUniqueName": "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Smort-api.Handlers\\Smort-api.Handlers.csproj",
         "projectName": "Smort-api.Handlers",
-        "projectPath": "C:\\Users\\bhendriks\\Gitkraken\\Kembit_Portals\\Smort-api\\Smort-api.Handlers\\Smort-api.Handlers.csproj",
-        "packagesPath": "C:\\Users\\bhendriks\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\bhendriks\\Gitkraken\\Kembit_Portals\\Smort-api\\Smort-api.Handlers\\obj\\",
+        "projectPath": "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Smort-api.Handlers\\Smort-api.Handlers.csproj",
+        "packagesPath": "C:\\Users\\DevAccount\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Smort-api.Handlers\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+          "E:\\Visual Studio IDE\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\bhendriks\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\DevAccount\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -952,8 +952,8 @@
             "framework": "net10.0",
             "targetAlias": "net10.0",
             "projectReferences": {
-              "C:\\Users\\bhendriks\\Gitkraken\\Kembit_Portals\\Smort-api\\Smort-api.Object\\Smort-api.Objects.csproj": {
-                "projectPath": "C:\\Users\\bhendriks\\Gitkraken\\Kembit_Portals\\Smort-api\\Smort-api.Object\\Smort-api.Objects.csproj"
+              "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Smort-api.Object\\Smort-api.Objects.csproj": {
+                "projectPath": "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Smort-api.Object\\Smort-api.Objects.csproj"
               }
             }
           }
@@ -1032,7 +1032,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.300/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.301/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",
@@ -1310,20 +1310,20 @@
         }
       }
     },
-    "C:\\Users\\bhendriks\\Gitkraken\\Kembit_Portals\\Smort-api\\Smort-api.Object\\Smort-api.Objects.csproj": {
+    "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Smort-api.Object\\Smort-api.Objects.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\bhendriks\\Gitkraken\\Kembit_Portals\\Smort-api\\Smort-api.Object\\Smort-api.Objects.csproj",
+        "projectUniqueName": "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Smort-api.Object\\Smort-api.Objects.csproj",
         "projectName": "Smort-api.Objects",
-        "projectPath": "C:\\Users\\bhendriks\\Gitkraken\\Kembit_Portals\\Smort-api\\Smort-api.Object\\Smort-api.Objects.csproj",
-        "packagesPath": "C:\\Users\\bhendriks\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\bhendriks\\Gitkraken\\Kembit_Portals\\Smort-api\\Smort-api.Object\\obj\\",
+        "projectPath": "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Smort-api.Object\\Smort-api.Objects.csproj",
+        "packagesPath": "C:\\Users\\DevAccount\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Smort-api.Object\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+          "E:\\Visual Studio IDE\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\bhendriks\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\DevAccount\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -1384,7 +1384,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.300/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.301/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",

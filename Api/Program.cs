@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Text;
+using Extensions;
 using FluentMigrator.Runner;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -46,6 +47,9 @@ namespace Tiktok_api
                 var services = builder.Services;
                 var configuration = builder.Configuration;
 
+                services.AddFirebaseAuth(configuration);
+
+
                 // ========== BASIC MVC & API SETUP ==========
                 // Register controllers and API explorer for Swagger
                 services.AddControllers();
@@ -69,45 +73,11 @@ namespace Tiktok_api
                 // ========== AUTHENTICATION & JWT ==========
                 // Configure JWT bearer token authentication for local Smort API tokens
                 services.AddMemoryCache();
-                services.AddSingleton<IClaimsTransformation, FirebaseClaimsTransformer>();
-
-                services.AddAuthentication(config =>
-                {
-                    config.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    config.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                    config.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                }).AddJwtBearer(config =>
-                {
-                    config.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidIssuer = configuration["JwtSettings:Issuer"],
-                        ValidAudience = configuration["JwtSettings:Audience"],
-                        IssuerSigningKey = new SymmetricSecurityKey(
-                            Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("SecretTokenJWT") ?? configuration["JwtSettings:Key"]!)),
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true
-                    };
-
-                    // Allow JWT tokens via query parameters for SignalR connections
-                    config.Events = new JwtBearerEvents
-                    {
-                        OnMessageReceived = context =>
-                        {
-                            var accessToken = context.Request.Query["access_token"];
-                            if (!string.IsNullOrEmpty(accessToken) &&
-                                context.HttpContext.Request.Path.StartsWithSegments("/Notify"))
-                            {
-                                context.Token = accessToken;
-                            }
-                            return Task.CompletedTask;
-                        }
-                    };
-                });
+                services.AddTransient<IClaimsTransformation, FirebaseClaimsTransformer>();
 
                 // Add authorization policies
                 services.AddAuthorization();
+
 
                 // ========== MVC & SIGNALR ==========
                 services.AddMvc();

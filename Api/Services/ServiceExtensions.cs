@@ -51,9 +51,6 @@ namespace Smort_api.Extensions
             // User service - orchestrates user-related operations
             services.AddScoped<IUserService, UserService>();
 
-            // Firebase authentication service - validates Firebase tokens and creates local identity records
-            services.AddScoped<IFirebaseAuthService, FirebaseAuthService>();
-
             // Image service - handles image retrieval logic
             services.AddScoped<IImageService, ImageService>();
 

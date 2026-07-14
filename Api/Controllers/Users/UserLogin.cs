@@ -185,24 +185,5 @@ namespace Tiktok_api.Controllers.Users
 
             return Task.FromResult<ActionResult>(Ok("User Created"));
         }
-
-        /// <summary>
-        /// Login for a user returns a jwt token
-        /// </summary>
-        /// <param name="User"></param>
-        /// <returns></returns>
-        [Route("users/Login")]
-        [HttpPost]
-        public async Task<ActionResult<string>> Login(LoginObject user)
-        {
-            if (string.IsNullOrEmpty(user.FirebaseIdToken))
-                return BadRequest("Firebase ID token is required for login.");
-
-            var loginResult = await _firebaseAuthService.LoginWithFirebaseTokenAsync(user.FirebaseIdToken);
-            if (!loginResult.Success)
-                return BadRequest(loginResult.ErrorMessage ?? "Unable to sign in with Firebase.");
-
-            return Ok(loginResult.Token);
-        }
     }
 }

@@ -39,7 +39,7 @@ namespace Smort_api.Handlers.Repositories
         /// <summary>Retrieves the current user's profile data (ID, picture, username).</summary>
         public async Task<GetMyUserDataSimpel?> GetMyProfileAsync(int id)
         {
-            const string sql = "SELECT Id, Profile_Picture, Username FROM Users_Public WHERE Id=@Id;";
+            const string sql = "SELECT Id, Profile_Picture, Username, Is_Account_Configured FROM Users_Public WHERE Id=@Id;";
             return await _db.QueryFirstOrDefaultAsync<GetMyUserDataSimpel>(sql, new { Id = id });
         }
 

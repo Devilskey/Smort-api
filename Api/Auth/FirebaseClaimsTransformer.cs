@@ -1,51 +1,106 @@
+using Dapper;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Caching.Memory;
+using MySql.Data.MySqlClient;
+using Serilog;
 using System;
 using System.Security.Claims;
-using System.Threading.Tasks;
+using static Dapper.SqlMapper;
 
 namespace Tiktok_api.Auth
 {
-    public class FirebaseClaimsTransformer : IClaimsTransformation
+    public class FirebaseClaimsTransformer
+        (IMemoryCache cache, MySqlConnection connection, IConfiguration configuration, ILogger<FirebaseClaimsTransformer> logger) : IClaimsTransformation
+
     {
-        private readonly IMemoryCache _cache;
-
-        public FirebaseClaimsTransformer(IMemoryCache cache)
+        public async Task<ClaimsPrincipal> TransformAsync(ClaimsPrincipal principal)
         {
-            _cache = cache;
-        }
-
-        public Task<ClaimsPrincipal> TransformAsync(ClaimsPrincipal principal)
-        {
-            if (principal == null || principal.Identity == null || !principal.Identity.IsAuthenticated)
-                return Task.FromResult(principal);
-
-            var firebaseUid = principal.FindFirst("firebase_uid")?.Value;
-            var userId = principal.FindFirst("Id")?.Value;
-            var roleValue = principal.FindFirst("role")?.Value;
-
-            if (string.IsNullOrWhiteSpace(firebaseUid) || string.IsNullOrWhiteSpace(userId))
-                return Task.FromResult(principal);
-
-            var cacheKey = $"firebase-user-{firebaseUid}";
-            if (!_cache.TryGetValue(cacheKey, out bool _))
+            Log.Information("🔥 ClaimsTransformer EXECUTED");
+            if (principal.Identity is not ClaimsIdentity identity ||
+                !identity.IsAuthenticated)
             {
-                var identity = new ClaimsIdentity();
+                Log.Information("🔥 ClaimsTransformer Failed");
 
-                if (!principal.HasClaim(c => c.Type == ClaimTypes.NameIdentifier))
-                    identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, userId));
-
-                if (!principal.HasClaim(c => c.Type == ClaimTypes.Role) && !string.IsNullOrWhiteSpace(roleValue))
-                    identity.AddClaim(new Claim(ClaimTypes.Role, roleValue));
-
-                if (!principal.HasClaim(c => c.Type == "username") && principal.FindFirst("username") != null)
-                    identity.AddClaim(new Claim("username", principal.FindFirst("username")!.Value));
-
-                principal.AddIdentity(identity);
-                _cache.Set(cacheKey, true, TimeSpan.FromMinutes(30));
+                return principal;
             }
 
-            return Task.FromResult(principal);
+            var firebaseUid = principal.FindFirst("user_id")?.Value;
+
+            if (string.IsNullOrWhiteSpace(firebaseUid))
+            {
+                Log.Information("🔥 ClaimsTransformer Whitespace");
+
+                return principal;
+            }
+
+            var cacheKey = $"firebase-user-{firebaseUid}";
+
+            Log.Information(cacheKey);
+
+            var userData = await cache.GetOrCreateAsync(cacheKey, async entry =>
+            {
+                entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10);
+
+                var query = """
+            SELECT 
+                Users_Public.Id AS id,
+                Users_Private.Role_Id AS role,
+                Users_Private.Email AS email
+            FROM Users_Private
+            INNER JOIN Users_Public
+                ON Users_Public.Person_Id = Users_Private.Id
+            WHERE Users_Private.Firebase_Uid = @Firebase;
+        """;
+
+                var dbUser = await connection.QueryFirstOrDefaultAsync<DatabaseUserObject>(
+                    query,
+                    new { Firebase = firebaseUid });
+
+                if (dbUser == null)
+                    return null;
+
+                Log.Information(dbUser.id.ToString());
+
+
+                return new SmortIdentity
+                {
+                    FirebaseUid = firebaseUid,
+                    UserIdPublic = dbUser.id,
+                    Role = dbUser.role,
+                    Email = dbUser.email
+                };
+            });
+
+            if (userData == null)
+                return principal;
+
+            if (!identity.HasClaim(c => c.Type == "app_user_id"))
+                identity.AddClaim(new Claim("app_user_id", userData.UserIdPublic.ToString()));
+
+            if (!identity.HasClaim(c => c.Type == "app_role") && userData.Role != null)
+                identity.AddClaim(new Claim(ClaimTypes.Role, userData.Role));
+
+            if (!identity.HasClaim(c => c.Type == "email") && userData.Email != null)
+                identity.AddClaim(new Claim("email", userData.Email));
+
+            logger.LogInformation("works");
+            return principal;
         }
+    }
+
+        public class DatabaseUserObject
+    {
+        public int id { get; set; }
+        public string role { get; set; }
+        public string email { get; set; }
+
+    }
+
+    public class SmortIdentity
+    {
+        public string FirebaseUid { get; set; } = default!;
+        public int UserIdPublic { get; set; }
+        public string? Role { get; set; }
+        public string? Email { get; set; }
     }
 }
