@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MySql.Data.MySqlClient;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Smort_api.Handlers;
 using Smort_api.Object.Videos;
 using Tiktok_api.Settings_Api;
+using Tiktok_api.Services;
 
 namespace Tiktok_api.Controllers
 {
@@ -11,57 +11,34 @@ namespace Tiktok_api.Controllers
     public class Images : ControllerBase
     {
         private readonly ILogger Logger;
+        private readonly IImageService _imageService;
 
-        public Images(ILogger<Images> logger)
+        public Images(ILogger<Images> logger, IImageService imageService)
         {
             Logger = logger;
+            _imageService = imageService;
         }
 
         [Route("Images/GetUsersProfileImage")]
         [HttpGet]
-        public ActionResult? GetUsersProfileImage(int UserId, Sizes size = Sizes.M)
+        public async Task<ActionResult?> GetUsersProfileImage(int UserId, Sizes size = Sizes.M)
         {
             try
             {
-                using DatabaseHandler databaseHandler = new DatabaseHandler();
-
-                using MySqlCommand GetUserProfileFileId = new MySqlCommand();
-
-                GetUserProfileFileId.CommandText = "SELECT Profile_Picture FROM Users_Public WHERE Id=@Id;";
-                GetUserProfileFileId.Parameters.AddWithValue("@Id", UserId);
-
-                var FileIdJson = databaseHandler.Select(GetUserProfileFileId);
-
-                var id = JsonConvert.DeserializeObject<ProfilePictureFileId[]>(FileIdJson);
-
-                if(id.Length == 0)
-                {
-                    return BadRequest();
-                }
-
-                Console.WriteLine(id.First().Profile_Picture);
-
-                using MySqlCommand GetVideoPath = new MySqlCommand();
-
-                GetVideoPath.CommandText = "SELECT File_Location FROM File_Image WHERE Id=@Id;";
-                GetVideoPath.Parameters.AddWithValue("@Id", $"{id.First().Profile_Picture}");
-
-
-                string json = databaseHandler.Select(GetVideoPath);
-
-                FilePathData[] path = JsonConvert.DeserializeObject<FilePathData[]>(json)!;
+                var path = await _imageService.GetProfileImagePathAsync(UserId);
+                if (string.IsNullOrEmpty(path)) return BadRequest();
 
                 FileStream filestream = null;
                 Logger.LogInformation(size.ToString());
 
                 try
                 {
-                    filestream = System.IO.File.OpenRead(path[0].File_Location! + $"_{size}.webp");
+                    filestream = System.IO.File.OpenRead(path + $"_{size}.webp");
                 }
                 catch (Exception)
                 {
-                    filestream = System.IO.File.OpenRead(path[0].File_Location!);
-                    Console.Write($"Returning old image Formate 1000X1000 {path[0].File_Location}");
+                    filestream = System.IO.File.OpenRead(path);
+                    Console.Write($"Returning old image Formate 1000X1000 {path}");
                 }
                 return File(filestream, contentType: "image/*", enableRangeProcessing: true);
 
@@ -81,38 +58,23 @@ namespace Tiktok_api.Controllers
         /// <returns></returns>
         [Route("Images/GetImage")]
         [HttpGet]
-        public ActionResult? GetImage(int ImageId, Sizes size = Sizes.M, bool IsContent = true)
+        public async Task<ActionResult?> GetImage(int ImageId, Sizes size = Sizes.M, bool IsContent = true)
         {
             try
             {
-                using MySqlCommand GetVideoPath = new MySqlCommand();
+                var path = await _imageService.GetImagePathAsync(ImageId, IsContent);
+                if (string.IsNullOrEmpty(path)) return BadRequest();
 
-                if (IsContent)
-                {
-                    GetVideoPath.CommandText = "SELECT File_Location FROM File_Content WHERE Id=@Id;";
-                    GetVideoPath.Parameters.AddWithValue("@Id", $"{ImageId}");
-                }
-                else
-                {
-                    GetVideoPath.CommandText = "SELECT File_Location FROM File_Image WHERE Id=@Id;";
-                    GetVideoPath.Parameters.AddWithValue("@Id", $"{ImageId}");
-                }
-
-                using DatabaseHandler databaseHandler = new DatabaseHandler();
-
-                string json = databaseHandler.Select(GetVideoPath);
-
-                FilePathData[] path = JsonConvert.DeserializeObject<FilePathData[]>(json)!;
                 FileStream filestream = null;
                 Logger.LogInformation(size.ToString());
 
                 try
                 {
-                    filestream = System.IO.File.OpenRead(path[0].File_Location! + $"_{size}.webp");
+                    filestream = System.IO.File.OpenRead(path + $"_{size}.webp");
                 }catch(Exception)
                 {
-                    filestream = System.IO.File.OpenRead(path[0].File_Location!);
-                    Console.Write($"Returning old image Formate 1000X1000 {path[0].File_Location}");
+                    filestream = System.IO.File.OpenRead(path);
+                    Console.Write($"Returning old image Formate 1000X1000 {path}");
                 }
                 return File(filestream, contentType: "image/*", enableRangeProcessing: true);
 

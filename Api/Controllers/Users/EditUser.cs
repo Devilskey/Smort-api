@@ -28,7 +28,7 @@ namespace Tiktok_api.Controllers.Users
             if (JWTTokenHandler.IsBlacklisted(token))
                 return Task.FromResult("token is blacklisted");
 
-            string id = User.FindFirstValue("Id");
+            string id = User.FindFirstValue("app_user_id");
 
             using MySqlCommand DeleteUserAndGetFilePath = new MySqlCommand();
 
@@ -97,7 +97,7 @@ namespace Tiktok_api.Controllers.Users
             if (JWTTokenHandler.IsBlacklisted(token))
                 return Task.FromResult("token is blacklisted");
 
-            string id = User.FindFirstValue("Id");
+            string id = User.FindFirstValue("app_user_id");
 
             string[] EncryptedPassword = EncryptionHandler.HashAndSaltData(newPassword.newPassword);
 
@@ -132,7 +132,7 @@ namespace Tiktok_api.Controllers.Users
             if (JWTTokenHandler.IsBlacklisted(token))
                 return Task.FromResult("token is blacklisted");
 
-            string id = User.FindFirstValue("Id");
+            string id = User.FindFirstValue("app_user_id");
 
 
             using MySqlCommand UpdatePassword = new MySqlCommand();
@@ -166,7 +166,7 @@ namespace Tiktok_api.Controllers.Users
             if (JWTTokenHandler.IsBlacklisted(token))
                 return Task.FromResult("token is blacklisted");
 
-            string id = User.FindFirstValue("Id");
+            string id = User.FindFirstValue("app_user_id");
 
             using MySqlCommand UpdatePassword = new MySqlCommand();
 
@@ -198,7 +198,7 @@ namespace Tiktok_api.Controllers.Users
             if (JWTTokenHandler.IsBlacklisted(token))
                 return Task.FromResult("token is blacklisted");
 
-            string Userid = User.FindFirstValue("Id");
+            string Userid = User.FindFirstValue("app_user_id");
 
 
             using DatabaseHandler databaseHandler = new DatabaseHandler();

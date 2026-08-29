@@ -1,0 +1,11 @@
+version: '3'
+services:
+  db:
+    container_name: Smort-Database
+    image: "mysql"
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: SmortTestDb
+    ports:
+      - "3306:3306"
+    restart: always

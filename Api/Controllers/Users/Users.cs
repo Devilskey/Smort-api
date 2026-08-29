@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 using Smort_api.Handlers;
+using Tiktok_api.Auth;
+using Tiktok_api.Services;
 using Smort_api.Object;
 using Smort_api.Object.Security;
 using Smort_api.Object.User;
@@ -11,160 +12,148 @@ using Tiktok_api.SignalRHubs;
 
 namespace Tiktok_api.Controllers.Users
 {
-    //When i made this only god and i knew how it worked.
-    //Now only god knows
-
+    /// <summary>
+    /// Controller for user-related API endpoints.
+    /// Handles user profiles, reports, and public user data retrieval.
+    /// </summary>
     [ApiController]
     public partial class Users : ControllerBase
     {
+        /// <summary>Logger instance for recording application events.</summary>
         private readonly ILogger Logger;
+        
+        /// <summary>Notification hub for sending real-time notifications.</summary>
         private readonly NotificationHubHandler _notificationHub;
+        
+        /// <summary>Mail handler for sending email notifications.</summary>
         private readonly MailHandler _mail;
+        
+        /// <summary>User service for business logic operations.</summary>
+        private readonly IUserService _userService;
 
-        public Users(ILogger<Users> logger, NotificationHubHandler notificationHub, MailHandler mail)
+        /// <summary>Firebase authentication service for verifying tokens and generating local JWTs.</summary>
+
+        /// <summary>Constructor - initializes the controller with dependencies.</summary>
+        public Users(ILogger<Users> logger, NotificationHubHandler notificationHub, MailHandler mail, IUserService userService)
         {
             Logger = logger;
             _notificationHub = notificationHub;
             _mail = mail;
+            _userService = userService;
         }
 
         /// <summary>
-        /// Reports a users his account
+        /// Reports a user's account for violations.
+        /// Requires authentication. Prevents duplicate reports from the same user.
         /// </summary>
-        /// <param name="User"></param>
-        /// <returns></returns>
+        /// <param name="UserReported">User report object containing reported user ID and reason</param>
+        /// <returns>Status message indicating if report was successful</returns>
         [Authorize]
         [Route("users/ReportUser")]
         [HttpPost]
-        public Task<string> ReportUser(ReportUser UserReported)
+        public async Task<string> ReportUser(ReportUser UserReported)
         {
             string token = HttpContext.Request.Headers["Authorization"]!;
 
             if (JWTTokenHandler.IsBlacklisted(token))
-                return Task.FromResult("token is blacklisted");
+                return "token is blacklisted";
 
-            string id = User.FindFirstValue("Id");
+            int id = int.Parse(User.FindFirstValue("Id") ?? "0");
 
             if (string.IsNullOrEmpty(UserReported.Reason))
-                return Task.FromResult($"User Reported");
+                return "User Reported";
 
-
-            using MySqlCommand AlreadyReported = new MySqlCommand();
-            AlreadyReported.CommandText = "SELECT COUNT(*) FROM Report_User WHERE User_Reporter_Id=@IdReporter AND User_Reported_Id=@IdReported;";
-            AlreadyReported.Parameters.AddWithValue("@IdReporter", id);
-            AlreadyReported.Parameters.AddWithValue("@IdReported", UserReported.Id);
-
-            using MySqlCommand ReportUserCommand = new MySqlCommand();
-
-            ReportUserCommand.CommandText = "INSERT INTO Report_User (User_Reported_Id, User_Reporter_Id, Reason, Reported_At) VALUES (@IdReported, @IdReporter, @Reason, @ReportedAt);";
-
-            ReportUserCommand.Parameters.AddWithValue("@IdReported", UserReported.Id);
-            ReportUserCommand.Parameters.AddWithValue("@IdReporter", id);
-
-            ReportUserCommand.Parameters.AddWithValue("@Reason", UserReported.Reason);
-            ReportUserCommand.Parameters.AddWithValue("@ReportedAt", DateTime.Now);
-
-            using (DatabaseHandler databaseHandler = new DatabaseHandler())
-            {
-                if (databaseHandler.GetNumber(AlreadyReported) == 0)
-                {
-                    databaseHandler.EditDatabase(ReportUserCommand);
-                    return Task.FromResult($"User Reported");
-                }
-            }
-
-            return Task.FromResult($"User Already Reported by you");
+            return await _userService.ReportUserAsync(id, UserReported.Id, UserReported.Reason);
         }
 
         /// <summary>
-        /// Returns ProfilePicture and username
+        /// Retrieves simplified public user data (profile picture and username).
+        /// No authentication required for public data.
         /// </summary>
-        /// <param name="User"></param>
-        /// <returns></returns>
+        /// <param name="userData">User data object containing user ID to retrieve</param>
+        /// <returns>JSON-serialized user data or not found message</returns>
         [Route("users/GetUserDataSimpel")]
         [HttpPost]
-        public Task<string> GetUserDataSimpel(UserData userData)
+        public async Task<string> GetUserDataSimpel(UserData userData)
         {
             string token = HttpContext.Request.Headers["Authorization"]!;
 
             if (JWTTokenHandler.IsBlacklisted(token))
-                return Task.FromResult("token is blacklisted");
+                return "token is blacklisted";
 
             if (userData.Id == 0)
-                return Task.FromResult($"Not valid value");
+                return "Not valid value";
 
-            using MySqlCommand GetDataUser = new MySqlCommand();
-
-            GetDataUser.CommandText = "SELECT Profile_Picture, Username FROM Users_Public WHERE Id=@Id;";
-            GetDataUser.Parameters.AddWithValue("@Id", userData);
-
-            using (DatabaseHandler databaseHandler = new DatabaseHandler())
-            {
-                return Task.FromResult(databaseHandler.Select(GetDataUser));
-            }
+            var data = await _userService.GetUserDataSimpleAsync(userData.Id);
+            return data == null ? "Not found" : JsonConvert.SerializeObject(data);
         }
 
         /// <summary>
-        /// Returns ProfilePicture and username from the user 
+        /// Retrieves the current authenticated user's profile data.
+        /// Requires valid JWT authentication token.
         /// </summary>
-        /// <param name="User"></param>
-        /// <returns></returns>
+        /// <returns>User profile object with ID, picture, and username</returns>
         [Authorize]
         [Route("users/GetMyProfile")]
         [HttpGet]
-        public IActionResult GetMyProfile()
+        public async Task<IActionResult> GetMyProfile()
         {
             string token = HttpContext.Request.Headers["Authorization"]!;
 
             if (JWTTokenHandler.IsBlacklisted(token))
                 return BadRequest("Token Black listed");
 
-            string id = User.FindFirstValue("Id");
+            var userIdClaim = User.FindFirstValue("app_user_id");
 
-            using MySqlCommand GetDataUser = new MySqlCommand();
+            if (!int.TryParse(userIdClaim, out var id))
+                return Unauthorized("Invalid user identity");
 
-            GetDataUser.CommandText = "SELECT Id, Profile_Picture, Username FROM Users_Public WHERE Id=@id;";
-            GetDataUser.Parameters.AddWithValue("Id", id);
-            GetMyUserDataSimpel Userdata = new GetMyUserDataSimpel();
+            var userdata = await _userService.GetMyProfileAsync(id);
+            Console.WriteLine(id);
 
-            using (DatabaseHandler databaseHandler = new DatabaseHandler())
-            {
-                string jsonData = databaseHandler.Select(GetDataUser);
-                GetMyUserDataSimpel[] UserDataArray = JsonConvert.DeserializeObject<GetMyUserDataSimpel[]>(jsonData);
-                if (UserDataArray == null)
-                    return BadRequest("Data not found");
+            if (userdata == null)
+                return BadRequest("Data not found");
 
-
-                Userdata = UserDataArray[0];
-            }
-
-
-            return Ok(Userdata);
+            return Ok(userdata);
         }
-
-        /// <summary>
-        /// Returns UserData and videos that user has made
-        /// </summary>
-        /// <param name="User"></param>
-        /// <returns></returns>
-        [Route("users/GetUserDataProfile")]
-        [HttpGet]
-        public Task<string> GetUserDataProfile(int id)
+        
+        [Authorize]
+        [Route("users/ConfigureUserData")]
+        [HttpPost]
+        public async Task<string> ConfigureUserData(CreateAccount createAccount)
         {
             string token = HttpContext.Request.Headers["Authorization"]!;
 
             if (JWTTokenHandler.IsBlacklisted(token))
-                return Task.FromResult("token is blacklisted");
+                return "token is blacklisted";
+            
+            var userIdClaim = User.FindFirstValue("app_user_id");
 
-            using MySqlCommand GetDataUser = new MySqlCommand();
+            if (!int.TryParse(userIdClaim, out var id))
+                return $"Invalid user  {userIdClaim} ";
 
-            GetDataUser.CommandText = "SELECT Profile_Picture, Username FROM Users_Public WHERE Id=@id;";
-            GetDataUser.Parameters.AddWithValue("Id", id);
+            var data = await _userService.ConfigureUserData(id, createAccount);
 
-            using (DatabaseHandler databaseHandler = new DatabaseHandler())
-            {
-                return Task.FromResult(databaseHandler.Select(GetDataUser));
-            }
+            return data;
+        }
+
+        /// <summary>
+        /// Retrieves user profile data for a specific user by ID.
+        /// Publicly accessible endpoint for viewing user profiles.
+        /// </summary>
+        /// <param name="id">User ID to retrieve profile for</param>
+        /// <returns>JSON-serialized user profile data</returns>
+        [Route("users/GetUserDataProfile")]
+        [HttpGet]
+        public async Task<string> GetUserDataProfile(int id)
+        {
+            string token = HttpContext.Request.Headers["Authorization"]!;
+
+            if (JWTTokenHandler.IsBlacklisted(token))
+                return "token is blacklisted";
+
+            var data = await _userService.GetUserDataProfileAsync(id);
+            return JsonConvert.SerializeObject(data);
         }
     }
 }

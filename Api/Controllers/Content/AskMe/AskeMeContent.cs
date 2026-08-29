@@ -26,7 +26,7 @@ namespace Tiktok_api.Controllers.Content.AskMe
             if (JWTTokenHandler.IsBlacklisted(token))
                 return Unauthorized("token is blacklisted");
 
-            string id = User.FindFirstValue("Id");
+            string id = User.FindFirstValue("app_user_id");
 
             MySqlCommand CreateQuestion = new MySqlCommand();
             CreateQuestion.CommandText = @"
@@ -65,7 +65,7 @@ namespace Tiktok_api.Controllers.Content.AskMe
             if (JWTTokenHandler.IsBlacklisted(token))
                 return Unauthorized("token is blacklisted");
 
-            string id = User.FindFirstValue("Id");
+            string id = User.FindFirstValue("app_user_id");
 
             MySqlCommand CreateQuestion = new MySqlCommand();
             CreateQuestion.CommandText = @"
@@ -104,7 +104,7 @@ namespace Tiktok_api.Controllers.Content.AskMe
             if (JWTTokenHandler.IsBlacklisted(token))
                 return Unauthorized("token is blacklisted");
 
-            string id = User.FindFirstValue("Id");
+            string id = User.FindFirstValue("app_user_id");
 
             MySqlCommand CreateQuestion = new MySqlCommand();
             CreateQuestion.CommandText = @"

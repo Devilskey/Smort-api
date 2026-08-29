@@ -28,12 +28,13 @@ namespace Smort_api.Handlers
             int width = info.PrimaryVideoStream.Width;
             int height = info.PrimaryVideoStream.Height;
 
-            int newheight = (int)Math.Round(width * (Sizewidth / (double)height));
+            int newheight = (int)Math.Round(
+                height * (Sizewidth / (double)width)
+            );
 
             if (newheight % 2 != 0)
                 newheight++;
 
-            Console.WriteLine(output);
             Console.WriteLine(output);
 
             Console.WriteLine($"{info.PrimaryVideoStream.Width}{info.PrimaryVideoStream.Height}");
@@ -43,21 +44,20 @@ namespace Smort_api.Handlers
             await FFMpegArguments
                 .FromFileInput(input)
                 .OutputToFile(output + FileName, true, options => options
-                    .WithVideoCodec("libx265")
+                    .WithVideoCodec("libx264")
                     .WithConstantRateFactor(23)
                     .WithCustomArgument("-pix_fmt yuv420p")
                     .WithCustomArgument("-err_detect ignore_err")
                     .ForceFormat("mp4")
                     .WithVideoFilters(filterOptions => filterOptions
                     .Scale(Sizewidth, newheight)))
-
                 .ProcessAsynchronously();
         }
         public static async Task CreateThumbnails(string PathVideo, string PathThumbnails)
         {
             foreach (var sizes in ContentSizingObjects.Thumbnails)
             {
-                await FFMpeg.SnapshotAsync(PathVideo, PathThumbnails + $"_{sizes.Size}.png", new System.Drawing.Size(sizes.Width, sizes.Width), TimeSpan.FromSeconds(10));
+                await FFMpeg.SnapshotAsync(PathVideo, PathThumbnails + $"_{sizes.Size}.png", new System.Drawing.Size(sizes.Width, sizes.Width), TimeSpan.FromSeconds(2));
                 
                 using (Image image = Image.Load(PathThumbnails + $"_{sizes.Size}.png"))
                 {

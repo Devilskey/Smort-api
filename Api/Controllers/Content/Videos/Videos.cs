@@ -49,7 +49,7 @@ namespace Tiktok_api.Controllers.Videos
 
             Data.FileName = $"{Data.GUIDObjSender}-${Data.ChunkNumber}";
 
-            string id = User.FindFirstValue("Id");
+            string id = User.FindFirstValue("app_user_id");
 
             chunkHandler.SaveFileChunk(Data.MediaData, Data.FileName);
 
@@ -88,7 +88,7 @@ namespace Tiktok_api.Controllers.Videos
                 videoBytes = null;
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
-
+                
                 return Ok("Saved the new Post");
             }
             else
@@ -118,7 +118,7 @@ namespace Tiktok_api.Controllers.Videos
             if (JWTTokenHandler.IsBlacklisted(token))
                 return Task.FromResult<ActionResult>(BadRequest());
 
-            string id = User.FindFirstValue("Id");
+            string id = User.FindFirstValue("app_user_id");
 
             using MySqlCommand SelectVideoPath = new MySqlCommand();
 
@@ -177,8 +177,8 @@ namespace Tiktok_api.Controllers.Videos
 
             FilePathData[] path = JsonConvert.DeserializeObject<FilePathData[]>(json)!;
 
-            var filestream = System.IO.File.OpenRead(path[0].File_Location! + $"_{size}.mp4");
-            return File(filestream, contentType: "video/mkv", enableRangeProcessing: true);
+            var filestream = new FileStream(path[0].File_Location! + $"_{size}.mp4", FileMode.Open, FileAccess.Read,  FileShare.Read);
+            return File(filestream, contentType: "video/mp4", enableRangeProcessing: true);
         }
     }
 }

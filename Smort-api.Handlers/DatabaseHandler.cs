@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
@@ -11,7 +12,6 @@ namespace Smort_api.Handlers
         private string? Password { get; set; }
         private string? Server { get; set; }
         private string? DatabaseName { get; set; }
-
 
         private MySqlConnection connection;
 
@@ -34,6 +34,8 @@ namespace Smort_api.Handlers
                 Console.WriteLine("No Env found");
 
             string connectionString = $"server={Server};port=3306;uid={Username};pwd={Password};database={DatabaseName};";
+
+
             connection = new MySqlConnection(connectionString);
             connection.Open();
         }
