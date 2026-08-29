@@ -60,7 +60,7 @@ namespace Extensions
                             var connection = new MySqlConnection(connectionString);
                             connection.Open();
 
-                            var CheckSql = """
+                            var checkSql = """
                                             INSERT INTO Users_Private (
                                                 Firebase_Uid,
                                                 Email,
@@ -75,9 +75,11 @@ namespace Extensions
                                             WHERE NOT EXISTS (
                                                 SELECT 1
                                                 FROM Users_Private
-                                                WHERE Firebase_Uid = @Firebase
+                                                WHERE Firebase_Uid = @Firebase or Email = @Email
                                             );
 
+                                            UPDATE Users_Private SET Firebase_Uid=@Firebase WHERE Email=@Email AND Firebase_Uid!=@Firebase AND ROW_COUNT()=0;
+                                            
                                             INSERT INTO Users_Public (
                                                 Person_Id,
                                                 Created_At
@@ -95,7 +97,8 @@ namespace Extensions
                                             """;
                             Log.Information("Logged");
 
-                            await connection.QuerySingleOrDefaultAsync<bool>(CheckSql, new { Firebase = firebaseUid, Email = Email, Provider = Provider, Date = DateTime.Now });
+                            await connection.QueryAsync(checkSql, new { Firebase = firebaseUid, Email = Email, Provider = Provider, Date = DateTime.Now });
+                            connection.Close();
                         }
                     };
                     });

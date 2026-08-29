@@ -28,10 +28,11 @@ namespace Tiktok_api.Controllers.Users
 
             if (JWTTokenHandler.IsBlacklisted(token))
                 return Task.FromResult("token is blacklisted");
-
-            string idUser = User.FindFirstValue("Id");
+            
+            string idUser = User.FindFirstValue("app_user_id");
             string username = User.FindFirstValue("Username");
 
+            Console.WriteLine(idUser);
             if (id == int.Parse(idUser))
                 return Task.FromResult($"you cannnot follow yourself");
 
@@ -83,7 +84,7 @@ namespace Tiktok_api.Controllers.Users
             if (JWTTokenHandler.IsBlacklisted(token))
                 return Task.FromResult("token is blacklisted");
 
-            string id = User.FindFirstValue("Id");
+            string id = User.FindFirstValue("app_user_id");
 
             if (creatorId == 0)
                 return Task.FromResult($"Failed to follow user");
@@ -166,7 +167,7 @@ namespace Tiktok_api.Controllers.Users
         [HttpGet]
         public string? Following(int Offset = 5)
         {
-            string idUser = User.FindFirstValue("Id");
+            string idUser = User.FindFirstValue("app_user_id");
 
             if (idUser == "")
                 return null;
@@ -199,7 +200,7 @@ namespace Tiktok_api.Controllers.Users
         [HttpPost]
         public Task<bool>? AlreadyFollowing(int id)
         {
-            string idUser = User.FindFirstValue("Id");
+            string idUser = User.FindFirstValue("app_user_id");
 
             if (idUser == "")
                  return null;
@@ -231,7 +232,7 @@ namespace Tiktok_api.Controllers.Users
         [HttpGet]
         public Task<int>? MyFollowersAmount()
         {
-            string id = User.FindFirstValue("Id");
+            string id = User.FindFirstValue("app_user_id");
 
             string token = HttpContext.Request.Headers["Authorization"]!;
 

@@ -83,19 +83,29 @@ namespace Smort_api.Handlers
             return tokenhandler.WriteToken(token);
         }
 
-        public static List<JWTtokenBlacklistItem>? ReadBlackList()
+        public static List<JWTtokenBlacklistItem> ReadBlackList()
         {
+            string filePath = Path.Combine(AppContext.BaseDirectory, "BlackList.json");
             try
             {
-                string json = File.ReadAllText("BlackList.json");
-                return JsonConvert.DeserializeObject<List<JWTtokenBlacklistItem>>(json)!;
+                if (!File.Exists(filePath))
+                {
+                    File.WriteAllText(filePath, "[]");
+                    return new List<JWTtokenBlacklistItem>();
+                }
+
+                string json = File.ReadAllText(filePath);
+                return JsonConvert.DeserializeObject<List<JWTtokenBlacklistItem>>(json)
+                       ?? new List<JWTtokenBlacklistItem>();
             }
-            catch (FileNotFoundException ex)
+            catch (IOException)
             {
-                File.WriteAllText("BlackList.json", "[]");
-                return null;
+                return new List<JWTtokenBlacklistItem>();
             }
-            
+            catch (JsonException)
+            {
+                return new List<JWTtokenBlacklistItem>();
+            }
         }
 
         public static void WriteBlackList()

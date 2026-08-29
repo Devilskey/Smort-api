@@ -33,7 +33,7 @@ namespace Tiktok_api.Controllers.Content.ImagePost
             if (JWTTokenHandler.IsBlacklisted(token))
                 return Unauthorized("token is blacklisted");
 
-            string id = User.FindFirstValue("Id");
+            string id = User.FindFirstValue("app_user_id");
 
             string filename = $"{data.GUIDObjSender}-${data.ChunkNumber}";
 
@@ -157,7 +157,7 @@ namespace Tiktok_api.Controllers.Content.ImagePost
             if (JWTTokenHandler.IsBlacklisted(token))
                 return Task.FromResult<ActionResult>(BadRequest());
 
-            string id = User.FindFirstValue("Id");
+            string id = User.FindFirstValue("app_user_id");
 
             using MySqlCommand SelectImagePath = new MySqlCommand();
 

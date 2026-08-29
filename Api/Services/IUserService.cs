@@ -1,6 +1,7 @@
 using Smort_api.Object.User;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Smort_api.Object;
 
 namespace Tiktok_api.Services
 {
@@ -21,5 +22,7 @@ namespace Tiktok_api.Services
         
         /// <summary>Gets user profile data for display purposes.</summary>
         Task<IEnumerable<GetMyUserDataSimpel>> GetUserDataProfileAsync(int id);
+        Task<string> ConfigureUserData(int id, CreateAccount createAccount);
+
     }
 }

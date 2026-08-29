@@ -22,7 +22,7 @@ namespace Tiktok_api.Controllers.Videos
             if (JWTTokenHandler.IsBlacklisted(token))
                 return Task.FromResult("token is blacklisted");
 
-            string userId = User.FindFirstValue("Id");
+            string userId = User.FindFirstValue("app_user_id");
             using MySqlCommand GetVideo = new MySqlCommand();
 
 

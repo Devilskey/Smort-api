@@ -20,7 +20,7 @@ namespace Tiktok_api.Controllers.Content.Posts
         {
             MySqlCommand sqlCommand = null;
 
-            var IdFromToken = User.FindFirstValue("Id");
+            var IdFromToken = User.FindFirstValue("app_user_id");
 
             if (IdFromToken != null)
             {
@@ -49,7 +49,7 @@ namespace Tiktok_api.Controllers.Content.Posts
         {
             MySqlCommand sqlCommand = null;
 
-            var IdFromToken = User.FindFirstValue("Id");
+            var IdFromToken = User.FindFirstValue("app_user_id");
 
             if (IdFromToken != null)
             {
@@ -74,7 +74,7 @@ namespace Tiktok_api.Controllers.Content.Posts
         public Task<string> GetAccountContentList(int? idUser)
         {
             string? id = "";
-            var IdFromToken = User.FindFirstValue("Id");
+            var IdFromToken = User.FindFirstValue("app_user_id");
 
             if (idUser != null)
             {

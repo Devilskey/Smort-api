@@ -1,5 +1,5 @@
 {
-  "version": 4,
+  "version": 3,
   "targets": {
     "net10.0": {
       "BouncyCastle.Cryptography/2.3.1": {
@@ -2862,32 +2862,25 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\DevAccount\\.nuget\\packages\\": {},
-    "E:\\Visual Studio IDE\\Shared\\NuGetPackages": {}
+    "/home/bramhendriks/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Api\\Smort-api.csproj",
+      "projectUniqueName": "/home/bramhendriks/Projects/GitKraken/Smort-api/Api/Smort-api.csproj",
       "projectName": "Smort-api",
-      "projectPath": "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Api\\Smort-api.csproj",
-      "packagesPath": "C:\\Users\\DevAccount\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Api\\obj\\",
+      "projectPath": "/home/bramhendriks/Projects/GitKraken/Smort-api/Api/Smort-api.csproj",
+      "packagesPath": "/home/bramhendriks/.nuget/packages/",
+      "outputPath": "/home/bramhendriks/Projects/GitKraken/Smort-api/Api/obj/",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "E:\\Visual Studio IDE\\Shared\\NuGetPackages"
-      ],
       "configFilePaths": [
-        "C:\\Users\\DevAccount\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "/home/bramhendriks/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net10.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "C:\\Program Files\\dotnet\\library-packs": {},
+        "/usr/lib/dotnet/library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -2895,11 +2888,11 @@
           "framework": "net10.0",
           "targetAlias": "net10.0",
           "projectReferences": {
-            "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Smort-api.Extensions\\Smort-api.Extensions.csproj": {
-              "projectPath": "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Smort-api.Extensions\\Smort-api.Extensions.csproj"
+            "/home/bramhendriks/Projects/GitKraken/Smort-api/Smort-api.Extensions/Smort-api.Extensions.csproj": {
+              "projectPath": "/home/bramhendriks/Projects/GitKraken/Smort-api/Smort-api.Extensions/Smort-api.Extensions.csproj"
             },
-            "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Smort-api.Object\\Smort-api.Objects.csproj": {
-              "projectPath": "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Smort-api.Object\\Smort-api.Objects.csproj"
+            "/home/bramhendriks/Projects/GitKraken/Smort-api/Smort-api.Object/Smort-api.Objects.csproj": {
+              "projectPath": "/home/bramhendriks/Projects/GitKraken/Smort-api/Smort-api.Object/Smort-api.Objects.csproj"
             }
           }
         }
@@ -2914,7 +2907,7 @@
         "auditLevel": "low",
         "auditMode": "all"
       },
-      "SdkAnalysisLevel": "10.0.300"
+      "SdkAnalysisLevel": "10.0.100"
     },
     "frameworks": {
       "net10.0": {
@@ -2985,7 +2978,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.301/PortableRuntimeIdentifierGraph.json",
+        "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/10.0.110/PortableRuntimeIdentifierGraph.json",
         "packagesToPrune": {
           "Microsoft.AspNetCore": "(,10.0.32767]",
           "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",
@@ -3408,8 +3401,8 @@
       "code": "NU1510",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "PackageReference Microsoft.AspNetCore.SignalR.Common will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.",
-      "libraryId": "Microsoft.AspNetCore.SignalR.Common",
+      "message": "PackageReference Microsoft.AspNetCore.ResponseCompression will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.",
+      "libraryId": "Microsoft.AspNetCore.ResponseCompression",
       "targetGraphs": [
         "net10.0"
       ]
@@ -3418,8 +3411,8 @@
       "code": "NU1510",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "PackageReference Microsoft.AspNetCore.ResponseCompression will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.",
-      "libraryId": "Microsoft.AspNetCore.ResponseCompression",
+      "message": "PackageReference Microsoft.AspNetCore.SignalR.Common will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.",
+      "libraryId": "Microsoft.AspNetCore.SignalR.Common",
       "targetGraphs": [
         "net10.0"
       ]

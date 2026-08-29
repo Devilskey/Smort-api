@@ -109,7 +109,7 @@ namespace Smort_api.Handlers.Repositories
         public async Task<IEnumerable<object>> GetAccountContentListAsync(string id)
         {
             const string sql = @"
-                SELECT Content.Id, Content.Thumbnail, Content.Type, File_Content.Id as File_Id
+                SELECT Content.Id, Content.Thumbnail, Content.Type, File_Content.Id as File_Id, Content.Description
                 FROM Content LEFT JOIN File_Content ON  Content.Id=File_Content.Content_Id 
                 WHERE User_Id=@Id ";
             return await _db.QueryAsync<object>(sql, new { Id = id });

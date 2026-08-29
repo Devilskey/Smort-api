@@ -45,7 +45,8 @@ namespace Tiktok_api.Auth
             SELECT 
                 Users_Public.Id AS id,
                 Users_Private.Role_Id AS role,
-                Users_Private.Email AS email
+                Users_Private.Email AS email,
+                Users_Public.UserName AS username
             FROM Users_Private
             INNER JOIN Users_Public
                 ON Users_Public.Person_Id = Users_Private.Id
@@ -66,6 +67,7 @@ namespace Tiktok_api.Auth
                 {
                     FirebaseUid = firebaseUid,
                     UserIdPublic = dbUser.id,
+                    Username =  dbUser.username,
                     Role = dbUser.role,
                     Email = dbUser.email
                 };
@@ -82,7 +84,10 @@ namespace Tiktok_api.Auth
 
             if (!identity.HasClaim(c => c.Type == "email") && userData.Email != null)
                 identity.AddClaim(new Claim("email", userData.Email));
-
+                    
+            if (!identity.HasClaim(c => c.Type == "Username") && userData.Username != null)
+                identity.AddClaim(new Claim("Username", userData.Username));
+            
             logger.LogInformation("works");
             return principal;
         }
@@ -91,6 +96,7 @@ namespace Tiktok_api.Auth
         public class DatabaseUserObject
     {
         public int id { get; set; }
+        public string username { get; set; }
         public string role { get; set; }
         public string email { get; set; }
 
@@ -99,6 +105,8 @@ namespace Tiktok_api.Auth
     public class SmortIdentity
     {
         public string FirebaseUid { get; set; } = default!;
+        public string Username { get; set; }
+
         public int UserIdPublic { get; set; }
         public string? Role { get; set; }
         public string? Email { get; set; }

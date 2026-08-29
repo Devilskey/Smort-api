@@ -116,6 +116,26 @@ namespace Tiktok_api.Controllers.Users
 
             return Ok(userdata);
         }
+        
+        [Authorize]
+        [Route("users/ConfigureUserData")]
+        [HttpPost]
+        public async Task<string> ConfigureUserData(CreateAccount createAccount)
+        {
+            string token = HttpContext.Request.Headers["Authorization"]!;
+
+            if (JWTTokenHandler.IsBlacklisted(token))
+                return "token is blacklisted";
+            
+            var userIdClaim = User.FindFirstValue("app_user_id");
+
+            if (!int.TryParse(userIdClaim, out var id))
+                return $"Invalid user  {userIdClaim} ";
+
+            var data = await _userService.ConfigureUserData(id, createAccount);
+
+            return data;
+        }
 
         /// <summary>
         /// Retrieves user profile data for a specific user by ID.

@@ -1,32 +1,26 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Api\\Smort-api.csproj": {}
+    "/home/bramhendriks/Projects/GitKraken/Smort-api/Api/Smort-api.csproj": {}
   },
   "projects": {
-    "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Api\\Smort-api.csproj": {
+    "/home/bramhendriks/Projects/GitKraken/Smort-api/Api/Smort-api.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Api\\Smort-api.csproj",
+        "projectUniqueName": "/home/bramhendriks/Projects/GitKraken/Smort-api/Api/Smort-api.csproj",
         "projectName": "Smort-api",
-        "projectPath": "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Api\\Smort-api.csproj",
-        "packagesPath": "C:\\Users\\DevAccount\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Api\\obj\\",
+        "projectPath": "/home/bramhendriks/Projects/GitKraken/Smort-api/Api/Smort-api.csproj",
+        "packagesPath": "/home/bramhendriks/.nuget/packages/",
+        "outputPath": "/home/bramhendriks/Projects/GitKraken/Smort-api/Api/obj/",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "E:\\Visual Studio IDE\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\DevAccount\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "/home/bramhendriks/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net10.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
+          "/usr/lib/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -34,11 +28,11 @@
             "framework": "net10.0",
             "targetAlias": "net10.0",
             "projectReferences": {
-              "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Smort-api.Extensions\\Smort-api.Extensions.csproj": {
-                "projectPath": "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Smort-api.Extensions\\Smort-api.Extensions.csproj"
+              "/home/bramhendriks/Projects/GitKraken/Smort-api/Smort-api.Extensions/Smort-api.Extensions.csproj": {
+                "projectPath": "/home/bramhendriks/Projects/GitKraken/Smort-api/Smort-api.Extensions/Smort-api.Extensions.csproj"
               },
-              "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Smort-api.Object\\Smort-api.Objects.csproj": {
-                "projectPath": "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Smort-api.Object\\Smort-api.Objects.csproj"
+              "/home/bramhendriks/Projects/GitKraken/Smort-api/Smort-api.Object/Smort-api.Objects.csproj": {
+                "projectPath": "/home/bramhendriks/Projects/GitKraken/Smort-api/Smort-api.Object/Smort-api.Objects.csproj"
               }
             }
           }
@@ -53,7 +47,7 @@
           "auditLevel": "low",
           "auditMode": "all"
         },
-        "SdkAnalysisLevel": "10.0.300"
+        "SdkAnalysisLevel": "10.0.100"
       },
       "frameworks": {
         "net10.0": {
@@ -124,7 +118,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.301/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/10.0.110/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.AspNetCore": "(,10.0.32767]",
             "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",
@@ -542,29 +536,23 @@
         }
       }
     },
-    "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Smort-api.Extensions\\Smort-api.Extensions.csproj": {
+    "/home/bramhendriks/Projects/GitKraken/Smort-api/Smort-api.Extensions/Smort-api.Extensions.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Smort-api.Extensions\\Smort-api.Extensions.csproj",
+        "projectUniqueName": "/home/bramhendriks/Projects/GitKraken/Smort-api/Smort-api.Extensions/Smort-api.Extensions.csproj",
         "projectName": "Smort-api.Extensions",
-        "projectPath": "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Smort-api.Extensions\\Smort-api.Extensions.csproj",
-        "packagesPath": "C:\\Users\\DevAccount\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Smort-api.Extensions\\obj\\",
+        "projectPath": "/home/bramhendriks/Projects/GitKraken/Smort-api/Smort-api.Extensions/Smort-api.Extensions.csproj",
+        "packagesPath": "/home/bramhendriks/.nuget/packages/",
+        "outputPath": "/home/bramhendriks/Projects/GitKraken/Smort-api/Smort-api.Extensions/obj/",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "E:\\Visual Studio IDE\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\DevAccount\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "/home/bramhendriks/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net10.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
+          "/usr/lib/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -572,8 +560,8 @@
             "framework": "net10.0",
             "targetAlias": "net10.0",
             "projectReferences": {
-              "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Smort-api.Handlers\\Smort-api.Handlers.csproj": {
-                "projectPath": "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Smort-api.Handlers\\Smort-api.Handlers.csproj"
+              "/home/bramhendriks/Projects/GitKraken/Smort-api/Smort-api.Handlers/Smort-api.Handlers.csproj": {
+                "projectPath": "/home/bramhendriks/Projects/GitKraken/Smort-api/Smort-api.Handlers/Smort-api.Handlers.csproj"
               }
             }
           }
@@ -588,7 +576,7 @@
           "auditLevel": "low",
           "auditMode": "all"
         },
-        "SdkAnalysisLevel": "10.0.300"
+        "SdkAnalysisLevel": "10.0.100"
       },
       "frameworks": {
         "net10.0": {
@@ -644,7 +632,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.301/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/10.0.110/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",
@@ -922,29 +910,23 @@
         }
       }
     },
-    "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Smort-api.Handlers\\Smort-api.Handlers.csproj": {
+    "/home/bramhendriks/Projects/GitKraken/Smort-api/Smort-api.Handlers/Smort-api.Handlers.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Smort-api.Handlers\\Smort-api.Handlers.csproj",
+        "projectUniqueName": "/home/bramhendriks/Projects/GitKraken/Smort-api/Smort-api.Handlers/Smort-api.Handlers.csproj",
         "projectName": "Smort-api.Handlers",
-        "projectPath": "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Smort-api.Handlers\\Smort-api.Handlers.csproj",
-        "packagesPath": "C:\\Users\\DevAccount\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Smort-api.Handlers\\obj\\",
+        "projectPath": "/home/bramhendriks/Projects/GitKraken/Smort-api/Smort-api.Handlers/Smort-api.Handlers.csproj",
+        "packagesPath": "/home/bramhendriks/.nuget/packages/",
+        "outputPath": "/home/bramhendriks/Projects/GitKraken/Smort-api/Smort-api.Handlers/obj/",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "E:\\Visual Studio IDE\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\DevAccount\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "/home/bramhendriks/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net10.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
+          "/usr/lib/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -952,8 +934,8 @@
             "framework": "net10.0",
             "targetAlias": "net10.0",
             "projectReferences": {
-              "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Smort-api.Object\\Smort-api.Objects.csproj": {
-                "projectPath": "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Smort-api.Object\\Smort-api.Objects.csproj"
+              "/home/bramhendriks/Projects/GitKraken/Smort-api/Smort-api.Object/Smort-api.Objects.csproj": {
+                "projectPath": "/home/bramhendriks/Projects/GitKraken/Smort-api/Smort-api.Object/Smort-api.Objects.csproj"
               }
             }
           }
@@ -968,7 +950,7 @@
           "auditLevel": "low",
           "auditMode": "all"
         },
-        "SdkAnalysisLevel": "10.0.300"
+        "SdkAnalysisLevel": "10.0.100"
       },
       "frameworks": {
         "net10.0": {
@@ -1032,7 +1014,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.301/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/10.0.110/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",
@@ -1310,29 +1292,23 @@
         }
       }
     },
-    "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Smort-api.Object\\Smort-api.Objects.csproj": {
+    "/home/bramhendriks/Projects/GitKraken/Smort-api/Smort-api.Object/Smort-api.Objects.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Smort-api.Object\\Smort-api.Objects.csproj",
+        "projectUniqueName": "/home/bramhendriks/Projects/GitKraken/Smort-api/Smort-api.Object/Smort-api.Objects.csproj",
         "projectName": "Smort-api.Objects",
-        "projectPath": "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Smort-api.Object\\Smort-api.Objects.csproj",
-        "packagesPath": "C:\\Users\\DevAccount\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\DevAccount\\Desktop\\Projects\\GitKraken\\Smort-api2\\Smort-api.Object\\obj\\",
+        "projectPath": "/home/bramhendriks/Projects/GitKraken/Smort-api/Smort-api.Object/Smort-api.Objects.csproj",
+        "packagesPath": "/home/bramhendriks/.nuget/packages/",
+        "outputPath": "/home/bramhendriks/Projects/GitKraken/Smort-api/Smort-api.Object/obj/",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "E:\\Visual Studio IDE\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\DevAccount\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "/home/bramhendriks/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net10.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
+          "/usr/lib/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -1352,7 +1328,7 @@
           "auditLevel": "low",
           "auditMode": "all"
         },
-        "SdkAnalysisLevel": "10.0.300"
+        "SdkAnalysisLevel": "10.0.100"
       },
       "frameworks": {
         "net10.0": {
@@ -1384,7 +1360,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.301/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/10.0.110/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",

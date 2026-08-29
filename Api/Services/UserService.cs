@@ -2,6 +2,7 @@ using Smort_api.Handlers.Repositories;
 using Smort_api.Object.User;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Smort_api.Object;
 
 namespace Tiktok_api.Services
 {
@@ -48,6 +49,11 @@ namespace Tiktok_api.Services
         public async Task<IEnumerable<GetMyUserDataSimpel>> GetUserDataProfileAsync(int id)
         {
             return await _userRepository.GetUserDataProfileAsync(id);
+        }
+
+        public async Task<string> ConfigureUserData(int id, CreateAccount createAccount)
+        {
+            return await _userRepository.ConfigureUserData(id, createAccount);
         }
     }
 }

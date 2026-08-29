@@ -96,7 +96,8 @@ namespace Smort_api.Extensions
         {
             // Token cleanup service - periodically removes expired JWT tokens from blacklist
             services.AddHostedService<RemoveExpiredTokensServices>();
-
+            services.AddHostedService(sp => sp.GetRequiredService<ProcessVideoServices>());
+            
             // TODO: Enable video processing when ProcessVideoServices is stable
             // services.AddHostedService(provider => provider.GetRequiredService<ProcessVideoServices>());
 

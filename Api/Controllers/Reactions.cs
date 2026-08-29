@@ -41,7 +41,7 @@ namespace Tiktok_api.Controllers
                 return BadRequest();
             }
 
-            string userId = User.FindFirstValue("Id");
+            string userId = User.FindFirstValue("app_user_id");
             string username = User.FindFirstValue("Username");
 
             var result = await _reactionsService.ToggleLikeAsync(userId, contentId, ContentType);
@@ -49,7 +49,7 @@ namespace Tiktok_api.Controllers
             if (result.TypeOfLike == "Like" && result.Owner.HasValue)
             {
                 var owner = result.Owner.Value;
-                await _notificationHub.SendNotificationLikeToUser(owner.Id.ToString(), $"{username} liked your video");
+                await _notificationHub.SendNotificationLikeToUser(owner.Id.ToString(), $"{username} liked your post");
             }
 
             return Ok(result.TypeOfLike);
