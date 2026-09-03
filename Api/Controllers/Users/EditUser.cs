@@ -8,6 +8,7 @@ using Smort_api.Object.Security;
 using Smort_api.Object.User;
 using Smort_api.Object.Videos;
 using System.Security.Claims;
+using Dapper;
 
 namespace Tiktok_api.Controllers.Users
 {
@@ -21,51 +22,39 @@ namespace Tiktok_api.Controllers.Users
         [Authorize]
         [Route("users/DeleteUser")]
         [HttpDelete]
-        public Task<string> Delete()
+        public async Task<string> Delete()
         {
             string token = HttpContext.Request.Headers["Authorization"]!;
 
             if (JWTTokenHandler.IsBlacklisted(token))
-                return Task.FromResult("token is blacklisted");
+                return "token is blacklisted";
 
             string id = User.FindFirstValue("app_user_id");
 
             using MySqlCommand DeleteUserAndGetFilePath = new MySqlCommand();
 
-            DeleteUserAndGetFilePath.CommandText =
-                "SELECT File_location FROM File WHERE Id=(SELECT Profile_Picture FROM Users_Public WHERE Id=@id) UNION " +
-                "SELECT File_location FROM File WHERE Id=(SELECT File_Id FROM Image_Post WHERE User_Id=@id) UNION " +
-                "SELECT File_location FROM File WHERE Id=(SELECT File_Id FROM Video WHERE User_Id=@id) UNION " +
-                "SELECT File_location FROM File WHERE Id=(SELECT Thumbnail FROM Video WHERE User_Id=@id); " +
-                "DELETE FROM Users_Public WHERE Person_Id = @id; " +
-                "DELETE FROM Users_Private WHERE Id = @id; " +
-                "DELETE FROM Following WHERE User_Id_Followed = @id; " +
-                "DELETE FROM Following WHERE User_Id_Follower = @id; " +
-                "DELETE FROM Report_User WHERE User_Reported_Id = @id; " +
-                "DELETE FROM Report_User WHERE User_Reporter_Id = @id; " +
-                "UPDATE Reaction SET User_Id=null WHERE User_Id=@Id;" +
-                "DELETE FROM Reaction WHERE Content_Id=(SELECT Id FROM Video WHERE User_Id=@id); " +
-                "DELETE FROM Image_Post WHERE User_Id = @id; " +
-                "DELETE FROM Video WHERE User_Id = @id; ";
-
-            DeleteUserAndGetFilePath.Parameters.AddWithValue("@id", $"{id}");
-
-            using (DatabaseHandler databaseHandler = new DatabaseHandler())
+            var sqlQuery =
+                @"SELECT File_location FROM File WHERE Id=(SELECT Profile_Picture FROM Users_Public WHERE Id=@id) UNION 
+                SELECT File_location FROM File WHERE Id=(SELECT File_Id FROM Image_Post WHERE User_Id=@id) UNION 
+                SELECT File_location FROM File WHERE Id=(SELECT File_Id FROM Video WHERE User_Id=@id) UNION 
+                SELECT File_location FROM File WHERE Id=(SELECT Thumbnail FROM Video WHERE User_Id=@id); 
+                DELETE FROM Users_Public WHERE Person_Id = @id; DELETE FROM Users_Private WHERE Id = @id;
+                DELETE FROM Following WHERE User_Id_Followed = @id; DELETE FROM Following WHERE User_Id_Follower = @id; 
+                DELETE FROM Report_User WHERE User_Reported_Id = @id; DELETE FROM Report_User WHERE User_Reporter_Id = @id; 
+                UPDATE Reaction SET User_Id=null WHERE User_Id=@Id;
+                DELETE FROM Reaction WHERE Content_Id=(SELECT Id FROM Video WHERE User_Id=@id);
+                DELETE FROM Image_Post WHERE User_Id = @id;
+                DELETE FROM Video WHERE User_Id = @id; ";
+            
+            var filePaths = await _db.QueryAsync<FilePathData>(sqlQuery, new { id = id });
+            
+            foreach (var paths in filePaths)
             {
-                string jsonFilePaths = databaseHandler.Select(DeleteUserAndGetFilePath);
-
-                Logger.LogInformation(jsonFilePaths);
-
-                var filePaths = JsonConvert.DeserializeObject<FilePathData[]>(jsonFilePaths);
-
-                foreach (var paths in filePaths)
-                {
-                    System.IO.File.Delete(paths.File_Location);
-                }
-
-                Logger.Log(LogLevel.Information, "USER DELETE");
+                System.IO.File.Delete(paths.File_Location);
             }
-
+            
+            Logger.Log(LogLevel.Information, "USER DELETE");
+            
             JWTtokenBlacklistItem jwttokenBlacklistItem = new JWTtokenBlacklistItem();
 
             if (token != null && jwttokenBlacklistItem != null)
@@ -74,12 +63,11 @@ namespace Tiktok_api.Controllers.Users
                 jwttokenBlacklistItem.Token = token;
                 jwttokenBlacklistItem.ExpireTime = DateTime.Now.AddHours(8);
 
-
                 JWTTokenHandler.BlackList!.Add(jwttokenBlacklistItem);
                 JWTTokenHandler.WriteBlackList();
             }
 
-            return Task.FromResult("User Removed");
+            return "User Removed";
         }
 
         /// <summary>
@@ -100,20 +88,11 @@ namespace Tiktok_api.Controllers.Users
             string id = User.FindFirstValue("app_user_id");
 
             string[] EncryptedPassword = EncryptionHandler.HashAndSaltData(newPassword.newPassword);
-
-            using MySqlCommand UpdatePassword = new MySqlCommand();
-
-            UpdatePassword.CommandText = "UPDATE Users_Private SET Password=@Password, Salt=@Salt WHERE Id=@Id";
-
-            UpdatePassword.Parameters.AddWithValue("@Password", EncryptedPassword[1]);
-            UpdatePassword.Parameters.AddWithValue("@Salt", EncryptedPassword[0]);
-            UpdatePassword.Parameters.AddWithValue("@Id", id);
-
-            using (DatabaseHandler databaseHandler = new DatabaseHandler())
-            {
-                databaseHandler.EditDatabase(UpdatePassword);
-            }
-
+            
+            var sql = "UPDATE Users_Private SET Password=@Password, Salt=@Salt WHERE Id=@Id";
+            
+            _db.ExecuteAsync(sql, new {Password=EncryptedPassword[1], Salt=EncryptedPassword[0], Id=id});
+            
             return Task.FromResult($"Password Changed");
         }
 
@@ -133,20 +112,11 @@ namespace Tiktok_api.Controllers.Users
                 return Task.FromResult("token is blacklisted");
 
             string id = User.FindFirstValue("app_user_id");
+                
+            var sql = "UPDATE Users_Private SET Email=@Email WHERE Id=@Id";
 
-
-            using MySqlCommand UpdatePassword = new MySqlCommand();
-
-            UpdatePassword.CommandText = "UPDATE Users_Private SET Email=@Email WHERE Id=@Id";
-
-            UpdatePassword.Parameters.AddWithValue("@Email", newEmail);
-            UpdatePassword.Parameters.AddWithValue("@Id", id);
-
-            using (DatabaseHandler databaseHandler = new DatabaseHandler())
-            {
-                databaseHandler.EditDatabase(UpdatePassword);
-            }
-
+            _db.ExecuteAsync(sql, new {Email = newEmail, Id = id});
+            
             return Task.FromResult($"Email Updated");
 
         }
@@ -167,18 +137,10 @@ namespace Tiktok_api.Controllers.Users
                 return Task.FromResult("token is blacklisted");
 
             string id = User.FindFirstValue("app_user_id");
+            
+            var sql = "UPDATE Users_Public SET Profile_Picture=@ProfilePicture WHERE Id=@Id";
 
-            using MySqlCommand UpdatePassword = new MySqlCommand();
-
-            UpdatePassword.CommandText = "UPDATE Users_Public SET Profile_Picture=@ProfilePicture WHERE Id=@Id";
-
-            UpdatePassword.Parameters.AddWithValue("@ProfilePicture", newProfilePicture);
-            UpdatePassword.Parameters.AddWithValue("@Id", id);
-
-            using (DatabaseHandler databaseHandler = new DatabaseHandler())
-            {
-                databaseHandler.EditDatabase(UpdatePassword);
-            }
+            _db.ExecuteAsync(sql, new { ProfilePicture = newProfilePicture, Id = id });
 
             return Task.FromResult($"Profile_Picture Updated");
         }
@@ -191,67 +153,37 @@ namespace Tiktok_api.Controllers.Users
         [Authorize]
         [Route("users/ChangeUsername")]
         [HttpPut]
-        public Task<string> ChangeUsername(string newUsername)
+        public async Task<string> ChangeUsername(string newUsername)
         {
             string token = HttpContext.Request.Headers["Authorization"]!;
 
             if (JWTTokenHandler.IsBlacklisted(token))
-                return Task.FromResult("token is blacklisted");
+                return "token is blacklisted";
+            
+            var sqlUsernameCounter = "SELECT COUNT(*) FROM Username_Counter WHERE Username=@Username;";
 
-            string Userid = User.FindFirstValue("app_user_id");
-
-
-            using DatabaseHandler databaseHandler = new DatabaseHandler();
-
-            using MySqlCommand CheckUsernameExist = new MySqlCommand();
-
-            CheckUsernameExist.CommandText = "SELECT COUNT(*) FROM Username_Counter WHERE Username=@Username;";
-            CheckUsernameExist.Parameters.AddWithValue("@Username", $"{newUsername}");
-
-            CheckUsernameExist.Dispose();
-
-            int Exist = databaseHandler.GetNumber(CheckUsernameExist);
+            var exist = await _db.QueryAsync<int>(sqlUsernameCounter, new { Username = newUsername });
+            
             int newNumber = 0;
-            using MySqlCommand GetUserNameAmount = new MySqlCommand();
 
-            if (Exist == 0)
+            if (exist.FirstOrDefault() != 0)
             {
-                GetUserNameAmount.CommandText = "INSERT INTO Username_Counter (Username, Amount, Created_At, Updated_At) VALUES (@Username, @Amount, @Created_At, @Update_At);";
-
-                GetUserNameAmount.Parameters.AddWithValue("@Username", $"{newUsername}");
-                GetUserNameAmount.Parameters.AddWithValue("@Amount", 0);
-                GetUserNameAmount.Parameters.AddWithValue("@Created_At", DateTime.Now);
-                GetUserNameAmount.Parameters.AddWithValue("@Deleted_At", DateTime.Now);
-                GetUserNameAmount.Parameters.AddWithValue("@Update_At", DateTime.Now);
-
-                databaseHandler.EditDatabase(GetUserNameAmount);
+                var sqlInsert = "INSERT INTO Username_Counter (Username, Amount, Created_At, Updated_At) VALUES (@Username, @Amount, @Created_At, @Update_At);";
+                await _db.QueryAsync(sqlInsert, new { Username = newUsername, Amount = newNumber, Created_At = DateTime.Now, Updated_At = DateTime.Now });
             }
             else
             {
-
-                GetUserNameAmount.CommandText = "SELECT Amount FROM Username_Counter WHERE Username=@Username;";
-
-                GetUserNameAmount.Parameters.AddWithValue("@Username", $"{newUsername}");
-
-                newNumber = databaseHandler.GetNumber(GetUserNameAmount);
+                var sqlSelect = "SELECT Amount FROM Username_Counter WHERE Username=@Username;";
+                await _db.QueryAsync(sqlSelect, new  { Username = newUsername });
             }
-            GetUserNameAmount.Dispose();
+            
+            var sqlUpdateUsername = 
+                @"UPDATE Users_Public SET Username=@Username WHERE Id=@Id;
+                  UPDATE Username_Counter SET Amount=@Amount, Updated_At=@UpdatedAt WHERE Username=@Username;";
 
-
-            using MySqlCommand UpdateUsername = new MySqlCommand();
-            UpdateUsername.CommandText = 
-                "UPDATE Users_Public SET Username=@Username WHERE Id=@Id" +
-                "UPDATE Username_Counter SET Amount=@Amount, Updated_At=@UpdatedAt WHERE Username=@Username;";
-
-            UpdateUsername.Parameters.AddWithValue("@UpdatedAt", DateTime.Now);
-            UpdateUsername.Parameters.AddWithValue("@Amount", newNumber + 1);
-            UpdateUsername.Parameters.AddWithValue("@Username", $"{newUsername}#{(newNumber + 1).ToString("D4")}");
-            UpdateUsername.Parameters.AddWithValue("@Id", Userid);
-
-            databaseHandler.EditDatabase(UpdateUsername);
-            UpdateUsername.Dispose();
-
-            return Task.FromResult($"Username Updated");
+            _db.QueryAsync(sqlUpdateUsername, new { Username = newUsername, UpdatedAt=DateTime.Now, Amount = newNumber, CreatedAt = DateTime.Now });
+            
+            return $"Username Updated";
         }
     }
 }

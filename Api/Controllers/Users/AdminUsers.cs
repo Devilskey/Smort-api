@@ -5,6 +5,7 @@ using MySql.Data.MySqlClient;
 using Smort_api.Handlers;
 using Smort_api.Object.User;
 using System.Security.Claims;
+using Dapper;
 
 namespace Tiktok_api.Controllers.Users
 {
@@ -21,63 +22,37 @@ namespace Tiktok_api.Controllers.Users
                 return BadRequest();
 
             string RoleId = User.FindFirstValue("http://schemas.microsoft.com/ws/2008/06/identity/claims/role");
-
-            Logger.LogInformation(RoleId);
-
+            
             if (RoleId != "3")
             {
                 return BadRequest();
             }
-
-            using MySqlCommand DeleteUserAndGetFilePath = new MySqlCommand();
-
-            MySqlCommand sqlCommand = new MySqlCommand();
-            sqlCommand.CommandText = @"
-                UPDATE Users_Public SET AllowedUser=@Allow WHERE Id=@Id;
-            ";
-            sqlCommand.Parameters.AddWithValue("@Allow", user.Allow ? 1 : 0);
-            sqlCommand.Parameters.AddWithValue("@Id", user.Id);
-
-            Logger.LogInformation(user.Id.ToString());
-            Logger.LogInformation(user.Allow.ToString());
-
-
-            using (DatabaseHandler database = new DatabaseHandler())
-            {
-                database.EditDatabase(sqlCommand);
-                return Ok();
-            }
+            
+            _db.ExecuteAsync("Users_Public SET AllowedUser=@Allow WHERE Id=@Id;", new {Allow= user.Allow ? 1 : 0, Id=user.Id });
+            return Ok();
         }
 
         [Authorize]
         [HttpGet("Admin/users/All")]
-        public Task<string> GetAllUsers()
+        public async Task<object> GetAllUsers()
         {
             string token = HttpContext.Request.Headers["Authorization"]!;
 
             if (JWTTokenHandler.IsBlacklisted(token))
-                return Task.FromResult("token is blacklisted");
+                return "token is blacklisted";
 
-            string RoleId = User.FindFirstValue("http://schemas.microsoft.com/ws/2008/06/identity/claims/role");
+            string roleId = User.FindFirstValue("http://schemas.microsoft.com/ws/2008/06/identity/claims/role");
 
-            Logger.LogInformation(RoleId);
+            Logger.LogInformation(roleId);
 
-            if(RoleId != "3")
+            if(roleId != "3")
             {
-                return Task.FromResult("NO ACCESS");
+                return "token is blacklisted";
             }
 
-            using MySqlCommand DeleteUserAndGetFilePath = new MySqlCommand();
-
-            MySqlCommand sqlCommand = new MySqlCommand();
-            sqlCommand.CommandText = @"
-                SELECT Id, Profile_Picture, Username, Created_At, AllowedUser FROM Users_Public;
-            ";
-
-            using (DatabaseHandler database = new DatabaseHandler())
-            {
-               return Task.FromResult(database.Select(sqlCommand));
-            }
+            var sqlGetAllUsers = @"SELECT Id, Profile_Picture, Username, Created_At, AllowedUser FROM Users_Public;";
+            
+            return await _db.QueryAsync<object>(sqlGetAllUsers);
         }
     }
 }

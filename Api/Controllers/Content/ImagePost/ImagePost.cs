@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
@@ -8,6 +9,7 @@ using Smort_api.Object.Database;
 using Smort_api.Object.ImagePosts;
 using Smort_api.Object.Videos;
 using System.Security.Claims;
+using Dapper;
 using Tiktok_api.Settings_Api;
 
 namespace Tiktok_api.Controllers.Content.ImagePost
@@ -17,16 +19,19 @@ namespace Tiktok_api.Controllers.Content.ImagePost
     {
         private ILogger<ImagePost> _logger;
         private ChunkHandler chunkHandler;
-        public ImagePost(ILogger<ImagePost> logger)
+        private readonly IDbConnection _db;
+
+        public ImagePost(ILogger<ImagePost> logger, IDbConnection db)
         {
             _logger = logger;
+            _db = db; 
             chunkHandler = new ChunkHandler("./TempImagePost", "./ImagePost", "webp");
         }
 
         [Authorize]
         [HttpPost]
         [Route("ImagePosts/CreateNewPost")]
-        public IActionResult CreateNewPost(CreateNewPostData data)
+        public async Task<IActionResult> CreateNewPost(CreateNewPostData data)
         {
             string token = HttpContext.Request.Headers["Authorization"]!;
 
@@ -95,40 +100,30 @@ namespace Tiktok_api.Controllers.Content.ImagePost
                         chunkHandler.SaveFile(ResizedFilePost, Thumbnailfilename, id, $"_{size.Size}");
                     }
                 }
+                
+                var sqlFileAndPostImage = @"
+                    INSERT INTO Content (User_Id, Type, Description, Created_At, Updated_At, Deleted_At) 
+                    VALUES (@Id,  @Type, @Description, @CreatedAt, @UpdatedAt, @DeletedAt);
+                    INSERT INTO File_Content (File_Name, Content_Id, File_location, file_type_Id, Created_At, Deleted_At) 
+                    VALUES (@FileName, LAST_INSERT_ID(), @FileLocation, @FileType, @CreatedAt, @DeletedAt)";
+                
+                await _db.QueryAsync(sqlFileAndPostImage, 
+                    new  {
+                    FileName= $"{filename}",
+                    Id = id,
+                    FileLocation = $"./ImagePost/{id}/{filename}/{filename}",
+                    FileType=FileType.PostImage,
+                    CreatedAt = DateTime.Now,
+                    DeletedAt = DateTime.Now,
+                    UpdatedAt =DateTime.Now,
+                    Type = "img",
+                    Description =data.Description
+                });
+                
+                Array.Clear(filePost);
 
-                using (var databaseHandler = new DatabaseHandler())
-                {
-                    using MySqlCommand FileAndPostImage = new MySqlCommand();
-
-                    FileAndPostImage.CommandText =
-                        @"
-                        INSERT INTO Content (User_Id, Type, Description, Created_At, Updated_At, Deleted_At) 
-                        VALUES (@Id,  @Type, @Description, @CreatedAt, @UpdatedAt, @DeletedAt);
-                        INSERT INTO File_Content (File_Name, Content_Id, File_location, file_type_Id, Created_At, Deleted_At) 
-                        VALUES (@FileName, LAST_INSERT_ID(), @FileLocation, @FileType, @CreatedAt, @DeletedAt)";
-
-                    FileAndPostImage.Parameters.AddWithValue("@FileName", $"{filename}");
-                    FileAndPostImage.Parameters.AddWithValue("@Id", id);
-                    FileAndPostImage.Parameters.AddWithValue("@FileLocation", $"./ImagePost/{id}/{filename}/{filename}");
-                    FileAndPostImage.Parameters.AddWithValue("@FileType", FileType.PostImage);
-
-                    FileAndPostImage.Parameters.AddWithValue("@CreatedAt", DateTime.Now);
-                    FileAndPostImage.Parameters.AddWithValue("@DeletedAt", DateTime.Now);
-                    FileAndPostImage.Parameters.AddWithValue("@UpdatedAt", DateTime.Now);
-
-                    FileAndPostImage.Parameters.AddWithValue("@Type", "img");
-
-
-                    FileAndPostImage.Parameters.AddWithValue("@Description", data.Description);
-
-                    databaseHandler.EditDatabase(FileAndPostImage);
-
-                    FileAndPostImage.Dispose();
-
-                    Array.Clear(filePost);
-
-                    chunkHandler.TempFileCleanup($"{data.GUIDObjSender}-$", (int)(data.TotalChunks - 1));
-                }
+                chunkHandler.TempFileCleanup($"{data.GUIDObjSender}-$", (int)(data.TotalChunks - 1));
+                
                 data = null;
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
@@ -150,42 +145,31 @@ namespace Tiktok_api.Controllers.Content.ImagePost
         [Authorize]
         [Route("ImagePosts/DeleteImage")]
         [HttpDelete]
-        public Task<ActionResult> DeleteImage(int imageId)
+        public async Task<ActionResult> DeleteImage(int imageId)
         {
             string token = HttpContext.Request.Headers["Authorization"]!;
 
             if (JWTTokenHandler.IsBlacklisted(token))
-                return Task.FromResult<ActionResult>(BadRequest());
+                return BadRequest();
 
             string id = User.FindFirstValue("app_user_id");
-
-            using MySqlCommand SelectImagePath = new MySqlCommand();
-
-            SelectImagePath.CommandText =
+            
+            var sqlSelectImagePath =
             "SELECT File_Location FROM File_Content WHERE Content_Id IN (SELECT Id FROM Content WHERE Id = @ImageId); " +
             "DELETE FROM File_Content WHERE Content_Id IN (SELECT Id FROM Content WHERE Id = @ImageId);" +
             "DELETE FROM Content WHERE Id = @ImageId AND User_Id = @UserId; ";
+            
+            var paths = await _db.QueryAsync<FilePathData>(sqlSelectImagePath, new {imageId=imageId, UserId=id});
+                
+            if (paths.Any())
+                return BadRequest();
 
-
-            SelectImagePath.Parameters.AddWithValue("@ImageId", imageId);
-            SelectImagePath.Parameters.AddWithValue("@UserId", id);
-
-            using (DatabaseHandler databaseHandler = new DatabaseHandler())
-            {
-                string json = databaseHandler.Select(SelectImagePath);
-
-                _logger.LogInformation(json);
-
-                FilePathData[] paths = JsonConvert.DeserializeObject<FilePathData[]>(json)!;
-                if (paths.Length != 1)
-                    return Task.FromResult<ActionResult>(BadRequest());
-
-                foreach (FilePathData path in paths)
-                {
-                    System.IO.File.Delete(path.File_Location!);
-                }
+            foreach (FilePathData path in paths)
+            { 
+                System.IO.File.Delete(path.File_Location!);
             }
-            return Task.FromResult<ActionResult>(Ok());
+            
+            return Ok();
         }
     }
 }

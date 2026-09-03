@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
@@ -6,6 +7,7 @@ using Smort_api.Handlers;
 using Smort_api.Object.Video;
 using Smort_api.Object.Videos;
 using System.Security.Claims;
+using Dapper;
 using Tiktok_api.BackgroundServices;
 using Tiktok_api.Settings_Api;
 
@@ -15,16 +17,16 @@ namespace Tiktok_api.Controllers.Videos
     public partial class Videos : ControllerBase
     {
         private readonly ILogger _logger;
-
         private readonly ProcessVideoServices _videoProcessor;
-
+        private readonly IDbConnection _db;
         private ChunkHandler chunkHandler;
 
-        public Videos(ILogger<Videos> logger, ProcessVideoServices VideoProcessor)
+        public Videos(ILogger<Videos> logger, ProcessVideoServices VideoProcessor, IDbConnection db)
         {
             _logger = logger;
             _videoProcessor = VideoProcessor;
             chunkHandler = new ChunkHandler("./TempVideos", "./Videos", "mkv");
+            _db = db;
         }
 
         /// <summary>
@@ -111,50 +113,34 @@ namespace Tiktok_api.Controllers.Videos
         [Authorize]
         [Route("Video/DeleteVideo")]
         [HttpDelete]
-        public Task<ActionResult> DeleteVideo(int videoId)
+        public async Task<ActionResult> DeleteVideo(int videoId)
         {
             string token = HttpContext.Request.Headers["Authorization"]!;
 
             if (JWTTokenHandler.IsBlacklisted(token))
-                return Task.FromResult<ActionResult>(BadRequest());
+                return BadRequest();
 
             string id = User.FindFirstValue("app_user_id");
-
-            using MySqlCommand SelectVideoPath = new MySqlCommand();
-
-            SelectVideoPath.CommandText = @"
+            
+            var sqlSelectVideoPath = @"
                 SELECT File_Location FROM File_Content WHERE Content_Id=@VideoId UNION 
                 SELECT File_Location FROM File_Image WHERE Id=(SELECT Thumbnail FROM Content WHERE id=@VideoId);
                 DELETE FROM File_Content WHERE Content_Id= @VideoId;
                 DELETE FROM Content WHERE Id = @VideoId AND User_Id = @UserId;
                 DELETE FROM File_Image WHERE Id In (SELECT Thumbnail FROM Content WHERE Id = @VideoId);
             ";
-            //"SELECT File_Location FROM File WHERE Id IN " +
-            //"((SELECT File_Id FROM Content WHERE Id = @VideoId) UNION (SELECT Thumbnail FROM Content WHERE Id = @VideoId)); " +
-            //" " +
-            //" +
-            //"DELETE FROM File_Image WHERE Id In (SELECT Thumbnail FROM Content WHERE Id = @VideoId)';";
+            
+            var paths = await _db.QueryAsync<FilePathData>(sqlSelectVideoPath, new { VideoId = videoId, UserId=id });
+            
+            if (paths.Any())
+                return BadRequest();
 
-            SelectVideoPath.Parameters.AddWithValue("@VideoId", videoId);
-            SelectVideoPath.Parameters.AddWithValue("@UserId", id);
-
-            using (DatabaseHandler databaseHandler = new DatabaseHandler())
-            {
-                string json = databaseHandler.Select(SelectVideoPath);
-                _logger.LogInformation(json);
-
-                FilePathData[] paths = JsonConvert.DeserializeObject<FilePathData[]>(json)!;
-                if (paths.Length != 1)
-                    return Task.FromResult<ActionResult>(BadRequest());
-
-                foreach (FilePathData path in paths)
-                {
-                    System.IO.File.Delete(path.File_Location!);
-                }
-
+            foreach (FilePathData path in paths) 
+            { 
+                System.IO.File.Delete(path.File_Location!);
             }
-
-            return Task.FromResult<ActionResult>(Ok());
+            
+            return Ok();
         }
 
         /// <summary>
@@ -164,17 +150,12 @@ namespace Tiktok_api.Controllers.Videos
         /// <returns></returns>
         [Route("Video/GetVideo")]
         [HttpGet]
-        public ActionResult? GetVideos(int videoId, Sizes size = Sizes.M)
+        public async Task<ActionResult?> GetVideos(int videoId, Sizes size = Sizes.M)
         {
-            using MySqlCommand GetVideoPath = new MySqlCommand();
-
-            GetVideoPath.CommandText = "SELECT File_Location FROM File_Content WHERE Content_Id=(SELECT Id FROM Content WHERE Id=@Id);";
-            GetVideoPath.Parameters.AddWithValue("@Id", $"{videoId}");
-
-            using DatabaseHandler databaseHandler = new DatabaseHandler();
-
-            string json = databaseHandler.Select(GetVideoPath);
-
+            var sqlGetVideoPath  = "SELECT File_Location FROM File_Content WHERE Content_Id=(SELECT Id FROM Content WHERE Id=@Id);";
+            
+            string json =  await _db.ExecuteScalarAsync<string>(sqlGetVideoPath, new {Id=videoId});
+                
             FilePathData[] path = JsonConvert.DeserializeObject<FilePathData[]>(json)!;
 
             var filestream = new FileStream(path[0].File_Location! + $"_{size}.mp4", FileMode.Open, FileAccess.Read,  FileShare.Read);

@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Data;
+using Microsoft.AspNetCore.Mvc;
 using MySql.Data.MySqlClient;
 using Smort_api.Handlers;
 using System.Security.Claims;
+using Dapper;
 
 namespace Tiktok_api.Controllers.Content.Posts
 {
@@ -9,69 +11,59 @@ namespace Tiktok_api.Controllers.Content.Posts
     public partial class AllPosts : ControllerBase
     {
         private ILogger<AllPosts> _logger;
-        public AllPosts(ILogger<AllPosts> logger)
+        private readonly IDbConnection _db;
+
+        public AllPosts(ILogger<AllPosts> logger, IDbConnection db)
         {
             _logger = logger;
+            _db = db;
         }
 
         [HttpGet]
         [Route("Posts/GetContentList")]
-        public IActionResult GetContentList(string search = "")
+        public async Task<IActionResult?> GetContentList(string search = "")
         {
-            MySqlCommand sqlCommand = null;
+            var sqlCommand = "";
 
             var IdFromToken = User.FindFirstValue("app_user_id");
 
             if (IdFromToken != null)
             {
-                sqlCommand = ContentHandler.GetContentAlgorithmQueryLoggedIn(IdFromToken, search);
+                sqlCommand = ContentHandler.GetContentAlgorithmQueryLoggedIn(search);
+                
+                return Ok(await _db.QueryAsync<object>(sqlCommand, new { @asked = search.ToLower(), max=30, offset=30, user=IdFromToken}));
             }
             else
             {
                 sqlCommand = ContentHandler.GetContentAlgorithmQuery(search);
+                
+                return Ok(await _db.QueryAsync<object>(sqlCommand, new { @asked = search.ToLower(), max=30, offset=30}));
             }
-
-            using (DatabaseHandler database = new())
-            {
-                Console.WriteLine(sqlCommand.CommandText);
-
-                string json = database.Select(sqlCommand);
-                Console.WriteLine(json);
-                return Ok(json);
-            }
-
         }
-
 
         [HttpGet]
         [Route("Posts/GetContentFromId")]
-        public IActionResult GetContentFromId(int id)
+        public async Task<IActionResult?> GetContentFromId(int id)
         {
-            MySqlCommand sqlCommand = null;
+            var sqlCommand = "";
 
             var IdFromToken = User.FindFirstValue("app_user_id");
 
             if (IdFromToken != null)
             {
-                sqlCommand = ContentHandler.GetContentItemAlgorithmQueryLoggedIn(IdFromToken, id.ToString());
+                sqlCommand = ContentHandler.GetContentItemAlgorithmQueryLoggedIn();
+                return Ok(await _db.QueryAsync<object>(sqlCommand, new { @user = IdFromToken,  @Contentid = id.ToString() }));
             }
             else
             {
-                sqlCommand = ContentHandler.GetContentItemAlgorithmQuery(id.ToString());
-            }
-
-            using (DatabaseHandler database = new())
-            {
-                string json = database.Select(sqlCommand);
-                return Ok(json);
+                sqlCommand = ContentHandler.GetContentItemAlgorithmQuery();
+                return Ok(await _db.QueryAsync<object>(sqlCommand, new { @Contentid = id.ToString() }));
             }
         }
-
-
-
+        
         [Route("Posts/GetAccountContentList")]
         [HttpGet]
-        public Task<string> GetAccountContentList(int? idUser)
+        public async Task<object?> GetAccountContentList(int? idUser)
         {
             string? id = "";
             var IdFromToken = User.FindFirstValue("app_user_id");
@@ -85,29 +77,21 @@ namespace Tiktok_api.Controllers.Content.Posts
                 string token = HttpContext.Request.Headers["Authorization"]!;
 
                 if (JWTTokenHandler.IsBlacklisted(token))
-                    return Task.FromResult("token is blacklisted");
+                    return Forbid();
 
                 id = IdFromToken;
             }
             else
             {
-                return Task.FromResult("No Valid User");
+                return BadRequest();
             }
-
-            using MySqlCommand GetVideoPath = new MySqlCommand();
-            _logger.LogInformation(id);
-
-            GetVideoPath.CommandText =
-                @" SELECT Content.Id, Content.Thumbnail, Content.Type, File_Content.Id as File_Id
+            
+            var sqlGetVideoPath =
+                @"SELECT Content.Id, Content.Thumbnail, Content.Type, File_Content.Id as File_Id
                 FROM Content LEFT JOIN File_Content ON  Content.Id=File_Content.Content_Id 
                 WHERE User_Id=@Id ";
-            //(SELECT Id FROM File_Content WHERE Id = Id) as File_Id
-            GetVideoPath.Parameters.AddWithValue("@Id", $"{id}");
-
-            using DatabaseHandler databaseHandler = new DatabaseHandler();
-            Console.WriteLine(databaseHandler.Select(GetVideoPath));
-
-            return Task.FromResult(databaseHandler.Select(GetVideoPath));
+            
+            return await _db.QueryAsync<object>(sqlGetVideoPath, new {Id=id});
         }
     }
 }

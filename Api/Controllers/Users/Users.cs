@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Smort_api.Handlers;
@@ -8,6 +9,7 @@ using Smort_api.Object;
 using Smort_api.Object.Security;
 using Smort_api.Object.User;
 using System.Security.Claims;
+using MySql.Data.MySqlClient;
 using Tiktok_api.SignalRHubs;
 
 namespace Tiktok_api.Controllers.Users
@@ -30,16 +32,19 @@ namespace Tiktok_api.Controllers.Users
         
         /// <summary>User service for business logic operations.</summary>
         private readonly IUserService _userService;
+        
+        private readonly IDbConnection _db;
 
         /// <summary>Firebase authentication service for verifying tokens and generating local JWTs.</summary>
 
         /// <summary>Constructor - initializes the controller with dependencies.</summary>
-        public Users(ILogger<Users> logger, NotificationHubHandler notificationHub, MailHandler mail, IUserService userService)
+        public Users(ILogger<Users> logger, NotificationHubHandler notificationHub, MailHandler mail, IUserService userService, IDbConnection db)
         {
             Logger = logger;
             _notificationHub = notificationHub;
             _mail = mail;
             _userService = userService;
+            _db = db;
         }
 
         /// <summary>

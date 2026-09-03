@@ -7,6 +7,7 @@ using Smort_api.Object;
 using Smort_api.Object.Security;
 using Smort_api.Object.User;
 using System.Security.Claims;
+using Dapper;
 using Tiktok_api.SignalRHubs;
 
 namespace Tiktok_api.Controllers.Users
@@ -22,52 +23,40 @@ namespace Tiktok_api.Controllers.Users
         [Authorize]
         [Route("users/FollowUser")]
         [HttpPost]
-        public Task<string> FollowUser(int id)
+        public async Task<string> FollowUser(int id)
         {
             string token = HttpContext.Request.Headers["Authorization"]!;
 
             if (JWTTokenHandler.IsBlacklisted(token))
-                return Task.FromResult("token is blacklisted");
+                return "token is blacklisted";
             
             string idUser = User.FindFirstValue("app_user_id");
             string username = User.FindFirstValue("Username");
 
             Console.WriteLine(idUser);
             if (id == int.Parse(idUser))
-                return Task.FromResult($"you cannnot follow yourself");
+                return $"you cannnot follow yourself";
 
 
             if (id == 0)
-                return Task.FromResult($"Failed to follow user");
+                return $"Failed to follow user";
 
-            using MySqlCommand CheckIfAlreadyFollowing = new MySqlCommand();
 
-            CheckIfAlreadyFollowing.CommandText = "SELECT COUNT(User_Id_Followed) FROM Following WHERE User_Id_Follower=@UserFollower AND User_Id_Followed=@UserFollowed;";
+            var sqlIsAlreadyFollowing = "SELECT COUNT(User_Id_Followed) FROM Following WHERE User_Id_Follower=@UserFollower AND User_Id_Followed=@UserFollowed;";
 
-            CheckIfAlreadyFollowing.Parameters.AddWithValue("@UserFollower", idUser);
-            CheckIfAlreadyFollowing.Parameters.AddWithValue("@UserFollowed", id);
-
-            using MySqlCommand FollowUserCommand = new MySqlCommand();
-
-            FollowUserCommand.CommandText = "INSERT INTO Following (User_Id_Followed, User_Id_Follower, Followed_At) VALUES (@UserFollowed, @UserFollower, @FollowedAt);";
-
-            FollowUserCommand.Parameters.AddWithValue("@UserFollowed", id);
-            FollowUserCommand.Parameters.AddWithValue("@UserFollower", idUser);
-
-            FollowUserCommand.Parameters.AddWithValue("@FollowedAt", DateTime.Now);
-
-            using (DatabaseHandler databaseHandler = new DatabaseHandler())
+            var checkIfAlreadyFollowing = await _db.QueryAsync<int>(sqlIsAlreadyFollowing, new { UserFollower = idUser, UserFollowed = id });
+            
+            var sqlFollowUserCommand = "INSERT INTO Following (User_Id_Followed, User_Id_Follower, Followed_At) VALUES (@UserFollowed, @UserFollower, @FollowedAt);";
+            
+            if (checkIfAlreadyFollowing.FirstOrDefault() == 0)
             {
-                if (databaseHandler.GetNumber(CheckIfAlreadyFollowing) == 0)
-                {
-                    databaseHandler.EditDatabase(FollowUserCommand);
-                    return Task.FromResult($"Now following user");
-                }
+                await _db.QueryAsync(sqlFollowUserCommand, new { UserFollower = idUser, UserFollowed = id, FollowedAt=DateTime.Now});
+                return $"Now following user";
             }
 
             _notificationHub.SendNotificationFollowToUser(id.ToString(), $"{username} started following you");
 
-            return Task.FromResult($"Not able to follow this user");
+            return $"Not able to follow this user";
         }
 
         /// <summary>
@@ -77,41 +66,23 @@ namespace Tiktok_api.Controllers.Users
         [Authorize]
         [Route("users/UnFollowUser")]
         [HttpDelete]
-        public Task<string> UnFollowUser(int creatorId)
+        public async Task<string> UnFollowUser(int creatorId)
         {
             string token = HttpContext.Request.Headers["Authorization"]!;
 
             if (JWTTokenHandler.IsBlacklisted(token))
-                return Task.FromResult("token is blacklisted");
+                return "token is blacklisted";
 
             string id = User.FindFirstValue("app_user_id");
 
             if (creatorId == 0)
-                return Task.FromResult($"Failed to follow user");
-
-            using MySqlCommand CheckIfFollowing = new MySqlCommand();
-
-            CheckIfFollowing.CommandText = "SELECT COUNT(User_Id_Followed) FROM Following WHERE User_Id_Follower=@UserFollower AND User_Id_Followed=@UserFollowed;";
-
-            CheckIfFollowing.Parameters.AddWithValue("@UserFollower", id);
-
-            CheckIfFollowing.Parameters.AddWithValue("@UserFollowed", creatorId);
-
-            using MySqlCommand UnFollowUserCommand = new MySqlCommand();
-
-            UnFollowUserCommand.CommandText = "DELETE FROM Following WHERE User_Id_Followed=@UserFollowed AND User_Id_Follower=@UserFollower;";
-
-            UnFollowUserCommand.Parameters.AddWithValue("@UserFollowed", creatorId);
-            UnFollowUserCommand.Parameters.AddWithValue("@UserFollower", id);
-
-            using (DatabaseHandler databaseHandler = new DatabaseHandler())
-            {
-                if (databaseHandler.GetNumber(CheckIfFollowing) != 0)
-                {
-                    databaseHandler.EditDatabase(UnFollowUserCommand);
-                }
-            }
-            return Task.FromResult($"user Unfollowed");
+                return $"Failed to follow user";
+            
+            var sqlUnFollowUserCommand = "DELETE FROM Following WHERE User_Id_Followed=@UserFollowed AND User_Id_Follower=@UserFollower;";
+            
+            await _db.QueryAsync(sqlUnFollowUserCommand, new {UserFollowed=creatorId, UserFollower=id});
+                
+            return $"user Unfollowed";
         }
 
         /// <summary>
@@ -120,23 +91,15 @@ namespace Tiktok_api.Controllers.Users
         /// <returns></returns>
         [Route("users/FollowersAmount")]
         [HttpPost]
-        public Task<int>? FollowersAmount(int id)
+        public async Task<int?> FollowersAmount(int id)
         {
             if (id == 0)
                 return null;
+            
+            var sqlGetFollowers = "SELECT COUNT(User_Id_Followed) FROM Following WHERE User_Id_Followed=@UserFollowed;";
 
-            using MySqlCommand CheckIfFollowing = new MySqlCommand();
+            return await _db.ExecuteScalarAsync<int>(sqlGetFollowers, new {UserFollowed=id});
 
-            CheckIfFollowing.CommandText = "SELECT COUNT(User_Id_Followed) FROM Following WHERE User_Id_Followed=@UserFollowed;";
-
-            CheckIfFollowing.Parameters.AddWithValue("@UserFollowed", id);
-
-            using (DatabaseHandler databaseHandler = new DatabaseHandler())
-            {
-                return Task.FromResult(
-                    databaseHandler.GetNumber(CheckIfFollowing)
-                   );
-            }
         }
 
 
@@ -146,48 +109,33 @@ namespace Tiktok_api.Controllers.Users
         /// <returns></returns>
         [Route("Following/MostFolowers")]
         [HttpGet]
-        public string? MostFollowers(int Offset = 5)
+        public async Task<IEnumerable<string>>? MostFollowers(int Offset = 5)
         {
-
-            using MySqlCommand MostFollowers = new MySqlCommand();
-
-            MostFollowers.CommandText = @"
+            var sqlMostFollowers = @"
                 SELECT Following.User_Id_Followed, COUNT(User_Id_Follower) as Amount, Users_Public.Profile_Picture, Username
                 FROM Following INNER JOIN Users_Public On Users_Public.Id = Following.User_Id_Followed
                 GROUP BY User_Id_Followed ORDER BY Amount DESC LIMIT @Offset;";
-            MostFollowers.Parameters.AddWithValue("@Offset", Offset);
-            using (DatabaseHandler databaseHandler = new DatabaseHandler())
-            {
-                 return databaseHandler.Select(MostFollowers);
-            }
+            
+            return await _db.QueryAsync<string>(sqlMostFollowers, new { Offset = Offset});
         }
 
         [Authorize]
         [Route("Following/Following")]
         [HttpGet]
-        public string? Following(int Offset = 5)
+        public async Task<IEnumerable<string>> Following(int Offset = 5)
         {
             string idUser = User.FindFirstValue("app_user_id");
 
             if (idUser == "")
                 return null;
-
-
-            using MySqlCommand MostFollowers = new MySqlCommand();
-
-            MostFollowers.CommandText = @"
+            
+            var sqlMostFollowers = @"
                 SELECT Following.User_Id_Followed, COUNT(User_Id_Follower) as Amount, Users_Public.Profile_Picture, Username
                 FROM Following INNER JOIN Users_Public On Users_Public.Id = Following.User_Id_Followed 
                 WHERE User_Id_Follower = @id
                 GROUP BY User_Id_Followed ORDER BY Amount DESC LIMIT @Offset;";
 
-            MostFollowers.Parameters.AddWithValue("@Offset", Offset);
-            MostFollowers.Parameters.AddWithValue("@id", idUser);
-
-            using (DatabaseHandler databaseHandler = new DatabaseHandler())
-            {
-                return databaseHandler.Select(MostFollowers);
-            }
+            return await _db.QueryAsync<string>(sqlMostFollowers, new { Offset = Offset, id = idUser });
         }
 
 
@@ -198,7 +146,7 @@ namespace Tiktok_api.Controllers.Users
         [Authorize]
         [Route("users/AlreadyFollowing")]
         [HttpPost]
-        public Task<bool>? AlreadyFollowing(int id)
+        public async Task<bool?> AlreadyFollowing(int id)
         {
             string idUser = User.FindFirstValue("app_user_id");
 
@@ -206,21 +154,12 @@ namespace Tiktok_api.Controllers.Users
                  return null;
             if (id == 0)
                 return null;
-
-            using MySqlCommand CheckIfFollowing = new MySqlCommand();
-
-            CheckIfFollowing.CommandText = "SELECT COUNT(User_Id_Followed) FROM Following WHERE User_Id_Followed=@UserFollowed AND User_Id_Follower=@UserFollower;";
-
-            CheckIfFollowing.Parameters.AddWithValue("@UserFollowed", id);
-            CheckIfFollowing.Parameters.AddWithValue("@UserFollower", idUser);
-
-            using (DatabaseHandler databaseHandler = new DatabaseHandler())
-            {
-                int Follow = databaseHandler.GetNumber(CheckIfFollowing);
-
-                if (Follow == 0) return Task.FromResult(false);
-                else return Task.FromResult(true);
-            }
+            
+            var sqlCheckIfFollowing = "SELECT COUNT(User_Id_Followed) FROM Following WHERE User_Id_Followed=@UserFollowed AND User_Id_Follower=@UserFollower;";
+            
+            int Follow = await _db.ExecuteScalarAsync<int>(sqlCheckIfFollowing, new {UserFollowed=id, UserFollower=idUser});
+            if (Follow == 0) return false;
+            else return true;
         }
 
         /// <summary>
@@ -230,7 +169,7 @@ namespace Tiktok_api.Controllers.Users
         [Authorize]
         [Route("users/MyFollowersAmount")]
         [HttpGet]
-        public Task<int>? MyFollowersAmount()
+        public async Task<int?> MyFollowersAmount()
         {
             string id = User.FindFirstValue("app_user_id");
 
@@ -239,18 +178,9 @@ namespace Tiktok_api.Controllers.Users
             if (JWTTokenHandler.IsBlacklisted(token))
                 return null;
 
-            using MySqlCommand CheckIfFollowing = new MySqlCommand();
-
-            CheckIfFollowing.CommandText = "SELECT COUNT(User_Id_Followed) FROM Following WHERE User_Id_Followed=@UserFollowed;";
-
-            CheckIfFollowing.Parameters.AddWithValue("@UserFollowed", id);
-
-            using (DatabaseHandler databaseHandler = new DatabaseHandler())
-            {
-                return Task.FromResult(
-                    databaseHandler.GetNumber(CheckIfFollowing)
-                   );
-            }
+            var sqlCheckIfFollowing =  "SELECT COUNT(User_Id_Followed) FROM Following WHERE User_Id_Followed=@UserFollowed;";
+            
+            return await _db.ExecuteScalarAsync<int> (sqlCheckIfFollowing, new {UserFollowed=id} );
         }
     }
 }

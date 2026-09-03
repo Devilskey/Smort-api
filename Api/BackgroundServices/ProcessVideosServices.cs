@@ -3,6 +3,8 @@ using Newtonsoft.Json;
 using Smort_api.Handlers;
 using Smort_api.Object.Security;
 using System.Collections.Concurrent;
+using System.Data;
+using Dapper;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using Tiktok_api.Settings_Api;
 using Smort_api.Object.Video;
@@ -18,14 +20,16 @@ namespace Tiktok_api.BackgroundServices
 
         private readonly ConcurrentQueue<VideoToProcessObject> _VideosToProcess;
 
+        private readonly IDbConnection _db;
 
         private readonly NotificationHubHandler _notificationHub;
 
-        public ProcessVideoServices(ILogger<ProcessVideoServices> logger, NotificationHubHandler notificationHub)
+        public ProcessVideoServices(ILogger<ProcessVideoServices> logger, NotificationHubHandler notificationHub, IDbConnection db)
         {
             _VideosToProcess = new ConcurrentQueue<VideoToProcessObject>();
             _notificationHub = notificationHub;
             _logger = logger;
+            _db = db;   
         }
 
         public void AddToQueue(VideoToProcessObject item)
@@ -72,46 +76,39 @@ namespace Tiktok_api.BackgroundServices
 
             await VideoHandler.CreateThumbnails(Video.Input, Video.Output + Video.FileName);
             _logger.LogInformation($"Thumbnail Done");
+            
+            int thumbnailID = 0;
 
-            using DatabaseHandler databaseHandler = new DatabaseHandler();
-
-            int ThumbnailID = 0;
-
-            MySqlCommand GetAndAddThumbnail = new MySqlCommand();
-            GetAndAddThumbnail.CommandText =
+           var sqlGetAndAddThumbnail =
                 @"INSERT INTO File_Image (File_Name, File_Location, file_type_Id, Created_At) VALUES (@Name, @Location, 2, @Created); 
                       SELECT LAST_INSERT_ID();";
+           
+            thumbnailID = await _db.ExecuteScalarAsync<int>(sqlGetAndAddThumbnail, new
+            {
+                Name = $"{Video.FileName}.png", 
+                Location= $"{Video.Output}{Video.FileName}",
+                Created= DateTime.Now
+            });
 
-            GetAndAddThumbnail.Parameters.AddWithValue("@Name", $"{Video.FileName}.png");
-            GetAndAddThumbnail.Parameters.AddWithValue("@Location", $"{Video.Output}{Video.FileName}");
-            GetAndAddThumbnail.Parameters.AddWithValue("@Created", DateTime.Now);
 
-            ThumbnailID = databaseHandler.GetNumber(GetAndAddThumbnail);
-
-            GetAndAddThumbnail.Dispose();
-
-            using MySqlCommand InsertFileAndVideo = new MySqlCommand();
-
-            InsertFileAndVideo.CommandText =
+            var sqlInsertFileAndVideo =
                 @"
                 INSERT INTO Content (User_Id, Type, Description, Thumbnail, Created_At, Updated_At, Deleted_At) VALUES (@Id, @Type, @Description, @Thumbnail, @CreatedAt, @UpdatedAt, @DeletedAt);
                 INSERT INTO File_Content (File_Name, File_location,file_type_Id, Content_Id, Created_At, Deleted_At) VALUES (@FileName, @FileLocation, @fileType, LAST_INSERT_ID(), @CreatedAt, @DeletedAt);";
-
-            InsertFileAndVideo.Parameters.AddWithValue("@FileName", $"{Video.FileName}.mkv");
-            InsertFileAndVideo.Parameters.AddWithValue("@Id", Video.UserId);
-            InsertFileAndVideo.Parameters.AddWithValue("@FileLocation", $"{Video.Output}{Video.FileName}");
-            InsertFileAndVideo.Parameters.AddWithValue("@CreatedAt", DateTime.Now);
-            InsertFileAndVideo.Parameters.AddWithValue("@DeletedAt", DateTime.Now);
-            InsertFileAndVideo.Parameters.AddWithValue("@fileType", 3);
-            InsertFileAndVideo.Parameters.AddWithValue("@UpdatedAt", DateTime.Now);
-
-            InsertFileAndVideo.Parameters.AddWithValue("@Type", "vid");
-
-            InsertFileAndVideo.Parameters.AddWithValue("@Thumbnail", ThumbnailID.ToString());
-
-            InsertFileAndVideo.Parameters.AddWithValue("@Description", Video.Description);
-            databaseHandler.EditDatabase(InsertFileAndVideo);
-            InsertFileAndVideo.Dispose();
+            
+            _db.QueryAsync(sqlInsertFileAndVideo, new
+            {
+                FileName= $"{Video.FileName}.mkv",
+                Id= Video.UserId,
+                FileLocation= $"{Video.Output}{Video.FileName}",
+                CreatedAt= DateTime.Now,
+                DeletedAt= DateTime.Now,
+                fileType= 3,
+                UpdatedAt=DateTime.Now,
+                Type="vid",
+                Thumbnail=thumbnailID.ToString(),
+                Description=Video.Description
+            });
 
             await _notificationHub.SendNotificationVideoToUser(Video.UserId, "Video has been uploaded");
         }

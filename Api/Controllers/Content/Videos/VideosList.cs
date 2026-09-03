@@ -2,6 +2,7 @@
 using MySql.Data.MySqlClient;
 using Smort_api.Handlers;
 using System.Security.Claims;
+using Dapper;
 
 namespace Tiktok_api.Controllers.Videos
 {
@@ -15,38 +16,32 @@ namespace Tiktok_api.Controllers.Videos
 
         [Route("Video/GetVideoFromId")]
         [HttpGet]
-        public Task<string> GetVideoFromId(int id)
+        public async Task<object> GetVideoFromId(int id)
         {
             string token = HttpContext.Request.Headers["Authorization"]!;
 
             if (JWTTokenHandler.IsBlacklisted(token))
-                return Task.FromResult("token is blacklisted");
+                return "token is blacklisted";
 
             string userId = User.FindFirstValue("app_user_id");
-            using MySqlCommand GetVideo = new MySqlCommand();
 
+            var sqlGetVideoFromId = "";
 
             if (string.IsNullOrEmpty(userId))
             {
-                GetVideo.CommandText = "SELECT Id, Title, Description, Created_At, " +
-                     "(SELECT COUNT(Id) FROM Reaction WHERE Content_Id = Video.Id AND Reaction = \"Like\" AND Content_Type=\"vid\") AS Likes, " +
-                    " FROM Video WHERE Id=@Id;";
+                sqlGetVideoFromId = "SELECT Id, Title, Description, Created_At, " +
+                                    "(SELECT COUNT(Id) FROM Reaction WHERE Content_Id = Video.Id AND Reaction = \"Like\" AND Content_Type=\"vid\") AS Likes, " +
+                                    " FROM Video WHERE Id=@Id;";
             }
             else
             {
-                GetVideo.CommandText = "SELECT Id, Title, Description, Created_At, " +
-                     "(SELECT COUNT(Id) FROM Reaction WHERE Content_Id = Video.Id AND Reaction = \"Like\" AND Content_Type=\"vid\") AS Likes, " +
-                     "(SELECT COUNT(Id) FROM Reaction WHERE Content_Id = Video.Id AND Reaction = \"Like\" AND Content_Type=\"vid\" AND User_Id=@user) AS AlreadyLiked " +
-                    " FROM Video WHERE Id=@Id;";
-                GetVideo.Parameters.AddWithValue("@user", userId);
-
+                sqlGetVideoFromId = "SELECT Id, Title, Description, Created_At, " +
+                                    "(SELECT COUNT(Id) FROM Reaction WHERE Content_Id = Video.Id AND Reaction = \"Like\" AND Content_Type=\"vid\") AS Likes, " +
+                                    "(SELECT COUNT(Id) FROM Reaction WHERE Content_Id = Video.Id AND Reaction = \"Like\" AND Content_Type=\"vid\" AND User_Id=@user) AS AlreadyLiked " +
+                                    " FROM Video WHERE Id=@Id;";
             }
-            GetVideo.Parameters.AddWithValue("@Id", id);
-            using (DatabaseHandler databaseHandler = new DatabaseHandler())
-            {
-                string json = databaseHandler.Select(GetVideo);
-                return Task.FromResult(json);
-            }
+            
+            return await _db.QueryAsync<object>(sqlGetVideoFromId, new {user=userId, Id=id });
         }
     }
 }
