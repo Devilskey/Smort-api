@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Smort_api.Handlers;
 using Smort_api.Object.User;
+using Smort_api.Object.DTO;
 using System.Security.Claims;
 
 namespace Tiktok_api.Controllers.Users
@@ -28,21 +29,22 @@ namespace Tiktok_api.Controllers.Users
 
         [Authorize]
         [HttpGet("Admin/users/All")]
-        public async Task<object> GetAllUsers()
+        public async Task<ActionResult<IEnumerable<AllUserDto>>> GetAllUsers()
         {
             string token = HttpContext.Request.Headers["Authorization"]!;
 
             if (JWTTokenHandler.IsBlacklisted(token))
-                return "token is blacklisted";
+                return Forbid();
 
             string roleId = User.FindFirstValue("http://schemas.microsoft.com/ws/2008/06/identity/claims/role");
 
             Logger.LogInformation(roleId);
 
             if (roleId != "3")
-                return "token is blacklisted";
+                return Forbid();
 
-            return await _userService.GetAllUsersAsync();
+            var data = await _userService.GetAllUsersAsync();
+            return Ok(data);
         }
     }
 }

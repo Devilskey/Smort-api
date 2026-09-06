@@ -1,6 +1,7 @@
 using Smort_api.Handlers;
 using Smort_api.Handlers.Repositories;
 using Smort_api.Object.Videos;
+using Smort_api.Object.DTO;
 using System;
 using System.IO;
 using System.Linq;
@@ -88,7 +89,7 @@ namespace Tiktok_api.Services
             await _videoRepository.DeleteVideoAsync(videoId, userId);
         }
 
-        public async Task<object> GetVideoFromIdAsync(string? userId, int id)
+        public async Task<IEnumerable<VideoDto>> GetVideoFromIdAsync(string? userId, int id)
         {
             return await _videoRepository.GetVideoByIdAsync(userId, id);
         }

@@ -1,5 +1,6 @@
 using Smort_api.Handlers.Repositories;
 using Smort_api.Object.Videos;
+using Smort_api.Object.DTO;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -14,12 +15,12 @@ namespace Tiktok_api.Services
             _repo = repo;
         }
 
-        public async Task<IEnumerable<object>> GetContentListAsync(string? userId, string search, int page = 0)
+        public async Task<IEnumerable<ContentItemDto>> GetContentListAsync(string? userId, string search, int page = 0)
         {
             return await _repo.GetContentListAsync(userId, search, page);
         }
 
-        public async Task<object?> GetContentFromIdAsync(string? userId, int contentId)
+        public async Task<ContentItemDto?> GetContentFromIdAsync(string? userId, int contentId)
         {
             return await _repo.GetContentFromIdAsync(userId, contentId);
         }
@@ -39,7 +40,7 @@ namespace Tiktok_api.Services
             return await _repo.GetVideoFilePathAsync(videoId);
         }
 
-        public async Task<IEnumerable<object>> GetAccountContentListAsync(string id)
+        public async Task<IEnumerable<ContentItemDto>> GetAccountContentListAsync(string id)
         {
             return await _repo.GetAccountContentListAsync(id);
         }

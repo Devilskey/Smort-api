@@ -4,6 +4,7 @@ using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 using Smort_api.Handlers;
 using Smort_api.Object;
+using Smort_api.Object.DTO;
 using Smort_api.Object.Security;
 using Smort_api.Object.User;
 using System.Security.Claims;
@@ -91,14 +92,15 @@ namespace Tiktok_api.Controllers.Users
         /// <returns></returns>
         [Route("users/FollowersAmount")]
         [HttpPost]
-        public async Task<int?> FollowersAmount(int id)
+        public async Task<ActionResult<FollowersAmountDto>> FollowersAmount(int id)
         {
             if (id == 0)
-                return null;
-            
+                return BadRequest();
+
             var sqlGetFollowers = "SELECT COUNT(User_Id_Followed) FROM Following WHERE User_Id_Followed=@UserFollowed;";
 
-            return await _db.ExecuteScalarAsync<int>(sqlGetFollowers, new {UserFollowed=id});
+            var count = await _db.ExecuteScalarAsync<int>(sqlGetFollowers, new { UserFollowed = id });
+            return Ok(new FollowersAmountDto { Count = count });
 
         }
 
@@ -109,33 +111,35 @@ namespace Tiktok_api.Controllers.Users
         /// <returns></returns>
         [Route("Following/MostFolowers")]
         [HttpGet]
-        public async Task<IEnumerable<string>>? MostFollowers(int Offset = 5)
+        public async Task<ActionResult<IEnumerable<MostFollowersDto>>>? MostFollowers(int Offset = 5)
         {
             var sqlMostFollowers = @"
                 SELECT Following.User_Id_Followed, COUNT(User_Id_Follower) as Amount, Users_Public.Profile_Picture, Username
                 FROM Following INNER JOIN Users_Public On Users_Public.Id = Following.User_Id_Followed
                 GROUP BY User_Id_Followed ORDER BY Amount DESC LIMIT @Offset;";
             
-            return await _db.QueryAsync<string>(sqlMostFollowers, new { Offset = Offset});
+            var list = await _db.QueryAsync<MostFollowersDto>(sqlMostFollowers, new { Offset = Offset });
+            return Ok(list);
         }
 
         [Authorize]
         [Route("Following/Following")]
         [HttpGet]
-        public async Task<IEnumerable<string>> Following(int Offset = 5)
+        public async Task<ActionResult<IEnumerable<MostFollowersDto>>> Following(int Offset = 5)
         {
             string idUser = User.FindFirstValue("app_user_id");
 
             if (idUser == "")
-                return null;
-            
+                return BadRequest();
+
             var sqlMostFollowers = @"
                 SELECT Following.User_Id_Followed, COUNT(User_Id_Follower) as Amount, Users_Public.Profile_Picture, Username
                 FROM Following INNER JOIN Users_Public On Users_Public.Id = Following.User_Id_Followed 
                 WHERE User_Id_Follower = @id
                 GROUP BY User_Id_Followed ORDER BY Amount DESC LIMIT @Offset;";
 
-            return await _db.QueryAsync<string>(sqlMostFollowers, new { Offset = Offset, id = idUser });
+            var list = await _db.QueryAsync<MostFollowersDto>(sqlMostFollowers, new { Offset = Offset, id = idUser });
+            return Ok(list);
         }
 
 
@@ -146,20 +150,19 @@ namespace Tiktok_api.Controllers.Users
         [Authorize]
         [Route("users/AlreadyFollowing")]
         [HttpPost]
-        public async Task<bool?> AlreadyFollowing(int id)
+        public async Task<ActionResult<AlreadyFollowingDto>> AlreadyFollowing(int id)
         {
             string idUser = User.FindFirstValue("app_user_id");
 
             if (idUser == "")
-                 return null;
+                 return BadRequest();
             if (id == 0)
-                return null;
-            
+                return BadRequest();
+
             var sqlCheckIfFollowing = "SELECT COUNT(User_Id_Followed) FROM Following WHERE User_Id_Followed=@UserFollowed AND User_Id_Follower=@UserFollower;";
-            
-            int Follow = await _db.ExecuteScalarAsync<int>(sqlCheckIfFollowing, new {UserFollowed=id, UserFollower=idUser});
-            if (Follow == 0) return false;
-            else return true;
+
+            int Follow = await _db.ExecuteScalarAsync<int>(sqlCheckIfFollowing, new { UserFollowed = id, UserFollower = idUser });
+            return Ok(new AlreadyFollowingDto { IsFollowing = Follow != 0 });
         }
 
         /// <summary>
@@ -169,18 +172,19 @@ namespace Tiktok_api.Controllers.Users
         [Authorize]
         [Route("users/MyFollowersAmount")]
         [HttpGet]
-        public async Task<int?> MyFollowersAmount()
+        public async Task<ActionResult<FollowersAmountDto>> MyFollowersAmount()
         {
             string id = User.FindFirstValue("app_user_id");
 
             string token = HttpContext.Request.Headers["Authorization"]!;
 
             if (JWTTokenHandler.IsBlacklisted(token))
-                return null;
+                return Forbid();
 
             var sqlCheckIfFollowing =  "SELECT COUNT(User_Id_Followed) FROM Following WHERE User_Id_Followed=@UserFollowed;";
-            
-            return await _db.ExecuteScalarAsync<int> (sqlCheckIfFollowing, new {UserFollowed=id} );
+
+            var count = await _db.ExecuteScalarAsync<int>(sqlCheckIfFollowing, new { UserFollowed = id });
+            return Ok(new FollowersAmountDto { Count = count });
         }
     }
 }

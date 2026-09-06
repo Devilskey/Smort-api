@@ -2,6 +2,7 @@ using Smort_api.Object.User;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Smort_api.Object;
+using Smort_api.Object.DTO;
 using Smort_api.Object.Videos;
 
 namespace Smort_api.Handlers.Repositories
@@ -10,12 +11,12 @@ namespace Smort_api.Handlers.Repositories
     {
         Task<int> GetReportCountAsync(int reporterId, int reportedId);
         Task ReportUserAsync(int reportedId, int reporterId, string reason);
-        Task<GetMyUserDataSimpel?> GetMyProfileAsync(int id);
-        Task<GetMyUserDataSimpel?> GetUserDataSimpleAsync(int id);
-        Task<IEnumerable<GetMyUserDataSimpel>> GetUserDataProfileAsync(int id);
+        Task<MyProfileDto?> GetMyProfileAsync(int id);
+        Task<MyUserDataSimpelDto?> GetUserDataSimpleAsync(int id);
+        Task<IEnumerable<UserProfileDto>> GetUserDataProfileAsync(int id);
         Task<string> ConfigureUserData(int id, CreateAccount createAccount);
         Task AllowUserAsync(int userId, bool allow);
-        Task<IEnumerable<object>> GetAllUsersAsync();
+        Task<IEnumerable<AllUserDto>> GetAllUsersAsync();
         Task DeleteUserAsync(string userId);
         Task ChangePasswordAsync(string id, string password, string salt);
         Task ChangeEmailAsync(string id, string email);

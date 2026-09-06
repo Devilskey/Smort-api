@@ -10,6 +10,7 @@ using Smort_api.Object.Security;
 using Smort_api.Object.User;
 using System.Security.Claims;
 using MySql.Data.MySqlClient;
+using Smort_api.Object.DTO;
 using Tiktok_api.SignalRHubs;
 
 namespace Tiktok_api.Controllers.Users
@@ -79,18 +80,18 @@ namespace Tiktok_api.Controllers.Users
         /// <returns>JSON-serialized user data or not found message</returns>
         [Route("users/GetUserDataSimpel")]
         [HttpPost]
-        public async Task<string> GetUserDataSimpel(UserData userData)
+        public async Task<ActionResult<MyUserDataSimpelDto>> GetUserDataSimpel(UserData userData)
         {
             string token = HttpContext.Request.Headers["Authorization"]!;
 
             if (JWTTokenHandler.IsBlacklisted(token))
-                return "token is blacklisted";
+                return Forbid();
 
             if (userData.Id == 0)
-                return "Not valid value";
+                return BadRequest();
 
             var data = await _userService.GetUserDataSimpleAsync(userData.Id);
-            return data == null ? "Not found" : JsonConvert.SerializeObject(data);
+            return data == null ? NotFound() : data;
         }
 
         /// <summary>
@@ -101,7 +102,7 @@ namespace Tiktok_api.Controllers.Users
         [Authorize]
         [Route("users/GetMyProfile")]
         [HttpGet]
-        public async Task<IActionResult> GetMyProfile()
+        public async Task<ActionResult<MyProfileDto>> GetMyProfile()
         {
             string token = HttpContext.Request.Headers["Authorization"]!;
 
@@ -150,15 +151,15 @@ namespace Tiktok_api.Controllers.Users
         /// <returns>JSON-serialized user profile data</returns>
         [Route("users/GetUserDataProfile")]
         [HttpGet]
-        public async Task<string> GetUserDataProfile(int id)
+        public async Task<ActionResult<IEnumerable<UserProfileDto>>> GetUserDataProfile(int id)
         {
             string token = HttpContext.Request.Headers["Authorization"]!;
 
             if (JWTTokenHandler.IsBlacklisted(token))
-                return "token is blacklisted";
+                return Forbid();
 
             var data = await _userService.GetUserDataProfileAsync(id);
-            return JsonConvert.SerializeObject(data);
+            return data == null ? NotFound() : Ok(data);
         }
     }
 }

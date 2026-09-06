@@ -20,7 +20,7 @@ namespace Tiktok_api.Controllers.Content.AskMe
         [Authorize]
         [HttpPost]
         [Route("AskMe/CreateQuestion")]
-        public async Task<IActionResult> CreateQuestion([FromBody] DTOCreateAskMe question)
+        public async Task<ActionResult> CreateQuestion([FromBody] CreateAskMe question)
         {
             string token = HttpContext.Request.Headers["Authorization"]!;
 
@@ -47,7 +47,7 @@ namespace Tiktok_api.Controllers.Content.AskMe
         [Authorize]
         [HttpPost]
         [Route("AskMe/CreateAnswer/{askId}")]
-        public async Task<IActionResult> CreateAnswer([FromBody] DTOCreateAskMe question, [FromRoute] int askId)
+        public async Task<IActionResult> CreateAnswer([FromBody] CreateAskMe question, [FromRoute] int askId)
         {
             string token = HttpContext.Request.Headers["Authorization"]!;
 

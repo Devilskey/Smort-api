@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Smort_api.Object;
 using Smort_api.Handlers;
 using Microsoft.Extensions.Logging;
+using Smort_api.Object.DTO;
 using Smort_api.Object.Security;
 
 namespace Tiktok_api.Services
@@ -39,19 +40,19 @@ namespace Tiktok_api.Services
         }
 
         /// <summary>Retrieves current user's profile data.</summary>
-        public async Task<GetMyUserDataSimpel?> GetMyProfileAsync(int id)
+        public async Task<MyProfileDto?> GetMyProfileAsync(int id)
         {
             return await _userRepository.GetMyProfileAsync(id);
         }
 
         /// <summary>Retrieves simplified user data for public viewing.</summary>
-        public async Task<GetMyUserDataSimpel?> GetUserDataSimpleAsync(int id)
+        public async Task<MyUserDataSimpelDto?> GetUserDataSimpleAsync(int id)
         {
             return await _userRepository.GetUserDataSimpleAsync(id);
         }
 
         /// <summary>Retrieves user profile data for display.</summary>
-        public async Task<IEnumerable<GetMyUserDataSimpel>> GetUserDataProfileAsync(int id)
+        public async Task<IEnumerable<UserProfileDto>> GetUserDataProfileAsync(int id)
         {
             return await _userRepository.GetUserDataProfileAsync(id);
         }
@@ -66,7 +67,7 @@ namespace Tiktok_api.Services
             await _userRepository.AllowUserAsync(userId, allow);
         }
 
-        public async Task<IEnumerable<object>> GetAllUsersAsync()
+        public async Task<IEnumerable<AllUserDto>> GetAllUsersAsync()
         {
             return await _userRepository.GetAllUsersAsync();
         }

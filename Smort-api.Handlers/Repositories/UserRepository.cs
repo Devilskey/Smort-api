@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Smort_api.Object;
+using Smort_api.Object.DTO;
 using Smort_api.Object.Videos;
 using Tiktok_api.Settings_Api;
 
@@ -47,24 +48,24 @@ namespace Smort_api.Handlers.Repositories
         }
 
         /// <summary>Retrieves the current user's profile data (ID, picture, username).</summary>
-        public async Task<GetMyUserDataSimpel?> GetMyProfileAsync(int id)
+        public async Task<MyProfileDto?> GetMyProfileAsync(int id)
         {
-            const string sql = "SELECT Id, Profile_Picture, Username, Is_Account_Configured FROM Users_Public WHERE Id=@Id;";
-            return await _db.QueryFirstOrDefaultAsync<GetMyUserDataSimpel>(sql, new { Id = id });
+            const string sql = "SELECT Id, Profile_Picture AS Profile_Picture, Username, Is_Account_Configured FROM Users_Public WHERE Id=@Id;";
+            return await _db.QueryFirstOrDefaultAsync<MyProfileDto>(sql, new { Id = id });
         }
 
         /// <summary>Retrieves simplified user data for public profile viewing.</summary>
-        public async Task<GetMyUserDataSimpel?> GetUserDataSimpleAsync(int id)
+        public async Task<MyUserDataSimpelDto?> GetUserDataSimpleAsync(int id)
         {
             const string sql = "SELECT Id, Profile_Picture, Username FROM Users_Public WHERE Id=@Id;";
-            return await _db.QueryFirstOrDefaultAsync<GetMyUserDataSimpel>(sql, new { Id = id });
+            return await _db.QueryFirstOrDefaultAsync<MyUserDataSimpelDto>(sql, new { Id = id });
         }
 
         /// <summary>Retrieves user profile data for display purposes.</summary>
-        public async Task<IEnumerable<GetMyUserDataSimpel>> GetUserDataProfileAsync(int id)
+        public async Task<IEnumerable<UserProfileDto>> GetUserDataProfileAsync(int id)
         {
             const string sql = "SELECT Id, Profile_Picture, Username FROM Users_Public WHERE Id=@Id;";
-            return await _db.QueryAsync<GetMyUserDataSimpel>(sql, new { Id = id });
+            return await _db.QueryAsync<UserProfileDto>(sql, new { Id = id });
         }
 
         public async Task AllowUserAsync(int userId, bool allow)
@@ -73,10 +74,10 @@ namespace Smort_api.Handlers.Repositories
             await _db.ExecuteAsync(sql, new { Allow = allow ? 1 : 0, Id = userId });
         }
 
-        public async Task<IEnumerable<object>> GetAllUsersAsync()
+        public async Task<IEnumerable<AllUserDto>> GetAllUsersAsync()
         {
             const string sql = "SELECT Id, Profile_Picture, Username, Created_At, AllowedUser FROM Users_Public;";
-            return await _db.QueryAsync<object>(sql);
+            return await _db.QueryAsync<AllUserDto>(sql);
         }
 
         public async Task<IEnumerable<FilePathData>> GetUserFilePathsAsync(string userId)
@@ -194,7 +195,7 @@ namespace Smort_api.Handlers.Repositories
             const string sqlUserData =
                 "SELECT Id, Username, Profile_Picture AS Profile_Picture, Is_Account_Configured FROM Users_Public WHERE Id=@Id;";
                 
-            var user = await _db.QueryFirstOrDefaultAsync<GetMyUserDataSimpel>(
+            var user = await _db.QueryFirstOrDefaultAsync<MyProfileDto>(
                 sqlUserData,
                 new { Id = id });
             

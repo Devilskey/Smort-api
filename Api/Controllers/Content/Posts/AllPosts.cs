@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Smort_api.Handlers;
+using Smort_api.Object.DTO;
 using System.Security.Claims;
 using Tiktok_api.Services;
 
@@ -19,7 +20,7 @@ namespace Tiktok_api.Controllers.Content.Posts
 
         [HttpGet]
         [Route("Posts/GetContentList")]
-        public async Task<IActionResult?> GetContentList(string search = "")
+        public async Task<ActionResult<IEnumerable<ContentItemDto>>?> GetContentList(string search = "")
         {
             try
             {
@@ -35,13 +36,13 @@ namespace Tiktok_api.Controllers.Content.Posts
 
         [HttpGet]
         [Route("Posts/GetContentFromId")]
-        public async Task<IActionResult?> GetContentFromId(int id)
+        public async Task<ActionResult<ContentItemDto>?> GetContentFromId(int id)
         {
             try
             {
                 var idFromToken = User.FindFirstValue("app_user_id");
                 var result = await _contentService.GetContentFromIdAsync(idFromToken, id);
-                return Ok(result);
+                return result == null ? NotFound() : Ok(result);
             }
             catch (Exception)
             {

@@ -2,6 +2,7 @@
 using Smort_api.Handlers;
 using System.Security.Claims;
 using Tiktok_api.Services;
+using Smort_api.Object.DTO;
 
 namespace Tiktok_api.Controllers.Videos
 {
@@ -9,7 +10,7 @@ namespace Tiktok_api.Controllers.Videos
     {
         [Route("Video/GetVideoFromId")]
         [HttpGet]
-        public async Task<IActionResult> GetVideoFromId(int id)
+        public async Task<ActionResult<IEnumerable<VideoDto>>> GetVideoFromId(int id)
         {
             string token = HttpContext.Request.Headers["Authorization"]!;
 

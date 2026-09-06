@@ -1,6 +1,7 @@
 using Dapper;
 using MySql.Data.MySqlClient;
 using Smort_api.Object.Videos;
+using Smort_api.Object.DTO;
 using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
@@ -16,7 +17,7 @@ namespace Smort_api.Handlers.Repositories
             _db = connection;
         }
 
-        public async Task<IEnumerable<object>> GetVideoByIdAsync(string? userId, int id)
+        public async Task<IEnumerable<VideoDto>> GetVideoByIdAsync(string? userId, int id)
         {
             const string sqlLoggedIn = @"
                 SELECT Id, Description, Created_At, User_Id,
@@ -33,7 +34,7 @@ namespace Smort_api.Handlers.Repositories
                 WHERE Id = @Id AND Type = 'vid';";
 
             var sql = string.IsNullOrWhiteSpace(userId) ? sqlAnonymous : sqlLoggedIn;
-            return await _db.QueryAsync<object>(sql, new { UserId = userId, Id = id });
+            return await _db.QueryAsync<VideoDto>(sql, new { UserId = userId, Id = id });
         }
 
         public async Task<IEnumerable<FilePathData>> GetVideoFilePathsAsync(int videoId)
