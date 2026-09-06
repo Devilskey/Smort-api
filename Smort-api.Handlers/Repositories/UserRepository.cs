@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Smort_api.Object;
+using Smort_api.Object.Videos;
 using Tiktok_api.Settings_Api;
 
 namespace Smort_api.Handlers.Repositories
@@ -64,6 +65,97 @@ namespace Smort_api.Handlers.Repositories
         {
             const string sql = "SELECT Id, Profile_Picture, Username FROM Users_Public WHERE Id=@Id;";
             return await _db.QueryAsync<GetMyUserDataSimpel>(sql, new { Id = id });
+        }
+
+        public async Task AllowUserAsync(int userId, bool allow)
+        {
+            const string sql = "UPDATE Users_Public SET AllowedUser=@Allow WHERE Id=@Id;";
+            await _db.ExecuteAsync(sql, new { Allow = allow ? 1 : 0, Id = userId });
+        }
+
+        public async Task<IEnumerable<object>> GetAllUsersAsync()
+        {
+            const string sql = "SELECT Id, Profile_Picture, Username, Created_At, AllowedUser FROM Users_Public;";
+            return await _db.QueryAsync<object>(sql);
+        }
+
+        public async Task<IEnumerable<FilePathData>> GetUserFilePathsAsync(string userId)
+        {
+            const string sql = @"
+                SELECT File_location FROM File WHERE Id=(SELECT Profile_Picture FROM Users_Public WHERE Id=@id)
+                UNION
+                SELECT File_location FROM File WHERE Id=(SELECT File_Id FROM Image_Post WHERE User_Id=@id)
+                UNION
+                SELECT File_location FROM File WHERE Id=(SELECT File_Id FROM Video WHERE User_Id=@id)
+                UNION
+                SELECT File_location FROM File WHERE Id=(SELECT Thumbnail FROM Video WHERE User_Id=@id);";
+
+            return await _db.QueryAsync<FilePathData>(sql, new { id = userId });
+        }
+
+        public async Task DeleteUserAsync(string userId)
+        {
+            const string sql = @"
+                DELETE FROM Users_Public WHERE Person_Id = @id;
+                DELETE FROM Users_Private WHERE Id = @id;
+                DELETE FROM Following WHERE User_Id_Followed = @id;
+                DELETE FROM Following WHERE User_Id_Follower = @id;
+                DELETE FROM Report_User WHERE User_Reported_Id = @id;
+                DELETE FROM Report_User WHERE User_Reporter_Id = @id;
+                UPDATE Reaction SET User_Id=null WHERE User_Id=@id;
+                DELETE FROM Reaction WHERE Content_Id=(SELECT Id FROM Video WHERE User_Id=@id);
+                DELETE FROM Image_Post WHERE User_Id = @id;
+                DELETE FROM Video WHERE User_Id = @id;";
+
+            await _db.ExecuteAsync(sql, new { id = userId });
+        }
+
+        public async Task ChangePasswordAsync(string id, string password, string salt)
+        {
+            const string sql = "UPDATE Users_Private SET Password=@Password, Salt=@Salt WHERE Id=@Id";
+            await _db.ExecuteAsync(sql, new { Password = password, Salt = salt, Id = id });
+        }
+
+        public async Task ChangeEmailAsync(string id, string email)
+        {
+            const string sql = "UPDATE Users_Private SET Email=@Email WHERE Id=@Id";
+            await _db.ExecuteAsync(sql, new { Email = email, Id = id });
+        }
+
+        public async Task ChangeProfilePictureAsync(string id, byte[] profilePicture)
+        {
+            const string sql = "UPDATE Users_Public SET Profile_Picture=@ProfilePicture WHERE Id=@Id";
+            await _db.ExecuteAsync(sql, new { ProfilePicture = profilePicture, Id = id });
+        }
+
+        public async Task<int> GetUsernameCountAsync(string username)
+        {
+            const string sql = "SELECT COUNT(*) FROM Username_Counter WHERE Username=@Username;";
+            return await _db.ExecuteScalarAsync<int>(sql, new { Username = username });
+        }
+
+        public async Task<int> GetUsernameAmountAsync(string username)
+        {
+            const string sql = "SELECT Amount FROM Username_Counter WHERE Username=@Username;";
+            return await _db.ExecuteScalarAsync<int>(sql, new { Username = username });
+        }
+
+        public async Task InsertUsernameCounterAsync(string username)
+        {
+            const string sql = "INSERT INTO Username_Counter (Username, Amount, Created_At, Updated_At) VALUES (@Username, @Amount, @Created_At, @Updated_At);";
+            await _db.ExecuteAsync(sql, new { Username = username, Amount = 0, Created_At = DateTime.Now, Updated_At = DateTime.Now });
+        }
+
+        public async Task UpdateUsernameAsync(string userId, string username)
+        {
+            const string sql = "UPDATE Users_Public SET Username=@Username WHERE Id=@Id;";
+            await _db.ExecuteAsync(sql, new { Username = username, Id = userId });
+        }
+
+        public async Task UpdateUsernameCounterAsync(string username, int amount, DateTime updatedAt)
+        {
+            const string sql = "UPDATE Username_Counter SET Amount=@Amount, Updated_At=@UpdatedAt WHERE Username=@Username;";
+            await _db.ExecuteAsync(sql, new { Username = username, Amount = amount, UpdatedAt = updatedAt });
         }
 
         public async Task<string> ConfigureUserData(int id, CreateAccount createAccount)

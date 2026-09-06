@@ -23,6 +23,12 @@ namespace Tiktok_api.Services
         /// <summary>Gets user profile data for display purposes.</summary>
         Task<IEnumerable<GetMyUserDataSimpel>> GetUserDataProfileAsync(int id);
         Task<string> ConfigureUserData(int id, CreateAccount createAccount);
-
+        Task AllowUserAsync(int userId, bool allow);
+        Task<IEnumerable<object>> GetAllUsersAsync();
+        Task<string> DeleteUserAsync(string userId, string token, ILogger logger);
+        Task<string> ChangePasswordAsync(string id, string newPassword);
+        Task<string> ChangeEmailAsync(string id, string newEmail);
+        Task<string> ChangeProfilePictureAsync(string id, byte[] newProfilePicture);
+        Task<string> ChangeUsernameAsync(string userId, string newUsername);
     }
 }

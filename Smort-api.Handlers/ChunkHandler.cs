@@ -28,8 +28,12 @@ namespace Smort_api.Handlers
         {
             for (int i = 0; i < Chunksmax; i++)
             {
+                Console.WriteLine("i");
+
                 if (!File.Exists($"{_folderNameTemp}/{filename + i}.{_extensionType}"))
                 {
+                    Console.WriteLine($"{_folderNameTemp}/{filename + i}.{_extensionType}");
+
                     return false;
                 }
             }

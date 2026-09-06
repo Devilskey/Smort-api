@@ -1,4 +1,5 @@
 using System;
+using System.Data;
 using System.Linq;
 using System.Text;
 using Extensions;
@@ -90,7 +91,8 @@ namespace Tiktok_api
                 string? connectionString = configuration.GetSection("Database:ConnectionString").Get<string>();
                 if (!string.IsNullOrEmpty(connectionString))
                 {
-                    services.AddTransient<MySqlConnection>(x => new MySqlConnection(connectionString));
+                    services.AddTransient<MySqlConnection>(_ => new MySqlConnection(connectionString));
+                    services.AddTransient<IDbConnection>(_ => new MySqlConnection(connectionString));
                     services.MigrateDatabase(configuration);
                     Console.WriteLine("✓ Database connection configured");
                 }

@@ -20,11 +20,11 @@ namespace Tiktok_api.BackgroundServices
 
         private readonly ConcurrentQueue<VideoToProcessObject> _VideosToProcess;
 
-        private readonly IDbConnection _db;
+        private readonly MySqlConnection _db;
 
         private readonly NotificationHubHandler _notificationHub;
 
-        public ProcessVideoServices(ILogger<ProcessVideoServices> logger, NotificationHubHandler notificationHub, IDbConnection db)
+        public ProcessVideoServices(ILogger<ProcessVideoServices> logger, NotificationHubHandler notificationHub, MySqlConnection db)
         {
             _VideosToProcess = new ConcurrentQueue<VideoToProcessObject>();
             _notificationHub = notificationHub;

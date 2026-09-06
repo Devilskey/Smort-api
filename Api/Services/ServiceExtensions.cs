@@ -37,6 +37,15 @@ namespace Smort_api.Extensions
             // Content repository - handles video/image content queries
             services.AddScoped<IContentRepository, ContentRepository>();
 
+            // Video repository - handles video metadata and file location queries
+            services.AddScoped<IVideoRepository, VideoRepository>();
+
+            // Image Post repository - handles image post creation and deletion
+            services.AddScoped<IImagePostRepository, ImagePostRepository>();
+
+            // Ask Me repository - handles question and answer storage
+            services.AddScoped<IAskMeRepository, AskMeRepository>();
+
             return services;
         }
 
@@ -62,6 +71,15 @@ namespace Smort_api.Extensions
 
             // Content service - handles content operations
             services.AddScoped<IContentService, ContentService>();
+
+            // Video service - handles upload, deletion, and lookup logic
+            services.AddScoped<IVideoService, VideoService>();
+
+            // Image Post service - handles image upload/deletion business logic
+            services.AddScoped<IImagePostService, ImagePostService>();
+
+            // Ask Me service - handles question/answer business logic
+            services.AddScoped<IAskMeService, AskMeService>();
 
             return services;
         }
