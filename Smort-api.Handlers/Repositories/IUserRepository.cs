@@ -27,5 +27,13 @@ namespace Smort_api.Handlers.Repositories
         Task UpdateUsernameAsync(string userId, string username);
         Task<IEnumerable<FilePathData>> GetUserFilePathsAsync(string userId);
         Task UpdateUsernameCounterAsync(string username, int amount, DateTime updatedAt);
+        Task<int> GetFollowCountAsync(string followerId, int followedUserId);
+        Task FollowUserAsync(string followerId, int followedUserId, DateTime followedAt);
+        Task UnfollowUserAsync(int followedUserId, string followerId);
+        Task<int> GetFollowersCountAsync(int userId);
+        Task<int> GetMyFollowersCountAsync(string userId);
+        Task<IEnumerable<MostFollowersDto>> GetMostFollowersAsync(int offset);
+        Task<IEnumerable<MostFollowersDto>> GetFollowingAsync(string userId, int offset);
+        Task<bool> IsFollowingAsync(string userId, int followedUserId);
     }
 }

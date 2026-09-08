@@ -2,10 +2,12 @@
 using Smort_api.Handlers;
 using Smort_api.Object.DTO;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Tiktok_api.Services;
 
 namespace Tiktok_api.Controllers.Content.Posts
 {
+    [Authorize]
     [ApiController]
     public partial class AllPosts : ControllerBase
     {

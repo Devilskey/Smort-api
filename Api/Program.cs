@@ -12,6 +12,7 @@ using MySql.Data.MySqlClient;
 using Serilog;
 using Smort_api.Extensions;
 using Smort_api.Handlers;
+using Smort_api.Handlers.Security;
 using Tiktok_api.Auth;
 using Tiktok_api.BackgroundServices;
 using Tiktok_api.SignalRHubs;
@@ -74,6 +75,7 @@ namespace Tiktok_api
                 // Configure JWT bearer token authentication for local Smort API tokens
                 services.AddMemoryCache();
                 services.AddTransient<IClaimsTransformation, FirebaseClaimsTransformer>();
+                
 
                 // Add authorization policies
                 services.AddAuthorization();
@@ -100,6 +102,13 @@ namespace Tiktok_api
                 {
                     Console.WriteLine("⚠ WARNING: No database connection string found. Database features disabled.");
                 }
+                
+                // =========== ExceptionHandler and security ===================================
+                services.AddExceptionHandler<GlobalExceptionHandler>();
+                services.AddProblemDetails();
+                
+                // =========== DAPPER CONFIGURATION ===================================
+                Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
 
                 // ========== DEPENDENCY INJECTION - REPOSITORIES & SERVICES ==========
                 // Use extension methods to register all data access and business logic layers
@@ -109,6 +118,7 @@ namespace Tiktok_api
                 services.AddBackgroundServices();     // Register hosted background services
 
                 // ========== CONFIGURATION & LOGGING SERVICES ==========
+                
                 services.AddSerilogLogging(configuration);
                 services.AddKestrelOptions();
 
@@ -143,6 +153,7 @@ namespace Tiktok_api
 
                 // Logging middleware
                 app.UseSerilogRequestLogging();
+                app.UseExceptionHandler();
 
                 // HTTPS redirect (only in production to avoid development issues)
                 if (!app.Environment.IsDevelopment())

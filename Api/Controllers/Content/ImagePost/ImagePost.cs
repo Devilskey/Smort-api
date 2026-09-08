@@ -7,6 +7,7 @@ using Tiktok_api.Services;
 
 namespace Tiktok_api.Controllers.Content.ImagePost
 {
+    [Authorize]
     [ApiController]
     public class ImagePost : ControllerBase
     {
@@ -17,7 +18,6 @@ namespace Tiktok_api.Controllers.Content.ImagePost
             _imagePostService = imagePostService;
         }
 
-        [Authorize]
         [HttpPost]
         [Route("ImagePosts/CreateNewPost")]
         public async Task<IActionResult> CreateNewPost(CreateNewPostData data)
@@ -44,7 +44,6 @@ namespace Tiktok_api.Controllers.Content.ImagePost
             }
         }
 
-        [Authorize]
         [Route("ImagePosts/DeleteImage")]
         [HttpDelete]
         public async Task<ActionResult> DeleteImage(int imageId)

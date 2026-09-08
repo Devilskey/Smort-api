@@ -9,7 +9,7 @@ namespace Tiktok_api.Controllers.Users
 {
     public partial class Users : ControllerBase
     {
-        [Authorize]
+        [Authorize(Roles = "3")]
         [HttpPost("Admin/users/PlatformAccess")]
         public async Task<ActionResult> AllowUser(UserAllow user)
         {
@@ -18,16 +18,11 @@ namespace Tiktok_api.Controllers.Users
             if (JWTTokenHandler.IsBlacklisted(token))
                 return BadRequest();
 
-            string roleId = User.FindFirstValue("http://schemas.microsoft.com/ws/2008/06/identity/claims/role");
-
-            if (roleId != "3")
-                return BadRequest();
-
             await _userService.AllowUserAsync(user.Id, user.Allow);
             return Ok();
         }
 
-        [Authorize]
+        [Authorize(Roles = "3")]
         [HttpGet("Admin/users/All")]
         public async Task<ActionResult<IEnumerable<AllUserDto>>> GetAllUsers()
         {
@@ -35,14 +30,7 @@ namespace Tiktok_api.Controllers.Users
 
             if (JWTTokenHandler.IsBlacklisted(token))
                 return Forbid();
-
-            string roleId = User.FindFirstValue("http://schemas.microsoft.com/ws/2008/06/identity/claims/role");
-
-            Logger.LogInformation(roleId);
-
-            if (roleId != "3")
-                return Forbid();
-
+            
             var data = await _userService.GetAllUsersAsync();
             return Ok(data);
         }

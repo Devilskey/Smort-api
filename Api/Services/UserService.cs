@@ -9,6 +9,8 @@ using Smort_api.Handlers;
 using Microsoft.Extensions.Logging;
 using Smort_api.Object.DTO;
 using Smort_api.Object.Security;
+using Microsoft.AspNetCore.Mvc;
+using Tiktok_api.SignalRHubs;
 
 namespace Tiktok_api.Services
 {
@@ -140,6 +142,71 @@ namespace Tiktok_api.Services
             await _userRepository.UpdateUsernameCounterAsync(newUsername, newNumber + 1, DateTime.Now);
 
             return "Username Updated";
+        }
+
+        public async Task<string> FollowUserAsync(string currentUserId, int targetUserId, string username, NotificationHubHandler notificationHub)
+        {
+            if (string.IsNullOrWhiteSpace(currentUserId))
+                throw new ArgumentException("User id is required.", nameof(currentUserId));
+
+            if (targetUserId == 0)
+                return "Failed to follow user";
+
+            if (int.TryParse(currentUserId, out var currentUserIdInt) && currentUserIdInt == targetUserId)
+                return "you cannnot follow yourself";
+
+            if (await _userRepository.GetFollowCountAsync(currentUserId, targetUserId) == 0)
+            {
+                await _userRepository.FollowUserAsync(currentUserId, targetUserId, DateTime.Now);
+                return "Now following user";
+            }
+
+            notificationHub.SendNotificationFollowToUser(targetUserId.ToString(), $"{username} started following you");
+            return "Not able to follow this user";
+        }
+
+        public async Task<string> UnfollowUserAsync(string currentUserId, int targetUserId)
+        {
+            if (string.IsNullOrWhiteSpace(currentUserId))
+                throw new ArgumentException("User id is required.", nameof(currentUserId));
+
+            if (targetUserId == 0)
+                return "Failed to follow user";
+
+            await _userRepository.UnfollowUserAsync(targetUserId, currentUserId);
+            return "user Unfollowed";
+        }
+
+        public async Task<int> FollowersAmountAsync(int userId)
+        {
+            return await _userRepository.GetFollowersCountAsync(userId);
+        }
+
+        public async Task<IEnumerable<MostFollowersDto>> MostFollowersAsync(int offset)
+        {
+            return await _userRepository.GetMostFollowersAsync(offset);
+        }
+
+        public async Task<IEnumerable<MostFollowersDto>> FollowingAsync(string userId, int offset)
+        {
+            return await _userRepository.GetFollowingAsync(userId, offset);
+        }
+
+        public async Task<ActionResult<bool>> AlreadyFollowingAsync(string userId, int targetUserId)
+        {
+            if (string.IsNullOrWhiteSpace(userId) || targetUserId == 0)
+                return new BadRequestObjectResult(false);
+
+            var result = await _userRepository.IsFollowingAsync(userId, targetUserId);
+            return new OkObjectResult(result);
+        }
+
+        public async Task<int> MyFollowersAmountAsync(string userId)
+        {
+            if (string.IsNullOrWhiteSpace(userId))
+                throw new ArgumentException("User id is required.", nameof(userId));
+
+            return await _userRepository.GetMyFollowersCountAsync(userId);
         }
     }
 }

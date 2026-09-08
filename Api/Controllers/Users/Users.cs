@@ -1,15 +1,11 @@
 ﻿using System.Data;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using Smort_api.Handlers;
-using Tiktok_api.Auth;
 using Tiktok_api.Services;
 using Smort_api.Object;
-using Smort_api.Object.Security;
 using Smort_api.Object.User;
-using System.Security.Claims;
-using MySql.Data.MySqlClient;
 using Smort_api.Object.DTO;
 using Tiktok_api.SignalRHubs;
 
@@ -19,6 +15,7 @@ namespace Tiktok_api.Controllers.Users
     /// Controller for user-related API endpoints.
     /// Handles user profiles, reports, and public user data retrieval.
     /// </summary>
+    [Authorize]
     [ApiController]
     public partial class Users : ControllerBase
     {
@@ -54,7 +51,6 @@ namespace Tiktok_api.Controllers.Users
         /// </summary>
         /// <param name="UserReported">User report object containing reported user ID and reason</param>
         /// <returns>Status message indicating if report was successful</returns>
-        [Authorize]
         [Route("users/ReportUser")]
         [HttpPost]
         public async Task<string> ReportUser(ReportUser UserReported)
@@ -99,7 +95,6 @@ namespace Tiktok_api.Controllers.Users
         /// Requires valid JWT authentication token.
         /// </summary>
         /// <returns>User profile object with ID, picture, and username</returns>
-        [Authorize]
         [Route("users/GetMyProfile")]
         [HttpGet]
         public async Task<ActionResult<MyProfileDto>> GetMyProfile()
@@ -123,7 +118,6 @@ namespace Tiktok_api.Controllers.Users
             return Ok(userdata);
         }
         
-        [Authorize]
         [Route("users/ConfigureUserData")]
         [HttpPost]
         public async Task<string> ConfigureUserData(CreateAccount createAccount)

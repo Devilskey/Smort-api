@@ -159,6 +159,64 @@ namespace Smort_api.Handlers.Repositories
             await _db.ExecuteAsync(sql, new { Username = username, Amount = amount, UpdatedAt = updatedAt });
         }
 
+        public async Task<int> GetFollowCountAsync(string followerId, int followedUserId)
+        {
+            const string sql = "SELECT COUNT(User_Id_Followed) FROM Following WHERE User_Id_Follower=@UserFollower AND User_Id_Followed=@UserFollowed;";
+            return await _db.ExecuteScalarAsync<int>(sql, new { UserFollower = followerId, UserFollowed = followedUserId });
+        }
+
+        public async Task FollowUserAsync(string followerId, int followedUserId, DateTime followedAt)
+        {
+            const string sql = "INSERT INTO Following (User_Id_Followed, User_Id_Follower, Followed_At) VALUES (@UserFollowed, @UserFollower, @FollowedAt);";
+            await _db.ExecuteAsync(sql, new { UserFollower = followerId, UserFollowed = followedUserId, FollowedAt = followedAt });
+        }
+
+        public async Task UnfollowUserAsync(int followedUserId, string followerId)
+        {
+            const string sql = "DELETE FROM Following WHERE User_Id_Followed=@UserFollowed AND User_Id_Follower=@UserFollower;";
+            await _db.ExecuteAsync(sql, new { UserFollowed = followedUserId, UserFollower = followerId });
+        }
+
+        public async Task<int> GetFollowersCountAsync(int userId)
+        {
+            const string sql = "SELECT COUNT(User_Id_Followed) FROM Following WHERE User_Id_Followed=@UserFollowed;";
+            return await _db.ExecuteScalarAsync<int>(sql, new { UserFollowed = userId });
+        }
+
+        public async Task<int> GetMyFollowersCountAsync(string userId)
+        {
+            const string sql = "SELECT COUNT(User_Id_Followed) FROM Following WHERE User_Id_Followed=@UserFollowed;";
+            return await _db.ExecuteScalarAsync<int>(sql, new { UserFollowed = userId });
+        }
+
+        public async Task<IEnumerable<MostFollowersDto>> GetMostFollowersAsync(int offset)
+        {
+            const string sql = @"
+                SELECT Following.User_Id_Followed, COUNT(User_Id_Follower) as Amount, Users_Public.Profile_Picture, Username
+                FROM Following INNER JOIN Users_Public On Users_Public.Id = Following.User_Id_Followed
+                GROUP BY User_Id_Followed ORDER BY Amount DESC LIMIT @Offset;";
+
+            return await _db.QueryAsync<MostFollowersDto>(sql, new { Offset = offset });
+        }
+
+        public async Task<IEnumerable<MostFollowersDto>> GetFollowingAsync(string userId, int offset)
+        {
+            const string sql = @"
+                SELECT Following.User_Id_Followed, COUNT(User_Id_Follower) as Amount, Users_Public.Profile_Picture, Username
+                FROM Following INNER JOIN Users_Public On Users_Public.Id = Following.User_Id_Followed
+                WHERE User_Id_Follower = @id
+                GROUP BY User_Id_Followed ORDER BY Amount DESC LIMIT @Offset;";
+
+            return await _db.QueryAsync<MostFollowersDto>(sql, new { Offset = offset, id = userId });
+        }
+
+        public async Task<bool> IsFollowingAsync(string userId, int followedUserId)
+        {
+            const string sql = "SELECT COUNT(User_Id_Followed) FROM Following WHERE User_Id_Followed=@UserFollowed AND User_Id_Follower=@UserFollower;";
+            int follow = await _db.ExecuteScalarAsync<int>(sql, new { UserFollowed = followedUserId, UserFollower = userId });
+            return follow != 0;
+        }
+
         public async Task<string> ConfigureUserData(int id, CreateAccount createAccount)
         {
 
@@ -200,7 +258,7 @@ namespace Smort_api.Handlers.Repositories
                 new { Id = id });
             
             // Creates the new user and adds the data to the database
-            if (user.Is_Account_Configured)
+            if (user.IsAccountConfigured)
             {
                 return "Account is Configured";
             }

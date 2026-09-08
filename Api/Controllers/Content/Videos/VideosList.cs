@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Smort_api.Handlers;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Tiktok_api.Services;
 using Smort_api.Object.DTO;
 
@@ -8,8 +9,9 @@ namespace Tiktok_api.Controllers.Videos
 {
     public partial class Videos : ControllerBase
     {
-        [Route("Video/GetVideoFromId")]
         [HttpGet]
+        [Authorize]
+        [Route("Video/GetVideoFromId")]
         public async Task<ActionResult<IEnumerable<VideoDto>>> GetVideoFromId(int id)
         {
             string token = HttpContext.Request.Headers["Authorization"]!;

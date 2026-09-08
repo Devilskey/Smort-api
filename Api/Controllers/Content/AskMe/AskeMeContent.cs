@@ -7,6 +7,7 @@ using Tiktok_api.Services;
 
 namespace Tiktok_api.Controllers.Content.AskMe
 {
+    [Authorize]
     [ApiController]
     public class AskeMeContent : ControllerBase
     {
@@ -17,7 +18,6 @@ namespace Tiktok_api.Controllers.Content.AskMe
             _askMeService = askMeService;
         }
 
-        [Authorize]
         [HttpPost]
         [Route("AskMe/CreateQuestion")]
         public async Task<ActionResult> CreateQuestion([FromBody] CreateAskMe question)
@@ -44,7 +44,6 @@ namespace Tiktok_api.Controllers.Content.AskMe
             }
         }
 
-        [Authorize]
         [HttpPost]
         [Route("AskMe/CreateAnswer/{askId}")]
         public async Task<IActionResult> CreateAnswer([FromBody] CreateAskMe question, [FromRoute] int askId)
@@ -71,7 +70,6 @@ namespace Tiktok_api.Controllers.Content.AskMe
             }
         }
 
-        [Authorize]
         [HttpGet]
         [Route("AskMe/Answer/{askId}")]
         public async Task<IActionResult> GetAnswer([FromRoute] int askId)
@@ -96,7 +94,6 @@ namespace Tiktok_api.Controllers.Content.AskMe
             }
         }
 
-        [Authorize]
         [HttpPost]
         [Route("AskMe/Delete")]
         public void Post([FromBody] string value)
