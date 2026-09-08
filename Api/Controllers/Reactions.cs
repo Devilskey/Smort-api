@@ -10,6 +10,7 @@ using Smort_api.Object.DTO;
 
 namespace Tiktok_api.Controllers
 {
+    [Authorize]
     [ApiController]
     public class Reactions : ControllerBase
     {
@@ -26,11 +27,9 @@ namespace Tiktok_api.Controllers
         }
 
         [HttpPost("Reactions/Like")]
-        [Authorize]
-        public async Task<ActionResult<ReactionToggleDto>> Like(string contentId, string ContentType)
+        public async Task<ActionResult<string>> Like(string contentId, string ContentType)
         {
             string token = HttpContext.Request.Headers["Authorization"]!;
-
 
             if (JWTTokenHandler.IsBlacklisted(token))
                 return Unauthorized();
@@ -53,7 +52,7 @@ namespace Tiktok_api.Controllers
                 await _notificationHub.SendNotificationLikeToUser(owner.Id.ToString(), $"{username} liked your post");
             }
 
-            return Ok(result);
+            return Ok(result.TypeOfLike);
         }
     }
 }
