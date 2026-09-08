@@ -1,13 +1,12 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Data;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using Smort_api.Handlers;
-using Tiktok_api.Auth;
 using Tiktok_api.Services;
 using Smort_api.Object;
-using Smort_api.Object.Security;
 using Smort_api.Object.User;
-using System.Security.Claims;
+using Smort_api.Object.DTO;
 using Tiktok_api.SignalRHubs;
 
 namespace Tiktok_api.Controllers.Users
@@ -16,6 +15,7 @@ namespace Tiktok_api.Controllers.Users
     /// Controller for user-related API endpoints.
     /// Handles user profiles, reports, and public user data retrieval.
     /// </summary>
+    [Authorize]
     [ApiController]
     public partial class Users : ControllerBase
     {
@@ -30,16 +30,19 @@ namespace Tiktok_api.Controllers.Users
         
         /// <summary>User service for business logic operations.</summary>
         private readonly IUserService _userService;
+        
+        private readonly IDbConnection _db;
 
         /// <summary>Firebase authentication service for verifying tokens and generating local JWTs.</summary>
 
         /// <summary>Constructor - initializes the controller with dependencies.</summary>
-        public Users(ILogger<Users> logger, NotificationHubHandler notificationHub, MailHandler mail, IUserService userService)
+        public Users(ILogger<Users> logger, NotificationHubHandler notificationHub, MailHandler mail, IUserService userService, IDbConnection db)
         {
             Logger = logger;
             _notificationHub = notificationHub;
             _mail = mail;
             _userService = userService;
+            _db = db;
         }
 
         /// <summary>
@@ -48,7 +51,6 @@ namespace Tiktok_api.Controllers.Users
         /// </summary>
         /// <param name="UserReported">User report object containing reported user ID and reason</param>
         /// <returns>Status message indicating if report was successful</returns>
-        [Authorize]
         [Route("users/ReportUser")]
         [HttpPost]
         public async Task<string> ReportUser(ReportUser UserReported)
@@ -74,18 +76,18 @@ namespace Tiktok_api.Controllers.Users
         /// <returns>JSON-serialized user data or not found message</returns>
         [Route("users/GetUserDataSimpel")]
         [HttpPost]
-        public async Task<string> GetUserDataSimpel(UserData userData)
+        public async Task<ActionResult<MyUserDataSimpelDto>> GetUserDataSimpel(UserData userData)
         {
             string token = HttpContext.Request.Headers["Authorization"]!;
 
             if (JWTTokenHandler.IsBlacklisted(token))
-                return "token is blacklisted";
+                return Forbid();
 
             if (userData.Id == 0)
-                return "Not valid value";
+                return BadRequest();
 
             var data = await _userService.GetUserDataSimpleAsync(userData.Id);
-            return data == null ? "Not found" : JsonConvert.SerializeObject(data);
+            return data == null ? NotFound() : data;
         }
 
         /// <summary>
@@ -93,10 +95,9 @@ namespace Tiktok_api.Controllers.Users
         /// Requires valid JWT authentication token.
         /// </summary>
         /// <returns>User profile object with ID, picture, and username</returns>
-        [Authorize]
         [Route("users/GetMyProfile")]
         [HttpGet]
-        public async Task<IActionResult> GetMyProfile()
+        public async Task<ActionResult<MyProfileDto>> GetMyProfile()
         {
             string token = HttpContext.Request.Headers["Authorization"]!;
 
@@ -117,7 +118,6 @@ namespace Tiktok_api.Controllers.Users
             return Ok(userdata);
         }
         
-        [Authorize]
         [Route("users/ConfigureUserData")]
         [HttpPost]
         public async Task<string> ConfigureUserData(CreateAccount createAccount)
@@ -145,15 +145,15 @@ namespace Tiktok_api.Controllers.Users
         /// <returns>JSON-serialized user profile data</returns>
         [Route("users/GetUserDataProfile")]
         [HttpGet]
-        public async Task<string> GetUserDataProfile(int id)
+        public async Task<ActionResult<IEnumerable<UserProfileDto>>> GetUserDataProfile(int id)
         {
             string token = HttpContext.Request.Headers["Authorization"]!;
 
             if (JWTTokenHandler.IsBlacklisted(token))
-                return "token is blacklisted";
+                return Forbid();
 
             var data = await _userService.GetUserDataProfileAsync(id);
-            return JsonConvert.SerializeObject(data);
+            return data == null ? NotFound() : Ok(data);
         }
     }
 }

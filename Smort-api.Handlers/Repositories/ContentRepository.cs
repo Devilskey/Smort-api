@@ -1,6 +1,7 @@
 using Dapper;
 using MySql.Data.MySqlClient;
 using Smort_api.Object.Videos;
+using Smort_api.Object.DTO;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -17,7 +18,7 @@ namespace Smort_api.Handlers.Repositories
             _db = connection;
         }
 
-        public async Task<IEnumerable<object>> GetContentListAsync(string? userId, string search, int page = 0)
+        public async Task<IEnumerable<ContentItemDto>> GetContentListAsync(string? userId, string search, int page = 0)
         {
             // Simplified: use similar SQL as ContentHandler
             if (string.IsNullOrEmpty(userId))
@@ -33,7 +34,7 @@ namespace Smort_api.Handlers.Repositories
                     WHERE LOWER(Content.Description) LIKE @asked
                     ORDER BY Content.Created_At DESC LIMIT @max OFFSET @offset;";
 
-                return await _db.QueryAsync<object>(sql, new { asked = $"%{search.ToLower()}%", max = 30, offset = page * 30 });
+                return await _db.QueryAsync<ContentItemDto>(sql, new { asked = $"%{search.ToLower()}%", max = 30, offset = page * 30 });
             }
             else
             {
@@ -47,11 +48,11 @@ namespace Smort_api.Handlers.Repositories
                     WHERE LOWER(Content.Description) LIKE @asked
                     ORDER BY Content.Created_At DESC LIMIT @max OFFSET @offset;";
 
-                return await _db.QueryAsync<object>(sql, new { asked = $"%{search.ToLower()}%", user = userId, max = 30, offset = page * 30 });
+                return await _db.QueryAsync<ContentItemDto>(sql, new { asked = $"%{search.ToLower()}%", user = userId, max = 30, offset = page * 30 });
             }
         }
 
-        public async Task<object?> GetContentFromIdAsync(string? userId, int contentId)
+        public async Task<ContentItemDto?> GetContentFromIdAsync(string? userId, int contentId)
         {
             if (string.IsNullOrEmpty(userId))
             {
@@ -64,7 +65,7 @@ namespace Smort_api.Handlers.Repositories
                     INNER JOIN Users_Public On Content.User_Id = Users_Public.Id 
                     WHERE Content.id = @Contentid;";
 
-                return await _db.QueryFirstOrDefaultAsync<object>(sql, new { Contentid = contentId });
+                return await _db.QueryFirstOrDefaultAsync<ContentItemDto>(sql, new { Contentid = contentId });
             }
             else
             {
@@ -77,7 +78,7 @@ namespace Smort_api.Handlers.Repositories
                     INNER JOIN Users_Public On Content.User_Id = Users_Public.Id
                     WHERE Content.id = @Contentid;";
 
-                return await _db.QueryFirstOrDefaultAsync<object>(sql, new { user = userId, Contentid = contentId });
+                return await _db.QueryFirstOrDefaultAsync<ContentItemDto>(sql, new { user = userId, Contentid = contentId });
             }
         }
 
@@ -106,13 +107,13 @@ namespace Smort_api.Handlers.Repositories
             return await _db.ExecuteScalarAsync<string?>(sql, new { Id = videoId });
         }
 
-        public async Task<IEnumerable<object>> GetAccountContentListAsync(string id)
+        public async Task<IEnumerable<ContentItemDto>> GetAccountContentListAsync(string id)
         {
             const string sql = @"
                 SELECT Content.Id, Content.Thumbnail, Content.Type, File_Content.Id as File_Id, Content.Description
                 FROM Content LEFT JOIN File_Content ON  Content.Id=File_Content.Content_Id 
                 WHERE User_Id=@Id ";
-            return await _db.QueryAsync<object>(sql, new { Id = id });
+            return await _db.QueryAsync<ContentItemDto>(sql, new { Id = id });
         }
     }
 }

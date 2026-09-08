@@ -17,11 +17,7 @@ namespace Smort_api.Handlers
     {
         private static readonly int MaxContent = 30;
 
-        public static MySqlCommand GetContentAlgorithmQuery(string search, int page = 0)
-        {
-            MySqlCommand GetContentCmd = new MySqlCommand();
-
-            GetContentCmd.CommandText = $@"
+        public static string GetContentAlgorithmQuery(string search) => $@"
                 SELECT Content.Id, Content.Description, Content.User_Id,
                 (SELECT Id FROM File_Content WHERE Content_Id=Content.Id) As File_Id,
                 Content.Created_At, Users_Public.Username, Content.Type,
@@ -32,20 +28,9 @@ namespace Smort_api.Handlers
                 {(search != "" ? "WHERE LOWER(Content.Description) LIKE @asked " : "")}
                 ORDER BY Content.Created_At DESC LIMIT @max OFFSET @offset;
                 ";
+        
 
-            GetContentCmd.Parameters.AddWithValue("@asked", $"%{search.ToLower()}%");
-
-            GetContentCmd.Parameters.AddWithValue("@max", MaxContent);
-            GetContentCmd.Parameters.AddWithValue("@offset", page * MaxContent);
-
-            return GetContentCmd;
-        }
-
-        public static MySqlCommand GetContentAlgorithmQueryLoggedIn(string id, string search, int page = 0)
-        {
-            MySqlCommand GetContentCmd = new MySqlCommand();
-
-            GetContentCmd.CommandText = $@"
+        public static string GetContentAlgorithmQueryLoggedIn(string search) => $@"
                 SELECT Content.Id, Content.Description, Content.User_Id, Content.Created_At, Users_Public.Username, Content.Type,
                 (SELECT COUNT(Id) FROM Reaction WHERE Content_Id = Content.Id AND Reaction = 'Like') AS Likes,
                 (SELECT EXISTS(SELECT Id FROM Reaction WHERE Content_Id = Content.Id AND Reaction = 'Like' AND User_Id=@user)) AS AlreadyLiked,
@@ -56,21 +41,9 @@ namespace Smort_api.Handlers
                 ORDER BY Content.Created_At DESC LIMIT @max OFFSET @offset;
                 ";
 
-            GetContentCmd.Parameters.AddWithValue("@asked",$"%{search.ToLower()}%");
-            GetContentCmd.Parameters.AddWithValue("@user", id);
-            GetContentCmd.Parameters.AddWithValue("@max", MaxContent);
-            GetContentCmd.Parameters.AddWithValue("@offset", page * MaxContent);
-
-            return GetContentCmd;
-        }
 
 
-
-        public static MySqlCommand GetContentItemAlgorithmQuery(string ContentId, int page = 0)
-        {
-            MySqlCommand GetContentCmd = new MySqlCommand();
-
-            GetContentCmd.CommandText = $@"
+        public static string GetContentItemAlgorithmQuery() => $@"
                 SELECT Content.Id, Content.Description, Content.User_Id, Content.Created_At, Users_Public.Username, Content.Type,
                 (SELECT COUNT(Id) FROM Reaction WHERE Content_Id = Content.Id AND Reaction = 'Like') AS Likes,
                 (SELECT Id FROM File_Content WHERE Content_Id=Content.Id) As File_Id,
@@ -79,17 +52,9 @@ namespace Smort_api.Handlers
                 INNER JOIN Users_Public On Content.User_Id = Users_Public.Id 
                 WHERE Content.id = @Contentid;
                 ";
+        
 
-            GetContentCmd.Parameters.AddWithValue("@Contentid", ContentId);
-
-            return GetContentCmd;
-        }
-
-        public static MySqlCommand GetContentItemAlgorithmQueryLoggedIn(string Userid, string ContentId)
-        {
-            MySqlCommand GetContentCmd = new MySqlCommand();
-
-            GetContentCmd.CommandText = $@"
+        public static string GetContentItemAlgorithmQueryLoggedIn() => $@"
                 SELECT Content.Id, Content.Description, Content.User_Id, Content.Created_At, Users_Public.Username, Content.Type,
                 (SELECT COUNT(Id) FROM Reaction WHERE Content_Id = Content.Id AND Reaction = 'Like') AS Likes,
                 (SELECT Id FROM File_Content WHERE Content_Id=Content.Id) As File_Id,
@@ -98,11 +63,5 @@ namespace Smort_api.Handlers
                 INNER JOIN Users_Public On Content.User_Id = Users_Public.Id
                 WHERE Content.id = @Contentid;
                 ";
-
-            GetContentCmd.Parameters.AddWithValue("@user", Userid);
-            GetContentCmd.Parameters.AddWithValue("@Contentid", ContentId);
-
-            return GetContentCmd;
-        }
     }
 }

@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Smort_api.Object;
+using Smort_api.Object.DTO;
+using Smort_api.Object.Videos;
 using Tiktok_api.Settings_Api;
 
 namespace Smort_api.Handlers.Repositories
@@ -46,24 +48,173 @@ namespace Smort_api.Handlers.Repositories
         }
 
         /// <summary>Retrieves the current user's profile data (ID, picture, username).</summary>
-        public async Task<GetMyUserDataSimpel?> GetMyProfileAsync(int id)
+        public async Task<MyProfileDto?> GetMyProfileAsync(int id)
         {
-            const string sql = "SELECT Id, Profile_Picture, Username, Is_Account_Configured FROM Users_Public WHERE Id=@Id;";
-            return await _db.QueryFirstOrDefaultAsync<GetMyUserDataSimpel>(sql, new { Id = id });
+            const string sql = "SELECT Id, Profile_Picture AS Profile_Picture, Username, Is_Account_Configured FROM Users_Public WHERE Id=@Id;";
+            return await _db.QueryFirstOrDefaultAsync<MyProfileDto>(sql, new { Id = id });
         }
 
         /// <summary>Retrieves simplified user data for public profile viewing.</summary>
-        public async Task<GetMyUserDataSimpel?> GetUserDataSimpleAsync(int id)
+        public async Task<MyUserDataSimpelDto?> GetUserDataSimpleAsync(int id)
         {
             const string sql = "SELECT Id, Profile_Picture, Username FROM Users_Public WHERE Id=@Id;";
-            return await _db.QueryFirstOrDefaultAsync<GetMyUserDataSimpel>(sql, new { Id = id });
+            return await _db.QueryFirstOrDefaultAsync<MyUserDataSimpelDto>(sql, new { Id = id });
         }
 
         /// <summary>Retrieves user profile data for display purposes.</summary>
-        public async Task<IEnumerable<GetMyUserDataSimpel>> GetUserDataProfileAsync(int id)
+        public async Task<IEnumerable<UserProfileDto>> GetUserDataProfileAsync(int id)
         {
             const string sql = "SELECT Id, Profile_Picture, Username FROM Users_Public WHERE Id=@Id;";
-            return await _db.QueryAsync<GetMyUserDataSimpel>(sql, new { Id = id });
+            return await _db.QueryAsync<UserProfileDto>(sql, new { Id = id });
+        }
+
+        public async Task AllowUserAsync(int userId, bool allow)
+        {
+            const string sql = "UPDATE Users_Public SET AllowedUser=@Allow WHERE Id=@Id;";
+            await _db.ExecuteAsync(sql, new { Allow = allow ? 1 : 0, Id = userId });
+        }
+
+        public async Task<IEnumerable<AllUserDto>> GetAllUsersAsync()
+        {
+            const string sql = "SELECT Id, Profile_Picture, Username, Created_At, AllowedUser FROM Users_Public;";
+            return await _db.QueryAsync<AllUserDto>(sql);
+        }
+
+        public async Task<IEnumerable<FilePathData>> GetUserFilePathsAsync(string userId)
+        {
+            const string sql = @"
+                SELECT File_location FROM File WHERE Id=(SELECT Profile_Picture FROM Users_Public WHERE Id=@id)
+                UNION
+                SELECT File_location FROM File WHERE Id=(SELECT File_Id FROM Image_Post WHERE User_Id=@id)
+                UNION
+                SELECT File_location FROM File WHERE Id=(SELECT File_Id FROM Video WHERE User_Id=@id)
+                UNION
+                SELECT File_location FROM File WHERE Id=(SELECT Thumbnail FROM Video WHERE User_Id=@id);";
+
+            return await _db.QueryAsync<FilePathData>(sql, new { id = userId });
+        }
+
+        public async Task DeleteUserAsync(string userId)
+        {
+            const string sql = @"
+                DELETE FROM Users_Public WHERE Person_Id = @id;
+                DELETE FROM Users_Private WHERE Id = @id;
+                DELETE FROM Following WHERE User_Id_Followed = @id;
+                DELETE FROM Following WHERE User_Id_Follower = @id;
+                DELETE FROM Report_User WHERE User_Reported_Id = @id;
+                DELETE FROM Report_User WHERE User_Reporter_Id = @id;
+                UPDATE Reaction SET User_Id=null WHERE User_Id=@id;
+                DELETE FROM Reaction WHERE Content_Id=(SELECT Id FROM Video WHERE User_Id=@id);
+                DELETE FROM Image_Post WHERE User_Id = @id;
+                DELETE FROM Video WHERE User_Id = @id;";
+
+            await _db.ExecuteAsync(sql, new { id = userId });
+        }
+
+        public async Task ChangePasswordAsync(string id, string password, string salt)
+        {
+            const string sql = "UPDATE Users_Private SET Password=@Password, Salt=@Salt WHERE Id=@Id";
+            await _db.ExecuteAsync(sql, new { Password = password, Salt = salt, Id = id });
+        }
+
+        public async Task ChangeEmailAsync(string id, string email)
+        {
+            const string sql = "UPDATE Users_Private SET Email=@Email WHERE Id=@Id";
+            await _db.ExecuteAsync(sql, new { Email = email, Id = id });
+        }
+
+        public async Task ChangeProfilePictureAsync(string id, byte[] profilePicture)
+        {
+            const string sql = "UPDATE Users_Public SET Profile_Picture=@ProfilePicture WHERE Id=@Id";
+            await _db.ExecuteAsync(sql, new { ProfilePicture = profilePicture, Id = id });
+        }
+
+        public async Task<int> GetUsernameCountAsync(string username)
+        {
+            const string sql = "SELECT COUNT(*) FROM Username_Counter WHERE Username=@Username;";
+            return await _db.ExecuteScalarAsync<int>(sql, new { Username = username });
+        }
+
+        public async Task<int> GetUsernameAmountAsync(string username)
+        {
+            const string sql = "SELECT Amount FROM Username_Counter WHERE Username=@Username;";
+            return await _db.ExecuteScalarAsync<int>(sql, new { Username = username });
+        }
+
+        public async Task InsertUsernameCounterAsync(string username)
+        {
+            const string sql = "INSERT INTO Username_Counter (Username, Amount, Created_At, Updated_At) VALUES (@Username, @Amount, @Created_At, @Updated_At);";
+            await _db.ExecuteAsync(sql, new { Username = username, Amount = 0, Created_At = DateTime.Now, Updated_At = DateTime.Now });
+        }
+
+        public async Task UpdateUsernameAsync(string userId, string username)
+        {
+            const string sql = "UPDATE Users_Public SET Username=@Username WHERE Id=@Id;";
+            await _db.ExecuteAsync(sql, new { Username = username, Id = userId });
+        }
+
+        public async Task UpdateUsernameCounterAsync(string username, int amount, DateTime updatedAt)
+        {
+            const string sql = "UPDATE Username_Counter SET Amount=@Amount, Updated_At=@UpdatedAt WHERE Username=@Username;";
+            await _db.ExecuteAsync(sql, new { Username = username, Amount = amount, UpdatedAt = updatedAt });
+        }
+
+        public async Task<int> GetFollowCountAsync(string followerId, int followedUserId)
+        {
+            const string sql = "SELECT COUNT(User_Id_Followed) FROM Following WHERE User_Id_Follower=@UserFollower AND User_Id_Followed=@UserFollowed;";
+            return await _db.ExecuteScalarAsync<int>(sql, new { UserFollower = followerId, UserFollowed = followedUserId });
+        }
+
+        public async Task FollowUserAsync(string followerId, int followedUserId, DateTime followedAt)
+        {
+            const string sql = "INSERT INTO Following (User_Id_Followed, User_Id_Follower, Followed_At) VALUES (@UserFollowed, @UserFollower, @FollowedAt);";
+            await _db.ExecuteAsync(sql, new { UserFollower = followerId, UserFollowed = followedUserId, FollowedAt = followedAt });
+        }
+
+        public async Task UnfollowUserAsync(int followedUserId, string followerId)
+        {
+            const string sql = "DELETE FROM Following WHERE User_Id_Followed=@UserFollowed AND User_Id_Follower=@UserFollower;";
+            await _db.ExecuteAsync(sql, new { UserFollowed = followedUserId, UserFollower = followerId });
+        }
+
+        public async Task<int> GetFollowersCountAsync(int userId)
+        {
+            const string sql = "SELECT COUNT(User_Id_Followed) FROM Following WHERE User_Id_Followed=@UserFollowed;";
+            return await _db.ExecuteScalarAsync<int>(sql, new { UserFollowed = userId });
+        }
+
+        public async Task<int> GetMyFollowersCountAsync(string userId)
+        {
+            const string sql = "SELECT COUNT(User_Id_Followed) FROM Following WHERE User_Id_Followed=@UserFollowed;";
+            return await _db.ExecuteScalarAsync<int>(sql, new { UserFollowed = userId });
+        }
+
+        public async Task<IEnumerable<MostFollowersDto>> GetMostFollowersAsync(int offset)
+        {
+            const string sql = @"
+                SELECT Following.User_Id_Followed, COUNT(User_Id_Follower) as Amount, Users_Public.Profile_Picture, Username
+                FROM Following INNER JOIN Users_Public On Users_Public.Id = Following.User_Id_Followed
+                GROUP BY User_Id_Followed ORDER BY Amount DESC LIMIT @Offset;";
+
+            return await _db.QueryAsync<MostFollowersDto>(sql, new { Offset = offset });
+        }
+
+        public async Task<IEnumerable<MostFollowersDto>> GetFollowingAsync(string userId, int offset)
+        {
+            const string sql = @"
+                SELECT Following.User_Id_Followed, COUNT(User_Id_Follower) as Amount, Users_Public.Profile_Picture, Username
+                FROM Following INNER JOIN Users_Public On Users_Public.Id = Following.User_Id_Followed
+                WHERE User_Id_Follower = @id
+                GROUP BY User_Id_Followed ORDER BY Amount DESC LIMIT @Offset;";
+
+            return await _db.QueryAsync<MostFollowersDto>(sql, new { Offset = offset, id = userId });
+        }
+
+        public async Task<bool> IsFollowingAsync(string userId, int followedUserId)
+        {
+            const string sql = "SELECT COUNT(User_Id_Followed) FROM Following WHERE User_Id_Followed=@UserFollowed AND User_Id_Follower=@UserFollower;";
+            int follow = await _db.ExecuteScalarAsync<int>(sql, new { UserFollowed = followedUserId, UserFollower = userId });
+            return follow != 0;
         }
 
         public async Task<string> ConfigureUserData(int id, CreateAccount createAccount)
@@ -102,12 +253,12 @@ namespace Smort_api.Handlers.Repositories
             const string sqlUserData =
                 "SELECT Id, Username, Profile_Picture AS Profile_Picture, Is_Account_Configured FROM Users_Public WHERE Id=@Id;";
                 
-            var user = await _db.QueryFirstOrDefaultAsync<GetMyUserDataSimpel>(
+            var user = await _db.QueryFirstOrDefaultAsync<MyProfileDto>(
                 sqlUserData,
                 new { Id = id });
             
             // Creates the new user and adds the data to the database
-            if (user.Is_Account_Configured)
+            if (user.IsAccountConfigured)
             {
                 return "Account is Configured";
             }

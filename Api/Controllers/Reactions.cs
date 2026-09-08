@@ -6,9 +6,11 @@ using Tiktok_api.SignalRHubs;
 using Tiktok_api.Services;
 using Newtonsoft.Json;
 using Smort_api.Handlers;
+using Smort_api.Object.DTO;
 
 namespace Tiktok_api.Controllers
 {
+    [Authorize]
     [ApiController]
     public class Reactions : ControllerBase
     {
@@ -25,11 +27,9 @@ namespace Tiktok_api.Controllers
         }
 
         [HttpPost("Reactions/Like")]
-        [Authorize]
-        public async Task<IActionResult> Like(string contentId, string ContentType)
+        public async Task<ActionResult<string>> Like(string contentId, string ContentType)
         {
             string token = HttpContext.Request.Headers["Authorization"]!;
-
 
             if (JWTTokenHandler.IsBlacklisted(token))
                 return Unauthorized();
@@ -46,9 +46,9 @@ namespace Tiktok_api.Controllers
 
             var result = await _reactionsService.ToggleLikeAsync(userId, contentId, ContentType);
 
-            if (result.TypeOfLike == "Like" && result.Owner.HasValue)
+            if (result.TypeOfLike == "Like" && result.Owner != null)
             {
-                var owner = result.Owner.Value;
+                var owner = result.Owner;
                 await _notificationHub.SendNotificationLikeToUser(owner.Id.ToString(), $"{username} liked your post");
             }
 

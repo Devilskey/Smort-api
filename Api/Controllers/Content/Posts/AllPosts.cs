@@ -1,113 +1,86 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MySql.Data.MySqlClient;
 using Smort_api.Handlers;
+using Smort_api.Object.DTO;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using Tiktok_api.Services;
 
 namespace Tiktok_api.Controllers.Content.Posts
 {
+    [Authorize]
     [ApiController]
     public partial class AllPosts : ControllerBase
     {
-        private ILogger<AllPosts> _logger;
-        public AllPosts(ILogger<AllPosts> logger)
+        private readonly ILogger<AllPosts> _logger;
+        private readonly IContentService _contentService;
+
+        public AllPosts(ILogger<AllPosts> logger, IContentService contentService)
         {
             _logger = logger;
+            _contentService = contentService;
         }
 
         [HttpGet]
         [Route("Posts/GetContentList")]
-        public IActionResult GetContentList(string search = "")
+        public async Task<ActionResult<IEnumerable<ContentItemDto>>?> GetContentList(string search = "")
         {
-            MySqlCommand sqlCommand = null;
-
-            var IdFromToken = User.FindFirstValue("app_user_id");
-
-            if (IdFromToken != null)
+            try
             {
-                sqlCommand = ContentHandler.GetContentAlgorithmQueryLoggedIn(IdFromToken, search);
+                var idFromToken = User.FindFirstValue("app_user_id");
+                var result = await _contentService.GetContentListAsync(idFromToken, search, 0);
+                return Ok(result);
             }
-            else
+            catch (Exception)
             {
-                sqlCommand = ContentHandler.GetContentAlgorithmQuery(search);
+                return StatusCode(500);
             }
-
-            using (DatabaseHandler database = new())
-            {
-                Console.WriteLine(sqlCommand.CommandText);
-
-                string json = database.Select(sqlCommand);
-                Console.WriteLine(json);
-                return Ok(json);
-            }
-
         }
-
 
         [HttpGet]
         [Route("Posts/GetContentFromId")]
-        public IActionResult GetContentFromId(int id)
+        public async Task<ActionResult<ContentItemDto>?> GetContentFromId(int id)
         {
-            MySqlCommand sqlCommand = null;
-
-            var IdFromToken = User.FindFirstValue("app_user_id");
-
-            if (IdFromToken != null)
+            try
             {
-                sqlCommand = ContentHandler.GetContentItemAlgorithmQueryLoggedIn(IdFromToken, id.ToString());
+                var idFromToken = User.FindFirstValue("app_user_id");
+                var result = await _contentService.GetContentFromIdAsync(idFromToken, id);
+                return result == null ? NotFound() : Ok(result);
             }
-            else
+            catch (Exception)
             {
-                sqlCommand = ContentHandler.GetContentItemAlgorithmQuery(id.ToString());
-            }
-
-            using (DatabaseHandler database = new())
-            {
-                string json = database.Select(sqlCommand);
-                return Ok(json);
+                return StatusCode(500);
             }
         }
 
-
-
         [Route("Posts/GetAccountContentList")]
         [HttpGet]
-        public Task<string> GetAccountContentList(int? idUser)
+        public async Task<IActionResult> GetAccountContentList(int? idUser)
         {
-            string? id = "";
-            var IdFromToken = User.FindFirstValue("app_user_id");
-
-            if (idUser != null)
+            try
             {
-                id = idUser.ToString();
+                string? id = idUser?.ToString();
+                var idFromToken = User.FindFirstValue("app_user_id");
+
+                if (id == null && idFromToken != "[null]" && idFromToken != null)
+                {
+                    string token = HttpContext.Request.Headers["Authorization"]!;
+
+                    if (JWTTokenHandler.IsBlacklisted(token))
+                        return Forbid();
+
+                    id = idFromToken;
+                }
+
+                if (string.IsNullOrWhiteSpace(id))
+                    return BadRequest();
+
+                var result = await _contentService.GetAccountContentListAsync(id);
+                return Ok(result);
             }
-            else if (IdFromToken != "[null]" && IdFromToken != null)
+            catch (Exception)
             {
-                string token = HttpContext.Request.Headers["Authorization"]!;
-
-                if (JWTTokenHandler.IsBlacklisted(token))
-                    return Task.FromResult("token is blacklisted");
-
-                id = IdFromToken;
+                return StatusCode(500);
             }
-            else
-            {
-                return Task.FromResult("No Valid User");
-            }
-
-            using MySqlCommand GetVideoPath = new MySqlCommand();
-            _logger.LogInformation(id);
-
-            GetVideoPath.CommandText =
-                @" SELECT Content.Id, Content.Thumbnail, Content.Type, File_Content.Id as File_Id
-                FROM Content LEFT JOIN File_Content ON  Content.Id=File_Content.Content_Id 
-                WHERE User_Id=@Id ";
-            //(SELECT Id FROM File_Content WHERE Id = Id) as File_Id
-            GetVideoPath.Parameters.AddWithValue("@Id", $"{id}");
-
-            using DatabaseHandler databaseHandler = new DatabaseHandler();
-            Console.WriteLine(databaseHandler.Select(GetVideoPath));
-
-            return Task.FromResult(databaseHandler.Select(GetVideoPath));
         }
     }
 }

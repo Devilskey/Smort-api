@@ -1,256 +1,103 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using MySql.Data.MySqlClient;
-using Newtonsoft.Json;
 using Smort_api.Handlers;
-using Smort_api.Object;
-using Smort_api.Object.Security;
-using Smort_api.Object.User;
-using System.Security.Claims;
-using Tiktok_api.SignalRHubs;
+using Smort_api.Object.DTO;
+using Tiktok_api.Services;
 
 namespace Tiktok_api.Controllers.Users
 {
-
+    [Authorize]
     public partial class Users : ControllerBase
     {
-
-        /// <summary>
-        /// follows a users his account
-        /// </summary>
-        /// <returns></returns>
-        [Authorize]
         [Route("users/FollowUser")]
         [HttpPost]
-        public Task<string> FollowUser(int id)
+        public async Task<string> FollowUser(int id)
         {
             string token = HttpContext.Request.Headers["Authorization"]!;
 
             if (JWTTokenHandler.IsBlacklisted(token))
-                return Task.FromResult("token is blacklisted");
-            
+                return "token is blacklisted";
+
             string idUser = User.FindFirstValue("app_user_id");
             string username = User.FindFirstValue("Username");
 
-            Console.WriteLine(idUser);
-            if (id == int.Parse(idUser))
-                return Task.FromResult($"you cannnot follow yourself");
-
-
-            if (id == 0)
-                return Task.FromResult($"Failed to follow user");
-
-            using MySqlCommand CheckIfAlreadyFollowing = new MySqlCommand();
-
-            CheckIfAlreadyFollowing.CommandText = "SELECT COUNT(User_Id_Followed) FROM Following WHERE User_Id_Follower=@UserFollower AND User_Id_Followed=@UserFollowed;";
-
-            CheckIfAlreadyFollowing.Parameters.AddWithValue("@UserFollower", idUser);
-            CheckIfAlreadyFollowing.Parameters.AddWithValue("@UserFollowed", id);
-
-            using MySqlCommand FollowUserCommand = new MySqlCommand();
-
-            FollowUserCommand.CommandText = "INSERT INTO Following (User_Id_Followed, User_Id_Follower, Followed_At) VALUES (@UserFollowed, @UserFollower, @FollowedAt);";
-
-            FollowUserCommand.Parameters.AddWithValue("@UserFollowed", id);
-            FollowUserCommand.Parameters.AddWithValue("@UserFollower", idUser);
-
-            FollowUserCommand.Parameters.AddWithValue("@FollowedAt", DateTime.Now);
-
-            using (DatabaseHandler databaseHandler = new DatabaseHandler())
-            {
-                if (databaseHandler.GetNumber(CheckIfAlreadyFollowing) == 0)
-                {
-                    databaseHandler.EditDatabase(FollowUserCommand);
-                    return Task.FromResult($"Now following user");
-                }
-            }
-
-            _notificationHub.SendNotificationFollowToUser(id.ToString(), $"{username} started following you");
-
-            return Task.FromResult($"Not able to follow this user");
+            return await _userService.FollowUserAsync(idUser, id, username ?? string.Empty, _notificationHub);
         }
 
-        /// <summary>
-        /// Unfollows a users his account
-        /// </summary>
-        /// <returns></returns>
-        [Authorize]
         [Route("users/UnFollowUser")]
         [HttpDelete]
-        public Task<string> UnFollowUser(int creatorId)
+        public async Task<string> UnFollowUser(int creatorId)
         {
             string token = HttpContext.Request.Headers["Authorization"]!;
 
             if (JWTTokenHandler.IsBlacklisted(token))
-                return Task.FromResult("token is blacklisted");
+                return "token is blacklisted";
 
             string id = User.FindFirstValue("app_user_id");
-
-            if (creatorId == 0)
-                return Task.FromResult($"Failed to follow user");
-
-            using MySqlCommand CheckIfFollowing = new MySqlCommand();
-
-            CheckIfFollowing.CommandText = "SELECT COUNT(User_Id_Followed) FROM Following WHERE User_Id_Follower=@UserFollower AND User_Id_Followed=@UserFollowed;";
-
-            CheckIfFollowing.Parameters.AddWithValue("@UserFollower", id);
-
-            CheckIfFollowing.Parameters.AddWithValue("@UserFollowed", creatorId);
-
-            using MySqlCommand UnFollowUserCommand = new MySqlCommand();
-
-            UnFollowUserCommand.CommandText = "DELETE FROM Following WHERE User_Id_Followed=@UserFollowed AND User_Id_Follower=@UserFollower;";
-
-            UnFollowUserCommand.Parameters.AddWithValue("@UserFollowed", creatorId);
-            UnFollowUserCommand.Parameters.AddWithValue("@UserFollower", id);
-
-            using (DatabaseHandler databaseHandler = new DatabaseHandler())
-            {
-                if (databaseHandler.GetNumber(CheckIfFollowing) != 0)
-                {
-                    databaseHandler.EditDatabase(UnFollowUserCommand);
-                }
-            }
-            return Task.FromResult($"user Unfollowed");
+            return await _userService.UnfollowUserAsync(id, creatorId);
         }
 
-        /// <summary>
-        /// Gives the followers amount of a user
-        /// </summary>
-        /// <returns></returns>
         [Route("users/FollowersAmount")]
         [HttpPost]
-        public Task<int>? FollowersAmount(int id)
+        public async Task<ActionResult<int>> FollowersAmount(int id)
         {
             if (id == 0)
-                return null;
+                return BadRequest();
 
-            using MySqlCommand CheckIfFollowing = new MySqlCommand();
-
-            CheckIfFollowing.CommandText = "SELECT COUNT(User_Id_Followed) FROM Following WHERE User_Id_Followed=@UserFollowed;";
-
-            CheckIfFollowing.Parameters.AddWithValue("@UserFollowed", id);
-
-            using (DatabaseHandler databaseHandler = new DatabaseHandler())
-            {
-                return Task.FromResult(
-                    databaseHandler.GetNumber(CheckIfFollowing)
-                   );
-            }
+            var count = await _userService.FollowersAmountAsync(id);
+            return Ok(count);
         }
 
-
-        /// <summary>
-        /// Gets the top 5 most followed users.
-        /// </summary>
-        /// <returns></returns>
         [Route("Following/MostFolowers")]
         [HttpGet]
-        public string? MostFollowers(int Offset = 5)
+        public async Task<ActionResult<IEnumerable<MostFollowersDto>>> MostFollowers(int Offset = 5)
         {
-
-            using MySqlCommand MostFollowers = new MySqlCommand();
-
-            MostFollowers.CommandText = @"
-                SELECT Following.User_Id_Followed, COUNT(User_Id_Follower) as Amount, Users_Public.Profile_Picture, Username
-                FROM Following INNER JOIN Users_Public On Users_Public.Id = Following.User_Id_Followed
-                GROUP BY User_Id_Followed ORDER BY Amount DESC LIMIT @Offset;";
-            MostFollowers.Parameters.AddWithValue("@Offset", Offset);
-            using (DatabaseHandler databaseHandler = new DatabaseHandler())
-            {
-                 return databaseHandler.Select(MostFollowers);
-            }
+            var list = await _userService.MostFollowersAsync(Offset);
+            return Ok(list);
         }
 
-        [Authorize]
         [Route("Following/Following")]
         [HttpGet]
-        public string? Following(int Offset = 5)
+        public async Task<ActionResult<IEnumerable<MostFollowersDto>>> Following(int Offset = 5)
         {
             string idUser = User.FindFirstValue("app_user_id");
 
-            if (idUser == "")
-                return null;
+            if (string.IsNullOrEmpty(idUser))
+                return BadRequest();
 
-
-            using MySqlCommand MostFollowers = new MySqlCommand();
-
-            MostFollowers.CommandText = @"
-                SELECT Following.User_Id_Followed, COUNT(User_Id_Follower) as Amount, Users_Public.Profile_Picture, Username
-                FROM Following INNER JOIN Users_Public On Users_Public.Id = Following.User_Id_Followed 
-                WHERE User_Id_Follower = @id
-                GROUP BY User_Id_Followed ORDER BY Amount DESC LIMIT @Offset;";
-
-            MostFollowers.Parameters.AddWithValue("@Offset", Offset);
-            MostFollowers.Parameters.AddWithValue("@id", idUser);
-
-            using (DatabaseHandler databaseHandler = new DatabaseHandler())
-            {
-                return databaseHandler.Select(MostFollowers);
-            }
+            var list = await _userService.FollowingAsync(idUser, Offset);
+            return Ok(list);
         }
 
-
-        /// <summary>
-        /// Checks if you are following the user
-        /// </summary>
-        /// <returns></returns>
-        [Authorize]
         [Route("users/AlreadyFollowing")]
         [HttpPost]
-        public Task<bool>? AlreadyFollowing(int id)
+        public async Task<ActionResult<bool>> AlreadyFollowing(int id)
         {
             string idUser = User.FindFirstValue("app_user_id");
 
-            if (idUser == "")
-                 return null;
+            if (string.IsNullOrEmpty(idUser))
+                return BadRequest();
+
             if (id == 0)
-                return null;
+                return BadRequest();
 
-            using MySqlCommand CheckIfFollowing = new MySqlCommand();
-
-            CheckIfFollowing.CommandText = "SELECT COUNT(User_Id_Followed) FROM Following WHERE User_Id_Followed=@UserFollowed AND User_Id_Follower=@UserFollower;";
-
-            CheckIfFollowing.Parameters.AddWithValue("@UserFollowed", id);
-            CheckIfFollowing.Parameters.AddWithValue("@UserFollower", idUser);
-
-            using (DatabaseHandler databaseHandler = new DatabaseHandler())
-            {
-                int Follow = databaseHandler.GetNumber(CheckIfFollowing);
-
-                if (Follow == 0) return Task.FromResult(false);
-                else return Task.FromResult(true);
-            }
+            return await _userService.AlreadyFollowingAsync(idUser, id);
         }
 
-        /// <summary>
-        /// Gives the followers amount of the user
-        /// </summary>
-        /// <returns></returns>
-        [Authorize]
         [Route("users/MyFollowersAmount")]
         [HttpGet]
-        public Task<int>? MyFollowersAmount()
+        public async Task<ActionResult<int>> MyFollowersAmount()
         {
             string id = User.FindFirstValue("app_user_id");
 
             string token = HttpContext.Request.Headers["Authorization"]!;
 
             if (JWTTokenHandler.IsBlacklisted(token))
-                return null;
+                return Forbid();
 
-            using MySqlCommand CheckIfFollowing = new MySqlCommand();
-
-            CheckIfFollowing.CommandText = "SELECT COUNT(User_Id_Followed) FROM Following WHERE User_Id_Followed=@UserFollowed;";
-
-            CheckIfFollowing.Parameters.AddWithValue("@UserFollowed", id);
-
-            using (DatabaseHandler databaseHandler = new DatabaseHandler())
-            {
-                return Task.FromResult(
-                    databaseHandler.GetNumber(CheckIfFollowing)
-                   );
-            }
+            var count = await _userService.MyFollowersAmountAsync(id);
+            return Ok(count);
         }
     }
 }

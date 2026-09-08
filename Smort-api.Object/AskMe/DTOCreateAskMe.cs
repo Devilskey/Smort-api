@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Smort_api.Object.AskMe
 {
-    public class DTOCreateAskMe
+    public class CreateAskMe
     {
         public string Content { get; set; } = string.Empty;
     }
