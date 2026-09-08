@@ -12,6 +12,6 @@ public class ContentItemDto
     public string? Username { get; set; }
     public string? Type { get; set; }
     public int? Likes { get; set; }
-    public bool? AlreadyLiked { get; set; }
+    public int? AlreadyLiked { get; set; }
     public int? Thumbnail { get; set; }
 }
