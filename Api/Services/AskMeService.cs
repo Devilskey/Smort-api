@@ -2,6 +2,7 @@ using Smort_api.Handlers.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Smort_api.Object.DTO;
 
 namespace Tiktok_api.Services
 {
@@ -39,7 +40,7 @@ namespace Tiktok_api.Services
             await _askMeRepository.CreateAnswerAsync(userId, askId, content);
         }
 
-        public async Task<IEnumerable<object>> GetAnswersAsync(int askId)
+        public async Task<IEnumerable<QuestionAnswerDto>> GetAnswersAsync(int askId)
         {
             if (askId <= 0)
                 throw new ArgumentException("A valid ask id is required.", nameof(askId));

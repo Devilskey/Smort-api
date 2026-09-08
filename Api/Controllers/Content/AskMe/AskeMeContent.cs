@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Smort_api.Handlers;
 using Smort_api.Object.AskMe;
 using System.Security.Claims;
+using Smort_api.Object.DTO;
 using Tiktok_api.Services;
 
 namespace Tiktok_api.Controllers.Content.AskMe
@@ -72,7 +73,7 @@ namespace Tiktok_api.Controllers.Content.AskMe
 
         [HttpGet]
         [Route("AskMe/Answer/{askId}")]
-        public async Task<IActionResult> GetAnswer([FromRoute] int askId)
+        public async Task<ActionResult<QuestionAnswerDto>> GetAnswer([FromRoute] int askId)
         {
             string token = HttpContext.Request.Headers["Authorization"]!;
 

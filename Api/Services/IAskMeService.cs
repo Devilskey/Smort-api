@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Smort_api.Object.DTO;
 
 namespace Tiktok_api.Services
 {
@@ -7,6 +8,6 @@ namespace Tiktok_api.Services
     {
         Task CreateQuestionAsync(string userId, string content);
         Task CreateAnswerAsync(string userId, int askId, string content);
-        Task<IEnumerable<object>> GetAnswersAsync(int askId);
+        Task<IEnumerable<QuestionAnswerDto>> GetAnswersAsync(int askId);
     }
 }
