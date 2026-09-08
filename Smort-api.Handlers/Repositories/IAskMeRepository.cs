@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Smort_api.Object.DTO;
 
 namespace Smort_api.Handlers.Repositories
 {
@@ -7,6 +8,6 @@ namespace Smort_api.Handlers.Repositories
     {
         Task CreateQuestionAsync(string userId, string content);
         Task CreateAnswerAsync(string userId, int askId, string content);
-        Task<IEnumerable<object>> GetAnswersByQuestionIdAsync(int askId);
+        Task<IEnumerable<QuestionAnswerDto>> GetAnswersByQuestionIdAsync(int askId);
     }
 }

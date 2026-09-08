@@ -3,6 +3,7 @@ using MySql.Data.MySqlClient;
 using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
+using Smort_api.Object.DTO;
 
 namespace Smort_api.Handlers.Repositories
 {
@@ -48,14 +49,14 @@ namespace Smort_api.Handlers.Repositories
             });
         }
 
-        public async Task<IEnumerable<object>> GetAnswersByQuestionIdAsync(int askId)
+        public async Task<IEnumerable<QuestionAnswerDto>> GetAnswersByQuestionIdAsync(int askId)
         {
             const string sql = @"
                 SELECT User_Id, Answer 
                 FROM Content_Answer 
                 WHERE Content_Id = @AskId;";
 
-            return await _db.QueryAsync<object>(sql, new { AskId = askId });
+            return await _db.QueryAsync<QuestionAnswerDto>(sql, new { AskId = askId });
         }
     }
 }
