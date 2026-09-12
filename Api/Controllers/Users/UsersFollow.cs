@@ -40,7 +40,7 @@ namespace Tiktok_api.Controllers.Users
 
         [Route("users/FollowersAmount")]
         [HttpPost]
-        public async Task<ActionResult<int>> FollowersAmount(int id)
+        public async Task<ActionResult<FollowingDataDto>> FollowersAmount(int id)
         {
             if (id == 0)
                 return BadRequest();
@@ -87,7 +87,7 @@ namespace Tiktok_api.Controllers.Users
 
         [Route("users/MyFollowersAmount")]
         [HttpGet]
-        public async Task<ActionResult<int>> MyFollowersAmount()
+        public async Task<ActionResult<FollowingDataDto>> MyFollowersAmount()
         {
             string id = User.FindFirstValue("app_user_id");
 

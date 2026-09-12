@@ -36,10 +36,10 @@ namespace Tiktok_api.Services
         Task<string> ChangeUsernameAsync(string userId, string newUsername);
         Task<string> FollowUserAsync(string currentUserId, int targetUserId, string username, NotificationHubHandler notificationHub);
         Task<string> UnfollowUserAsync(string currentUserId, int targetUserId);
-        Task<int> FollowersAmountAsync(int userId);
+        Task<FollowingDataDto> FollowersAmountAsync(int userId);
         Task<IEnumerable<MostFollowersDto>> MostFollowersAsync(int offset);
         Task<IEnumerable<MostFollowersDto>> FollowingAsync(string userId, int offset);
         Task<ActionResult<bool>> AlreadyFollowingAsync(string userId, int targetUserId);
-        Task<int> MyFollowersAmountAsync(string userId);
+        Task<FollowingDataDto> MyFollowersAmountAsync(string userId);
     }
 }

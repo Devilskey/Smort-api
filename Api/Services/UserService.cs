@@ -177,7 +177,7 @@ namespace Tiktok_api.Services
             return "user Unfollowed";
         }
 
-        public async Task<int> FollowersAmountAsync(int userId)
+        public async Task<FollowingDataDto> FollowersAmountAsync(int userId)
         {
             return await _userRepository.GetFollowersCountAsync(userId);
         }
@@ -201,7 +201,7 @@ namespace Tiktok_api.Services
             return new OkObjectResult(result);
         }
 
-        public async Task<int> MyFollowersAmountAsync(string userId)
+        public async Task<FollowingDataDto> MyFollowersAmountAsync(string userId)
         {
             if (string.IsNullOrWhiteSpace(userId))
                 throw new ArgumentException("User id is required.", nameof(userId));

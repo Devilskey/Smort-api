@@ -30,8 +30,8 @@ namespace Smort_api.Handlers.Repositories
         Task<int> GetFollowCountAsync(string followerId, int followedUserId);
         Task FollowUserAsync(string followerId, int followedUserId, DateTime followedAt);
         Task UnfollowUserAsync(int followedUserId, string followerId);
-        Task<int> GetFollowersCountAsync(int userId);
-        Task<int> GetMyFollowersCountAsync(string userId);
+        Task<FollowingDataDto> GetFollowersCountAsync(int userId);
+        Task<FollowingDataDto> GetMyFollowersCountAsync(string userId);
         Task<IEnumerable<MostFollowersDto>> GetMostFollowersAsync(int offset);
         Task<IEnumerable<MostFollowersDto>> GetFollowingAsync(string userId, int offset);
         Task<bool> IsFollowingAsync(string userId, int followedUserId);

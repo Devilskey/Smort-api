@@ -31,6 +31,9 @@ namespace Smort_api.Extensions
             // Reactions repository - handles likes and other reactions
             services.AddScoped<IReactionsRepository, ReactionsRepository>();
             
+            // Search repository - handles Searches of data
+            services.AddScoped<ISearchRepository, SearchRepository>();
+
             // Content repository - handles video/image content queries
             services.AddScoped<IContentRepository, ContentRepository>();
 
@@ -62,6 +65,9 @@ namespace Smort_api.Extensions
 
             // Reactions service - handles like/reaction logic
             services.AddScoped<IReactionsService, ReactionsService>();
+            
+            // search - handles search operations
+            services.AddScoped<ISearchService, SearchService>();
             
             // Content service - handles content operations
             services.AddScoped<IContentService, ContentService>();

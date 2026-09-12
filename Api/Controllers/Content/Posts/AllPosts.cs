@@ -54,7 +54,7 @@ namespace Tiktok_api.Controllers.Content.Posts
 
         [Route("Posts/GetAccountContentList")]
         [HttpGet]
-        public async Task<IActionResult> GetAccountContentList(int? idUser)
+        public async Task<ActionResult<ContentItemDto>> GetAccountContentList(int? idUser)
         {
             try
             {
