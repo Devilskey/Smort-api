@@ -63,6 +63,10 @@
               "target": "Package",
               "version": "[5.2.0, )"
             },
+            "FirebaseAdmin": {
+              "target": "Package",
+              "version": "[3.4.0, )"
+            },
             "FluentMigrator.Runner.MySql": {
               "target": "Package",
               "version": "[7.1.0, )"

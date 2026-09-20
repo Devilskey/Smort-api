@@ -21,7 +21,7 @@
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="7.2.0" />
-    <PackageReference Include="Google.Apis.Auth" Version="1.63.0" />
+    <PackageReference Include="Google.Apis.Auth" Version="1.68.0" />
 
   </ItemGroup>
 
@@ -33,6 +33,7 @@
   <ItemGroup>
     <Folder Include="logs\" />
     <Folder Include="ProfilePictures\" />
+    <Folder Include="Services\NotificationServices\" />
     <Folder Include="TempImagePost\" />
     <Folder Include="TempVideos\" />
     <Folder Include="Videos\" />

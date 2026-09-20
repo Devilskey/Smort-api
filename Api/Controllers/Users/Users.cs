@@ -145,7 +145,7 @@ namespace Tiktok_api.Controllers.Users
         /// <returns>JSON-serialized user profile data</returns>
         [Route("users/GetUserDataProfile")]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserProfileDto>>> GetUserDataProfile(int id)
+        public async Task<ActionResult<UserProfileDto>> GetUserDataProfile(int id)
         {
             string token = HttpContext.Request.Headers["Authorization"]!;
 
@@ -153,7 +153,9 @@ namespace Tiktok_api.Controllers.Users
                 return Forbid();
 
             var data = await _userService.GetUserDataProfileAsync(id);
-            return data == null ? NotFound() : Ok(data);
+            var usersReturnList = data.ToList();
+
+            return usersReturnList.Any() ? Ok(usersReturnList.FirstOrDefault()) :  NotFound() ;
         }
     }
 }

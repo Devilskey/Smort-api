@@ -177,16 +177,35 @@ namespace Smort_api.Handlers.Repositories
             await _db.ExecuteAsync(sql, new { UserFollowed = followedUserId, UserFollower = followerId });
         }
 
-        public async Task<int> GetFollowersCountAsync(int userId)
+        public async Task<FollowingDataDto> GetFollowersCountAsync(int userId)
         {
-            const string sql = "SELECT COUNT(User_Id_Followed) FROM Following WHERE User_Id_Followed=@UserFollowed;";
-            return await _db.ExecuteScalarAsync<int>(sql, new { UserFollowed = userId });
-        }
+            const string sql = """
+                               SELECT COUNT(User_Id_Followed) FROM Following WHERE User_Id_Followed=@userId;
+                               SELECT COUNT(User_Id_Follower) FROM Following WHERE User_Id_Follower=@userId;
+                               """;
+            
+            var results = await _db.QueryMultipleAsync(sql, new { userId = userId });
 
-        public async Task<int> GetMyFollowersCountAsync(string userId)
+            return new FollowingDataDto()
+            {
+                Followers = results.ReadFirst<int>(),
+                Following = results.ReadFirst<int>(),
+            };        }
+
+        public async Task<FollowingDataDto> GetMyFollowersCountAsync(string userId)
         {
-            const string sql = "SELECT COUNT(User_Id_Followed) FROM Following WHERE User_Id_Followed=@UserFollowed;";
-            return await _db.ExecuteScalarAsync<int>(sql, new { UserFollowed = userId });
+            const string sql = """
+                               SELECT COUNT(User_Id_Followed) FROM Following WHERE User_Id_Followed=@userId;
+                               SELECT COUNT(User_Id_Follower) FROM Following WHERE User_Id_Follower=@userId;
+                               """;
+            
+            var results = await _db.QueryMultipleAsync(sql, new { userId = userId });
+
+            return new FollowingDataDto()
+            {
+                Followers = results.ReadFirst<int>(),
+                Following = results.ReadFirst<int>(),
+            };
         }
 
         public async Task<IEnumerable<MostFollowersDto>> GetMostFollowersAsync(int offset)

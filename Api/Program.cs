@@ -50,6 +50,7 @@ namespace Tiktok_api
                 var configuration = builder.Configuration;
 
                 services.AddFirebaseAuth(configuration);
+                services.FirebaseServiceAuth(configuration);
                 
                 // ========== BASIC MVC & API SETUP ==========
                 // Register controllers and API explorer for Swagger

@@ -31,6 +31,9 @@ namespace Smort_api.Extensions
             // Reactions repository - handles likes and other reactions
             services.AddScoped<IReactionsRepository, ReactionsRepository>();
             
+            // Search repository - handles Searches of data
+            services.AddScoped<ISearchRepository, SearchRepository>();
+
             // Content repository - handles video/image content queries
             services.AddScoped<IContentRepository, ContentRepository>();
 
@@ -63,11 +66,17 @@ namespace Smort_api.Extensions
             // Reactions service - handles like/reaction logic
             services.AddScoped<IReactionsService, ReactionsService>();
             
+            // search - handles search operations
+            services.AddScoped<ISearchService, SearchService>();
+            
             // Content service - handles content operations
             services.AddScoped<IContentService, ContentService>();
 
             // Video service - handles upload, deletion, and lookup logic
             services.AddScoped<IVideoService, VideoService>();
+            
+            // Notifaction Servce - handles basic api logic
+            services.AddScoped<INotificationServices, NotificationServices>();
 
             // Image Post service - handles image upload/deletion business logic
             services.AddScoped<IImagePostService, ImagePostService>();
@@ -91,7 +100,8 @@ namespace Smort_api.Extensions
 
             // Notification hub handler - manages SignalR connections for real-time notifications
             services.AddSingleton<NotificationHubHandler>();
-
+            services.AddSingleton<NotificationsHandler>(new NotificationsHandler());
+            
             // Mail handler - sends email notifications
             services.AddSingleton<MailHandler>(new MailHandler());
 
