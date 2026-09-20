@@ -58,6 +58,7 @@ namespace Smort_api.Handlers.Database
                 .WithColumn("Person_Id").AsInt32()
                 .WithColumn("Username").AsString(32).Nullable()
                 .WithColumn("Profile_Picture").AsInt32().Nullable()
+                .WithColumn("FcmCode").AsString(180).Nullable()
                 .WithColumn("Created_At").AsDateTime()
                 .WithColumn("Updated_At").AsDateTime().Nullable()
                 .WithColumn("Deleted_At").AsDateTime().Nullable()

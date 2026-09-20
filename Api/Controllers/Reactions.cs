@@ -53,6 +53,6 @@ namespace Tiktok_api.Controllers
             }
 
             return Ok(result.TypeOfLike);
-        }
+        }   
     }
 }

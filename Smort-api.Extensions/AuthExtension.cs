@@ -4,12 +4,25 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using MySql.Data.MySqlClient;
 using Dapper;
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
 using Serilog;
 
 namespace Extensions
 {
     public static class authExtension
     {
+        public static IServiceCollection FirebaseServiceAuth( this IServiceCollection service, IConfiguration configuration) {
+            
+            var credential = GoogleCredential.FromFile(configuration.GetValue<string>("Firebase:pathServiceAccountKey"));
+            FirebaseApp.Create(new AppOptions
+            {
+                Credential = credential
+            });
+            Console.WriteLine(configuration.GetValue<string>("Firebase:pathServiceAccountKey"));
+            return service;
+        }
+        
         public static IServiceCollection AddFirebaseAuth(this IServiceCollection service, IConfiguration configuration)
         {
             string projectId = configuration.GetValue<string>("Firebase:projectId") ?? throw new Exception("Setting Firebase:projectId is empty");

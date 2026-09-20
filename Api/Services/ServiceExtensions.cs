@@ -74,6 +74,9 @@ namespace Smort_api.Extensions
 
             // Video service - handles upload, deletion, and lookup logic
             services.AddScoped<IVideoService, VideoService>();
+            
+            // Notifaction Servce - handles basic api logic
+            services.AddScoped<INotificationServices, NotificationServices>();
 
             // Image Post service - handles image upload/deletion business logic
             services.AddScoped<IImagePostService, ImagePostService>();
@@ -97,7 +100,8 @@ namespace Smort_api.Extensions
 
             // Notification hub handler - manages SignalR connections for real-time notifications
             services.AddSingleton<NotificationHubHandler>();
-
+            services.AddSingleton<NotificationsHandler>(new NotificationsHandler());
+            
             // Mail handler - sends email notifications
             services.AddSingleton<MailHandler>(new MailHandler());
 
