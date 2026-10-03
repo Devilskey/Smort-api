@@ -12,10 +12,12 @@ namespace Tiktok_api.Controllers.Content.ImagePost
     public class ImagePost : ControllerBase
     {
         private readonly IImagePostService _imagePostService;
+        private readonly NotificationsHandler _notifications;
 
-        public ImagePost(IImagePostService imagePostService)
+        public ImagePost(IImagePostService imagePostService, NotificationsHandler notifications)
         {
             _imagePostService = imagePostService;
+            _notifications = notifications;
         }
 
         [HttpPost]
@@ -28,10 +30,12 @@ namespace Tiktok_api.Controllers.Content.ImagePost
                 return Unauthorized("token is blacklisted");
 
             string userId = User.FindFirstValue("app_user_id");
+            string username = User.FindFirstValue("Username");
 
             try
             {
                 var result = await _imagePostService.SaveImagePostAsync(userId, data);
+                _notifications.SendNotificationFollowers(userId, "Notify.NewImage.Title", $"Notify.NewImage.Body:{username}");
                 return Ok(result);
             }
             catch (ArgumentException)

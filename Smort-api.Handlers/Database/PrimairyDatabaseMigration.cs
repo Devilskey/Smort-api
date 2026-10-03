@@ -104,6 +104,14 @@ namespace Smort_api.Handlers.Database
                 .WithColumn("Created_At").AsDateTime()
                 .WithColumn("Updated_At").AsDateTime().Nullable();
 
+            Create.Table("User_Notifications")
+                .WithColumn("Id").AsInt32().PrimaryKey().Identity()
+                .WithColumn("Notification_For_User").AsInt32().NotNullable()
+                .WithColumn("Notification_From_User").AsInt32().Nullable()
+                .WithColumn("Text").AsString(256).NotNullable()
+                .WithColumn("Has_Seen").AsBoolean().WithDefaultValue(false)
+                .WithColumn("Created_At").AsDateTime().WithDefaultValue(SystemMethods.CurrentDateTime);
+
             // KEY CONNECTIONS 
 
             Create.ForeignKey("FK_File_Image_FileType")
@@ -162,11 +170,19 @@ namespace Smort_api.Handlers.Database
                 .FromTable("Content_Answer").ForeignColumn("Content_Id")
                 .ToTable("Content").PrimaryColumn("Id");
 
-
+            Create.ForeignKey("FK_Notifications_User_for")
+                .FromTable("User_Notifications").ForeignColumn("Notification_For_User")
+                .ToTable("Users_Public").PrimaryColumn("Id");
+            
+            Create.ForeignKey("FK_Notifications_User_from")
+                .FromTable("User_Notifications").ForeignColumn("Notification_From_User")
+                .ToTable("Users_Public").PrimaryColumn("Id");
 
             Insert.IntoTable("Role").Row(new { Id = 1, Name = "User", Description = "Someone who has an account on the site" });
             Insert.IntoTable("Role").Row(new { Id = 2, Name = "Creator", Description = "Someone who Creates content" });
             Insert.IntoTable("Role").Row(new { Id = 3, Name = "Admin", Description = "Someone who has unlimited power" });
+            Insert.IntoTable("Role").Row(new { Id = 4, Name = "Friends", Description = "Friends" });
+            Insert.IntoTable("Role").Row(new { Id = 5, Name = "Supporter", Description = "Supporter" });
 
             Insert.IntoTable("File_Type").Row(new { Id = 1, Type = "Post image" });
             Insert.IntoTable("File_Type").Row(new { Id = 2, Type = "Thumbnail" });

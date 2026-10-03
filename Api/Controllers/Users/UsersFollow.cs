@@ -21,7 +21,7 @@ namespace Tiktok_api.Controllers.Users
 
             string idUser = User.FindFirstValue("app_user_id");
             string username = User.FindFirstValue("Username");
-
+            
             return await _userService.FollowUserAsync(idUser, id, username ?? string.Empty, _notificationHub);
         }
 

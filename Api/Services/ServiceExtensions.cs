@@ -100,7 +100,7 @@ namespace Smort_api.Extensions
 
             // Notification hub handler - manages SignalR connections for real-time notifications
             services.AddSingleton<NotificationHubHandler>();
-            services.AddSingleton<NotificationsHandler>(new NotificationsHandler());
+            services.AddSingleton<NotificationsHandler>();
             
             // Mail handler - sends email notifications
             services.AddSingleton<MailHandler>(new MailHandler());

@@ -22,12 +22,12 @@ namespace Tiktok_api.BackgroundServices
 
         private readonly MySqlConnection _db;
 
-        private readonly NotificationHubHandler _notificationHub;
+        private readonly NotificationsHandler _notifications;
 
-        public ProcessVideoServices(ILogger<ProcessVideoServices> logger, NotificationHubHandler notificationHub, MySqlConnection db)
+        public ProcessVideoServices(ILogger<ProcessVideoServices> logger, NotificationsHandler notifications, MySqlConnection db)
         {
             _VideosToProcess = new ConcurrentQueue<VideoToProcessObject>();
-            _notificationHub = notificationHub;
+            _notifications = notifications;
             _logger = logger;
             _db = db;   
         }
@@ -110,7 +110,7 @@ namespace Tiktok_api.BackgroundServices
                 Description=Video.Description
             });
 
-            await _notificationHub.SendNotificationVideoToUser(Video.UserId, "Video has been uploaded");
+            _notifications.SendNotificationFollowers(Video.UserId, "Notify.NewVideo.Title", $"Notify.NewVideo.Body:{Video.Username}");
         }
 
         public override async Task StopAsync(CancellationToken stoppingToken)

@@ -8,7 +8,7 @@ namespace Tiktok_api.Services
 {
     public interface IVideoService
     {
-        Task<string> UploadVideoAsync(string userId, VideoUploadData data, ProcessVideoServices videoProcessor);
+        Task<string> UploadVideoAsync(string userId, string username, VideoUploadData data, ProcessVideoServices videoProcessor);
         Task DeleteVideoAsync(int videoId, string userId);
         Task<IEnumerable<VideoDto>> GetVideoFromIdAsync(string? userId, int id);
         Task<string?> GetVideoFilePathAsync(int videoId, Sizes size);

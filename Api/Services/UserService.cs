@@ -20,13 +20,16 @@ namespace Tiktok_api.Services
     /// </summary>
     public class UserService : IUserService
     {
+        
         /// <summary>Repository for user data access.</summary>
         private readonly IUserRepository _userRepository;
+        private readonly NotificationsHandler _notifications;
 
         /// <summary>Constructor - initializes the service with a user repository.</summary>
-        public UserService(IUserRepository userRepository)
+        public UserService(IUserRepository userRepository, NotificationsHandler notifications)
         {
             _userRepository = userRepository;
+            _notifications =  notifications;
         }
 
         /// <summary>Reports a user after checking for existing reports.</summary>
@@ -158,10 +161,11 @@ namespace Tiktok_api.Services
             if (await _userRepository.GetFollowCountAsync(currentUserId, targetUserId) == 0)
             {
                 await _userRepository.FollowUserAsync(currentUserId, targetUserId, DateTime.Now);
+                _notifications.SendNotification(targetUserId.ToString(), currentUserId, "Notify.NewFollow.Title", $"Notify.NewFollow.Body:{username}");
+
                 return "Now following user";
             }
-
-            notificationHub.SendNotificationFollowToUser(targetUserId.ToString(), $"{username} started following you");
+            
             return "Not able to follow this user";
         }
 

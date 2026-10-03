@@ -49,10 +49,11 @@ namespace Tiktok_api.Controllers.Videos
                 return Unauthorized("token is blacklisted");
 
             string userId = User.FindFirstValue("app_user_id");
+            string username = User.FindFirstValue("Username");
 
             try
             {
-                var result = await _videoService.UploadVideoAsync(userId, data, _videoProcessor);
+                var result = await _videoService.UploadVideoAsync(userId, username, data, _videoProcessor);
                 return Ok(result);
             }
             catch (ArgumentException)
