@@ -9,6 +9,8 @@ namespace Smort_api.Object.Video
     public class VideoToProcessObject
     {
         public required string UserId = "";
+        public required string Username = "";
+
         public required string Input = "";
         public required string Output = "";
         public required string FileName = "";

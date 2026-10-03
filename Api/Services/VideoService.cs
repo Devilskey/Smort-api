@@ -23,7 +23,7 @@ namespace Tiktok_api.Services
             _chunkHandler = new ChunkHandler("./TempVideos", "./Videos", "mkv");
         }
 
-        public async Task<string> UploadVideoAsync(string userId, VideoUploadData data, ProcessVideoServices videoProcessor)
+        public async Task<string> UploadVideoAsync(string userId, string username, VideoUploadData data, ProcessVideoServices videoProcessor)
         {
             if (string.IsNullOrWhiteSpace(userId))
                 throw new ArgumentException("User id is required.", nameof(userId));
@@ -60,6 +60,7 @@ namespace Tiktok_api.Services
             {
                 Output = output,
                 Input = input,
+                Username = username,
                 Description = data.Description,
                 UserId = userId,
                 FileName = data.FileName

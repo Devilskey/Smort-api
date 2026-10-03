@@ -33,7 +33,6 @@
   <ItemGroup>
     <Folder Include="logs\" />
     <Folder Include="ProfilePictures\" />
-    <Folder Include="Services\NotificationServices\" />
     <Folder Include="TempImagePost\" />
     <Folder Include="TempVideos\" />
     <Folder Include="Videos\" />

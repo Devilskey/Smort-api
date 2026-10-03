@@ -18,12 +18,14 @@ namespace Tiktok_api.Controllers
         private readonly ILogger<Reactions> _logger;
         private readonly NotificationHubHandler _notificationHub;
         private readonly IReactionsService _reactionsService;
+        private readonly NotificationsHandler _notifcations;
 
-        public Reactions(ILogger<Reactions> logger, NotificationHubHandler notificationHub, IReactionsService reactionsService)
+        public Reactions(ILogger<Reactions> logger, NotificationHubHandler notificationHub, IReactionsService reactionsService, NotificationsHandler notifcations)
         {
             _logger = logger;
             _notificationHub = notificationHub;
             _reactionsService = reactionsService;
+            _notifcations = notifcations;
         }
 
         [HttpPost("Reactions/Like")]
@@ -44,12 +46,12 @@ namespace Tiktok_api.Controllers
             string userId = User.FindFirstValue("app_user_id");
             string username = User.FindFirstValue("Username");
 
-            var result = await _reactionsService.ToggleLikeAsync(userId, contentId, ContentType);
+            var result = await _reactionsService.ToggleLikeAsync(userId,  contentId, ContentType);
 
             if (result.TypeOfLike == "Like" && result.Owner != null)
             {
                 var owner = result.Owner;
-                await _notificationHub.SendNotificationLikeToUser(owner.Id.ToString(), $"{username} liked your post");
+                _notifcations.SendNotification(owner.Id.ToString(), userId, "Notify.NewLike.Title", $"Notify.NewLike.Body:{username}");
             }
 
             return Ok(result.TypeOfLike);
